@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.Python
+.venv/
+venv/
+env/
+
+# Environment
+.env
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project artifacts
+data/raw/*
+data/parsed/*
+data/cleaned/*
+data/chunks/*
+data/embeddings/*
+data/chromadb/*
+logs/**/*.log
+
+# Keep directory placeholders
+!data/**/.gitkeep
+!logs/**/.gitkeep

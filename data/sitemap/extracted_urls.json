@@ -1,0 +1,2410 @@
+[
+  {
+    "url": "https://aliansoftware.com/en",
+    "canonical_url": "https://aliansoftware.com/en",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 1.0,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi",
+    "canonical_url": "https://aliansoftware.com/hi",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 1.0,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/about",
+    "canonical_url": "https://aliansoftware.com/en/about",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/about",
+    "canonical_url": "https://aliansoftware.com/hi/about",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pricing",
+    "canonical_url": "https://aliansoftware.com/en/pricing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pricing",
+    "canonical_url": "https://aliansoftware.com/hi/pricing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/process",
+    "canonical_url": "https://aliansoftware.com/en/process",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/process",
+    "canonical_url": "https://aliansoftware.com/hi/process",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/contact",
+    "canonical_url": "https://aliansoftware.com/en/contact",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/contact",
+    "canonical_url": "https://aliansoftware.com/hi/contact",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/book-a-demo",
+    "canonical_url": "https://aliansoftware.com/en/book-a-demo",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/book-a-demo",
+    "canonical_url": "https://aliansoftware.com/hi/book-a-demo",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/partners",
+    "canonical_url": "https://aliansoftware.com/en/partners",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/partners",
+    "canonical_url": "https://aliansoftware.com/hi/partners",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/checklist",
+    "canonical_url": "https://aliansoftware.com/en/checklist",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/checklist",
+    "canonical_url": "https://aliansoftware.com/hi/checklist",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work",
+    "canonical_url": "https://aliansoftware.com/en/work",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work",
+    "canonical_url": "https://aliansoftware.com/hi/work",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog",
+    "canonical_url": "https://aliansoftware.com/en/blog",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog",
+    "canonical_url": "https://aliansoftware.com/hi/blog",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries",
+    "canonical_url": "https://aliansoftware.com/en/industries",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries",
+    "canonical_url": "https://aliansoftware.com/hi/industries",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/changelog",
+    "canonical_url": "https://aliansoftware.com/en/changelog",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/changelog",
+    "canonical_url": "https://aliansoftware.com/hi/changelog",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/uses",
+    "canonical_url": "https://aliansoftware.com/en/uses",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/uses",
+    "canonical_url": "https://aliansoftware.com/hi/uses",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/testimonials",
+    "canonical_url": "https://aliansoftware.com/en/testimonials",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/testimonials",
+    "canonical_url": "https://aliansoftware.com/hi/testimonials",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/legal/privacy",
+    "canonical_url": "https://aliansoftware.com/en/legal/privacy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/legal/privacy",
+    "canonical_url": "https://aliansoftware.com/hi/legal/privacy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/legal/terms",
+    "canonical_url": "https://aliansoftware.com/en/legal/terms",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/legal/terms",
+    "canonical_url": "https://aliansoftware.com/hi/legal/terms",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/legal/cookies",
+    "canonical_url": "https://aliansoftware.com/en/legal/cookies",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/legal/cookies",
+    "canonical_url": "https://aliansoftware.com/hi/legal/cookies",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/security",
+    "canonical_url": "https://aliansoftware.com/en/security",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/security",
+    "canonical_url": "https://aliansoftware.com/hi/security",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary",
+    "canonical_url": "https://aliansoftware.com/en/glossary",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary",
+    "canonical_url": "https://aliansoftware.com/hi/glossary",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/roi",
+    "canonical_url": "https://aliansoftware.com/en/roi",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/roi",
+    "canonical_url": "https://aliansoftware.com/hi/roi",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/playbooks",
+    "canonical_url": "https://aliansoftware.com/en/playbooks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/playbooks",
+    "canonical_url": "https://aliansoftware.com/hi/playbooks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations",
+    "canonical_url": "https://aliansoftware.com/en/integrations",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations",
+    "canonical_url": "https://aliansoftware.com/hi/integrations",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/demos",
+    "canonical_url": "https://aliansoftware.com/en/demos",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/demos",
+    "canonical_url": "https://aliansoftware.com/hi/demos",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/careers",
+    "canonical_url": "https://aliansoftware.com/en/careers",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/careers",
+    "canonical_url": "https://aliansoftware.com/hi/careers",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/status",
+    "canonical_url": "https://aliansoftware.com/en/status",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/status",
+    "canonical_url": "https://aliansoftware.com/hi/status",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/labs",
+    "canonical_url": "https://aliansoftware.com/en/labs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/labs",
+    "canonical_url": "https://aliansoftware.com/hi/labs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/referrals",
+    "canonical_url": "https://aliansoftware.com/en/referrals",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/referrals",
+    "canonical_url": "https://aliansoftware.com/hi/referrals",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/api-docs",
+    "canonical_url": "https://aliansoftware.com/en/api-docs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/api-docs",
+    "canonical_url": "https://aliansoftware.com/hi/api-docs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/site-map",
+    "canonical_url": "https://aliansoftware.com/en/site-map",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/site-map",
+    "canonical_url": "https://aliansoftware.com/hi/site-map",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/quiz",
+    "canonical_url": "https://aliansoftware.com/en/quiz",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/quiz",
+    "canonical_url": "https://aliansoftware.com/hi/quiz",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/use-cases",
+    "canonical_url": "https://aliansoftware.com/en/use-cases",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/use-cases",
+    "canonical_url": "https://aliansoftware.com/hi/use-cases",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/roadmap",
+    "canonical_url": "https://aliansoftware.com/en/roadmap",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/roadmap",
+    "canonical_url": "https://aliansoftware.com/hi/roadmap",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/customers",
+    "canonical_url": "https://aliansoftware.com/en/customers",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/customers",
+    "canonical_url": "https://aliansoftware.com/hi/customers",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/press",
+    "canonical_url": "https://aliansoftware.com/en/press",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/press",
+    "canonical_url": "https://aliansoftware.com/hi/press",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/office-hours",
+    "canonical_url": "https://aliansoftware.com/en/office-hours",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/office-hours",
+    "canonical_url": "https://aliansoftware.com/hi/office-hours",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/tools",
+    "canonical_url": "https://aliansoftware.com/en/tools",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/tools",
+    "canonical_url": "https://aliansoftware.com/hi/tools",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/tools/token-counter",
+    "canonical_url": "https://aliansoftware.com/en/tools/token-counter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/tools/token-counter",
+    "canonical_url": "https://aliansoftware.com/hi/tools/token-counter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/tools/cost-estimator",
+    "canonical_url": "https://aliansoftware.com/en/tools/cost-estimator",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/tools/cost-estimator",
+    "canonical_url": "https://aliansoftware.com/hi/tools/cost-estimator",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/accessibility",
+    "canonical_url": "https://aliansoftware.com/en/accessibility",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/accessibility",
+    "canonical_url": "https://aliansoftware.com/hi/accessibility",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/state-of-ai-2026",
+    "canonical_url": "https://aliansoftware.com/en/state-of-ai-2026",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/state-of-ai-2026",
+    "canonical_url": "https://aliansoftware.com/hi/state-of-ai-2026",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/methodology",
+    "canonical_url": "https://aliansoftware.com/en/methodology",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/methodology",
+    "canonical_url": "https://aliansoftware.com/hi/methodology",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/security/disclosure",
+    "canonical_url": "https://aliansoftware.com/en/security/disclosure",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/security/disclosure",
+    "canonical_url": "https://aliansoftware.com/hi/security/disclosure",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/community",
+    "canonical_url": "https://aliansoftware.com/en/community",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/community",
+    "canonical_url": "https://aliansoftware.com/hi/community",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/timeline",
+    "canonical_url": "https://aliansoftware.com/en/timeline",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/timeline",
+    "canonical_url": "https://aliansoftware.com/hi/timeline",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for",
+    "canonical_url": "https://aliansoftware.com/en/for",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for",
+    "canonical_url": "https://aliansoftware.com/hi/for",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/learn",
+    "canonical_url": "https://aliansoftware.com/en/learn",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/learn",
+    "canonical_url": "https://aliansoftware.com/hi/learn",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/audits",
+    "canonical_url": "https://aliansoftware.com/en/audits",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/audits",
+    "canonical_url": "https://aliansoftware.com/hi/audits",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/team",
+    "canonical_url": "https://aliansoftware.com/en/team",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/team",
+    "canonical_url": "https://aliansoftware.com/hi/team",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/build-a-spec",
+    "canonical_url": "https://aliansoftware.com/en/build-a-spec",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/build-a-spec",
+    "canonical_url": "https://aliansoftware.com/hi/build-a-spec",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates",
+    "canonical_url": "https://aliansoftware.com/en/templates",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates",
+    "canonical_url": "https://aliansoftware.com/hi/templates",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pdf-library",
+    "canonical_url": "https://aliansoftware.com/en/pdf-library",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pdf-library",
+    "canonical_url": "https://aliansoftware.com/hi/pdf-library",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/principles",
+    "canonical_url": "https://aliansoftware.com/en/principles",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/principles",
+    "canonical_url": "https://aliansoftware.com/hi/principles",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents",
+    "canonical_url": "https://aliansoftware.com/en/agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents",
+    "canonical_url": "https://aliansoftware.com/hi/agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/snippets",
+    "canonical_url": "https://aliansoftware.com/en/snippets",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/snippets",
+    "canonical_url": "https://aliansoftware.com/hi/snippets",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/vs",
+    "canonical_url": "https://aliansoftware.com/en/vs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/vs",
+    "canonical_url": "https://aliansoftware.com/hi/vs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/scoping-call-prep",
+    "canonical_url": "https://aliansoftware.com/en/scoping-call-prep",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/scoping-call-prep",
+    "canonical_url": "https://aliansoftware.com/hi/scoping-call-prep",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/handoff",
+    "canonical_url": "https://aliansoftware.com/en/handoff",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/handoff",
+    "canonical_url": "https://aliansoftware.com/hi/handoff",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/migrations",
+    "canonical_url": "https://aliansoftware.com/en/migrations",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/migrations",
+    "canonical_url": "https://aliansoftware.com/hi/migrations",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/why-now",
+    "canonical_url": "https://aliansoftware.com/en/why-now",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/why-now",
+    "canonical_url": "https://aliansoftware.com/hi/why-now",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/search",
+    "canonical_url": "https://aliansoftware.com/en/search",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/search",
+    "canonical_url": "https://aliansoftware.com/hi/search",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/quick-wins",
+    "canonical_url": "https://aliansoftware.com/en/quick-wins",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/quick-wins",
+    "canonical_url": "https://aliansoftware.com/hi/quick-wins",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/risks",
+    "canonical_url": "https://aliansoftware.com/en/risks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/risks",
+    "canonical_url": "https://aliansoftware.com/hi/risks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/decisions",
+    "canonical_url": "https://aliansoftware.com/en/decisions",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/decisions",
+    "canonical_url": "https://aliansoftware.com/hi/decisions",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/case-study-wishlist",
+    "canonical_url": "https://aliansoftware.com/en/case-study-wishlist",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/case-study-wishlist",
+    "canonical_url": "https://aliansoftware.com/hi/case-study-wishlist",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/explore",
+    "canonical_url": "https://aliansoftware.com/en/explore",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/explore",
+    "canonical_url": "https://aliansoftware.com/hi/explore",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/budget-guide",
+    "canonical_url": "https://aliansoftware.com/en/budget-guide",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/budget-guide",
+    "canonical_url": "https://aliansoftware.com/hi/budget-guide",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/sample-sows",
+    "canonical_url": "https://aliansoftware.com/en/sample-sows",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/sample-sows",
+    "canonical_url": "https://aliansoftware.com/hi/sample-sows",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/scoping-briefs",
+    "canonical_url": "https://aliansoftware.com/en/scoping-briefs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/scoping-briefs",
+    "canonical_url": "https://aliansoftware.com/hi/scoping-briefs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/founder-letter",
+    "canonical_url": "https://aliansoftware.com/en/founder-letter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/founder-letter",
+    "canonical_url": "https://aliansoftware.com/hi/founder-letter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/proof",
+    "canonical_url": "https://aliansoftware.com/en/proof",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/proof",
+    "canonical_url": "https://aliansoftware.com/hi/proof",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/why-not-us",
+    "canonical_url": "https://aliansoftware.com/en/why-not-us",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/why-not-us",
+    "canonical_url": "https://aliansoftware.com/hi/why-not-us",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/legal/templates",
+    "canonical_url": "https://aliansoftware.com/en/legal/templates",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/legal/templates",
+    "canonical_url": "https://aliansoftware.com/hi/legal/templates",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pricing/compare",
+    "canonical_url": "https://aliansoftware.com/en/pricing/compare",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pricing/compare",
+    "canonical_url": "https://aliansoftware.com/hi/pricing/compare",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/talks",
+    "canonical_url": "https://aliansoftware.com/en/talks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/talks",
+    "canonical_url": "https://aliansoftware.com/hi/talks",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.8,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/services/agents-automation",
+    "canonical_url": "https://aliansoftware.com/en/services/agents-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/services/agents-automation",
+    "canonical_url": "https://aliansoftware.com/hi/services/agents-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/services/apps-chatbots",
+    "canonical_url": "https://aliansoftware.com/en/services/apps-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/services/apps-chatbots",
+    "canonical_url": "https://aliansoftware.com/hi/services/apps-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/services/strategy",
+    "canonical_url": "https://aliansoftware.com/en/services/strategy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/services/strategy",
+    "canonical_url": "https://aliansoftware.com/hi/services/strategy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/services/data-intelligence",
+    "canonical_url": "https://aliansoftware.com/en/services/data-intelligence",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/services/data-intelligence",
+    "canonical_url": "https://aliansoftware.com/hi/services/data-intelligence",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/ecommerce",
+    "canonical_url": "https://aliansoftware.com/en/industries/ecommerce",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/ecommerce",
+    "canonical_url": "https://aliansoftware.com/hi/industries/ecommerce",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/saas",
+    "canonical_url": "https://aliansoftware.com/en/industries/saas",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/saas",
+    "canonical_url": "https://aliansoftware.com/hi/industries/saas",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/manufacturing",
+    "canonical_url": "https://aliansoftware.com/en/industries/manufacturing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/manufacturing",
+    "canonical_url": "https://aliansoftware.com/hi/industries/manufacturing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/healthcare",
+    "canonical_url": "https://aliansoftware.com/en/industries/healthcare",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/healthcare",
+    "canonical_url": "https://aliansoftware.com/hi/industries/healthcare",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/finance",
+    "canonical_url": "https://aliansoftware.com/en/industries/finance",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/finance",
+    "canonical_url": "https://aliansoftware.com/hi/industries/finance",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/real-estate",
+    "canonical_url": "https://aliansoftware.com/en/industries/real-estate",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/real-estate",
+    "canonical_url": "https://aliansoftware.com/hi/industries/real-estate",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/education",
+    "canonical_url": "https://aliansoftware.com/en/industries/education",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/education",
+    "canonical_url": "https://aliansoftware.com/hi/industries/education",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/industries/logistics",
+    "canonical_url": "https://aliansoftware.com/en/industries/logistics",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/industries/logistics",
+    "canonical_url": "https://aliansoftware.com/hi/industries/logistics",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work/multi-agent-manufacturing",
+    "canonical_url": "https://aliansoftware.com/en/work/multi-agent-manufacturing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work/multi-agent-manufacturing",
+    "canonical_url": "https://aliansoftware.com/hi/work/multi-agent-manufacturing",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work/auto-issue-resolution",
+    "canonical_url": "https://aliansoftware.com/en/work/auto-issue-resolution",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work/auto-issue-resolution",
+    "canonical_url": "https://aliansoftware.com/hi/work/auto-issue-resolution",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work/alian-infinity-erp",
+    "canonical_url": "https://aliansoftware.com/en/work/alian-infinity-erp",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work/alian-infinity-erp",
+    "canonical_url": "https://aliansoftware.com/hi/work/alian-infinity-erp",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work/lead-qualification-agent",
+    "canonical_url": "https://aliansoftware.com/en/work/lead-qualification-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work/lead-qualification-agent",
+    "canonical_url": "https://aliansoftware.com/hi/work/lead-qualification-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/work/youtube-automation",
+    "canonical_url": "https://aliansoftware.com/en/work/youtube-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/work/youtube-automation",
+    "canonical_url": "https://aliansoftware.com/hi/work/youtube-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/evals-as-permanent-system",
+    "canonical_url": "https://aliansoftware.com/en/blog/evals-as-permanent-system",
+    "last_modified": "2026-05-15T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/evals-as-permanent-system",
+    "canonical_url": "https://aliansoftware.com/hi/blog/evals-as-permanent-system",
+    "last_modified": "2026-05-15T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/hiring-for-production-ai",
+    "canonical_url": "https://aliansoftware.com/en/blog/hiring-for-production-ai",
+    "last_modified": "2026-05-09T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/hiring-for-production-ai",
+    "canonical_url": "https://aliansoftware.com/hi/blog/hiring-for-production-ai",
+    "last_modified": "2026-05-09T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/ecommerce-ai-playbook-2026",
+    "canonical_url": "https://aliansoftware.com/en/blog/ecommerce-ai-playbook-2026",
+    "last_modified": "2026-05-13T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/ecommerce-ai-playbook-2026",
+    "canonical_url": "https://aliansoftware.com/hi/blog/ecommerce-ai-playbook-2026",
+    "last_modified": "2026-05-13T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/manufacturing-ai-readiness",
+    "canonical_url": "https://aliansoftware.com/en/blog/manufacturing-ai-readiness",
+    "last_modified": "2026-05-08T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/manufacturing-ai-readiness",
+    "canonical_url": "https://aliansoftware.com/hi/blog/manufacturing-ai-readiness",
+    "last_modified": "2026-05-08T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/ai-compliance-fintech",
+    "canonical_url": "https://aliansoftware.com/en/blog/ai-compliance-fintech",
+    "last_modified": "2026-05-01T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/ai-compliance-fintech",
+    "canonical_url": "https://aliansoftware.com/hi/blog/ai-compliance-fintech",
+    "last_modified": "2026-05-01T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/ai-implementation-roadmap-90-days",
+    "canonical_url": "https://aliansoftware.com/en/blog/ai-implementation-roadmap-90-days",
+    "last_modified": "2026-04-22T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/ai-implementation-roadmap-90-days",
+    "canonical_url": "https://aliansoftware.com/hi/blog/ai-implementation-roadmap-90-days",
+    "last_modified": "2026-04-22T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/we-built-ai-agent-manufacturing-cost",
+    "canonical_url": "https://aliansoftware.com/en/blog/we-built-ai-agent-manufacturing-cost",
+    "last_modified": "2026-04-29T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/we-built-ai-agent-manufacturing-cost",
+    "canonical_url": "https://aliansoftware.com/hi/blog/we-built-ai-agent-manufacturing-cost",
+    "last_modified": "2026-04-29T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/build-customer-support-ai-agent-saas",
+    "canonical_url": "https://aliansoftware.com/en/blog/build-customer-support-ai-agent-saas",
+    "last_modified": "2026-04-15T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/build-customer-support-ai-agent-saas",
+    "canonical_url": "https://aliansoftware.com/hi/blog/build-customer-support-ai-agent-saas",
+    "last_modified": "2026-04-15T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/rag-vs-fine-tuning-ecommerce",
+    "canonical_url": "https://aliansoftware.com/en/blog/rag-vs-fine-tuning-ecommerce",
+    "last_modified": "2026-04-08T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/rag-vs-fine-tuning-ecommerce",
+    "canonical_url": "https://aliansoftware.com/hi/blog/rag-vs-fine-tuning-ecommerce",
+    "last_modified": "2026-04-08T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/blog/n8n-gpt-workflows-saving-50k",
+    "canonical_url": "https://aliansoftware.com/en/blog/n8n-gpt-workflows-saving-50k",
+    "last_modified": "2026-04-01T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/blog/n8n-gpt-workflows-saving-50k",
+    "canonical_url": "https://aliansoftware.com/hi/blog/n8n-gpt-workflows-saving-50k",
+    "last_modified": "2026-04-01T00:00:00.000Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/vs/in-house",
+    "canonical_url": "https://aliansoftware.com/en/vs/in-house",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/vs/in-house",
+    "canonical_url": "https://aliansoftware.com/hi/vs/in-house",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/vs/agency",
+    "canonical_url": "https://aliansoftware.com/en/vs/agency",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/vs/agency",
+    "canonical_url": "https://aliansoftware.com/hi/vs/agency",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/vs/consultancy",
+    "canonical_url": "https://aliansoftware.com/en/vs/consultancy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/vs/consultancy",
+    "canonical_url": "https://aliansoftware.com/hi/vs/consultancy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/playbooks/agent-design",
+    "canonical_url": "https://aliansoftware.com/en/playbooks/agent-design",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/playbooks/agent-design",
+    "canonical_url": "https://aliansoftware.com/hi/playbooks/agent-design",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/playbooks/rag",
+    "canonical_url": "https://aliansoftware.com/en/playbooks/rag",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/playbooks/rag",
+    "canonical_url": "https://aliansoftware.com/hi/playbooks/rag",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/playbooks/eval-suite",
+    "canonical_url": "https://aliansoftware.com/en/playbooks/eval-suite",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/playbooks/eval-suite",
+    "canonical_url": "https://aliansoftware.com/hi/playbooks/eval-suite",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/slack",
+    "canonical_url": "https://aliansoftware.com/en/integrations/slack",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/slack",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/slack",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/hubspot",
+    "canonical_url": "https://aliansoftware.com/en/integrations/hubspot",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/hubspot",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/hubspot",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/linear",
+    "canonical_url": "https://aliansoftware.com/en/integrations/linear",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/linear",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/linear",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/n8n",
+    "canonical_url": "https://aliansoftware.com/en/integrations/n8n",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/n8n",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/n8n",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/supabase",
+    "canonical_url": "https://aliansoftware.com/en/integrations/supabase",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/supabase",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/supabase",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/stripe",
+    "canonical_url": "https://aliansoftware.com/en/integrations/stripe",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/stripe",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/stripe",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/twilio",
+    "canonical_url": "https://aliansoftware.com/en/integrations/twilio",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/twilio",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/twilio",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/integrations/github",
+    "canonical_url": "https://aliansoftware.com/en/integrations/github",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/integrations/github",
+    "canonical_url": "https://aliansoftware.com/hi/integrations/github",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/ecommerce-chatbots",
+    "canonical_url": "https://aliansoftware.com/en/for/ecommerce-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/ecommerce-chatbots",
+    "canonical_url": "https://aliansoftware.com/hi/for/ecommerce-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/saas-agents",
+    "canonical_url": "https://aliansoftware.com/en/for/saas-agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/saas-agents",
+    "canonical_url": "https://aliansoftware.com/hi/for/saas-agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/manufacturing-agents",
+    "canonical_url": "https://aliansoftware.com/en/for/manufacturing-agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/manufacturing-agents",
+    "canonical_url": "https://aliansoftware.com/hi/for/manufacturing-agents",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/finance-strategy",
+    "canonical_url": "https://aliansoftware.com/en/for/finance-strategy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/finance-strategy",
+    "canonical_url": "https://aliansoftware.com/hi/for/finance-strategy",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/healthcare-chatbots",
+    "canonical_url": "https://aliansoftware.com/en/for/healthcare-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/healthcare-chatbots",
+    "canonical_url": "https://aliansoftware.com/hi/for/healthcare-chatbots",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/for/logistics-automation",
+    "canonical_url": "https://aliansoftware.com/en/for/logistics-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/for/logistics-automation",
+    "canonical_url": "https://aliansoftware.com/hi/for/logistics-automation",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pricing/sprint",
+    "canonical_url": "https://aliansoftware.com/en/pricing/sprint",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pricing/sprint",
+    "canonical_url": "https://aliansoftware.com/hi/pricing/sprint",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pricing/retainer",
+    "canonical_url": "https://aliansoftware.com/en/pricing/retainer",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pricing/retainer",
+    "canonical_url": "https://aliansoftware.com/hi/pricing/retainer",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/pricing/hourly",
+    "canonical_url": "https://aliansoftware.com/en/pricing/hourly",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/pricing/hourly",
+    "canonical_url": "https://aliansoftware.com/hi/pricing/hourly",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.7,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/support-agent-system-prompt",
+    "canonical_url": "https://aliansoftware.com/en/templates/support-agent-system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/support-agent-system-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/templates/support-agent-system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/lead-qualification-system-prompt",
+    "canonical_url": "https://aliansoftware.com/en/templates/lead-qualification-system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/lead-qualification-system-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/templates/lead-qualification-system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/refusal-pattern-library",
+    "canonical_url": "https://aliansoftware.com/en/templates/refusal-pattern-library",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/refusal-pattern-library",
+    "canonical_url": "https://aliansoftware.com/hi/templates/refusal-pattern-library",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/rag-citation-prompt",
+    "canonical_url": "https://aliansoftware.com/en/templates/rag-citation-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/rag-citation-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/templates/rag-citation-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/code-review-agent",
+    "canonical_url": "https://aliansoftware.com/en/templates/code-review-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/code-review-agent",
+    "canonical_url": "https://aliansoftware.com/hi/templates/code-review-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/eval-suite-starter",
+    "canonical_url": "https://aliansoftware.com/en/templates/eval-suite-starter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/eval-suite-starter",
+    "canonical_url": "https://aliansoftware.com/hi/templates/eval-suite-starter",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/structured-output-json",
+    "canonical_url": "https://aliansoftware.com/en/templates/structured-output-json",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/structured-output-json",
+    "canonical_url": "https://aliansoftware.com/hi/templates/structured-output-json",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/voice-agent-greeting",
+    "canonical_url": "https://aliansoftware.com/en/templates/voice-agent-greeting",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/voice-agent-greeting",
+    "canonical_url": "https://aliansoftware.com/hi/templates/voice-agent-greeting",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/doc-extraction-prompt",
+    "canonical_url": "https://aliansoftware.com/en/templates/doc-extraction-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/doc-extraction-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/templates/doc-extraction-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/templates/approval-workflow-prompt",
+    "canonical_url": "https://aliansoftware.com/en/templates/approval-workflow-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/templates/approval-workflow-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/templates/approval-workflow-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.6,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/inbound-qualification",
+    "canonical_url": "https://aliansoftware.com/en/agents/inbound-qualification",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/inbound-qualification",
+    "canonical_url": "https://aliansoftware.com/hi/agents/inbound-qualification",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/support-deflection",
+    "canonical_url": "https://aliansoftware.com/en/agents/support-deflection",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/support-deflection",
+    "canonical_url": "https://aliansoftware.com/hi/agents/support-deflection",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/multi-agent-ops",
+    "canonical_url": "https://aliansoftware.com/en/agents/multi-agent-ops",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/multi-agent-ops",
+    "canonical_url": "https://aliansoftware.com/hi/agents/multi-agent-ops",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/document-extraction",
+    "canonical_url": "https://aliansoftware.com/en/agents/document-extraction",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/document-extraction",
+    "canonical_url": "https://aliansoftware.com/hi/agents/document-extraction",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/voice-agent",
+    "canonical_url": "https://aliansoftware.com/en/agents/voice-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/voice-agent",
+    "canonical_url": "https://aliansoftware.com/hi/agents/voice-agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/erp-query-alert",
+    "canonical_url": "https://aliansoftware.com/en/agents/erp-query-alert",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/erp-query-alert",
+    "canonical_url": "https://aliansoftware.com/hi/agents/erp-query-alert",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/kyc-onboarding",
+    "canonical_url": "https://aliansoftware.com/en/agents/kyc-onboarding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/kyc-onboarding",
+    "canonical_url": "https://aliansoftware.com/hi/agents/kyc-onboarding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/vision-qc",
+    "canonical_url": "https://aliansoftware.com/en/agents/vision-qc",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/vision-qc",
+    "canonical_url": "https://aliansoftware.com/hi/agents/vision-qc",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/agents/compliance-evidence",
+    "canonical_url": "https://aliansoftware.com/en/agents/compliance-evidence",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/agents/compliance-evidence",
+    "canonical_url": "https://aliansoftware.com/hi/agents/compliance-evidence",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.65,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/agent",
+    "canonical_url": "https://aliansoftware.com/en/glossary/agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/agent",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/agent",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/agentic-workflow",
+    "canonical_url": "https://aliansoftware.com/en/glossary/agentic-workflow",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/agentic-workflow",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/agentic-workflow",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/baa",
+    "canonical_url": "https://aliansoftware.com/en/glossary/baa",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/baa",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/baa",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/cache",
+    "canonical_url": "https://aliansoftware.com/en/glossary/cache",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/cache",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/cache",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/citations-grounding",
+    "canonical_url": "https://aliansoftware.com/en/glossary/citations-grounding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/citations-grounding",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/citations-grounding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/context-window",
+    "canonical_url": "https://aliansoftware.com/en/glossary/context-window",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/context-window",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/context-window",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/dpa",
+    "canonical_url": "https://aliansoftware.com/en/glossary/dpa",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/dpa",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/dpa",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/embedding",
+    "canonical_url": "https://aliansoftware.com/en/glossary/embedding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/embedding",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/embedding",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/eval-evaluation-suite",
+    "canonical_url": "https://aliansoftware.com/en/glossary/eval-evaluation-suite",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/eval-evaluation-suite",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/eval-evaluation-suite",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/fine-tuning",
+    "canonical_url": "https://aliansoftware.com/en/glossary/fine-tuning",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/fine-tuning",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/fine-tuning",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/function-calling-tool-use",
+    "canonical_url": "https://aliansoftware.com/en/glossary/function-calling-tool-use",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/function-calling-tool-use",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/function-calling-tool-use",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/guardrails",
+    "canonical_url": "https://aliansoftware.com/en/glossary/guardrails",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/guardrails",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/guardrails",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/hallucination",
+    "canonical_url": "https://aliansoftware.com/en/glossary/hallucination",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/hallucination",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/hallucination",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/hybrid-search",
+    "canonical_url": "https://aliansoftware.com/en/glossary/hybrid-search",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/hybrid-search",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/hybrid-search",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/inference",
+    "canonical_url": "https://aliansoftware.com/en/glossary/inference",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/inference",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/inference",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/llm",
+    "canonical_url": "https://aliansoftware.com/en/glossary/llm",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/llm",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/llm",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/llm-as-judge",
+    "canonical_url": "https://aliansoftware.com/en/glossary/llm-as-judge",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/llm-as-judge",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/llm-as-judge",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/mcp",
+    "canonical_url": "https://aliansoftware.com/en/glossary/mcp",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/mcp",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/mcp",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/multi-agent-system",
+    "canonical_url": "https://aliansoftware.com/en/glossary/multi-agent-system",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/multi-agent-system",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/multi-agent-system",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/prompt",
+    "canonical_url": "https://aliansoftware.com/en/glossary/prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/prompt",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/prompt-engineering",
+    "canonical_url": "https://aliansoftware.com/en/glossary/prompt-engineering",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/prompt-engineering",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/prompt-engineering",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/rag",
+    "canonical_url": "https://aliansoftware.com/en/glossary/rag",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/rag",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/rag",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/reranking",
+    "canonical_url": "https://aliansoftware.com/en/glossary/reranking",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/reranking",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/reranking",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/sccs",
+    "canonical_url": "https://aliansoftware.com/en/glossary/sccs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/sccs",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/sccs",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/sandbox",
+    "canonical_url": "https://aliansoftware.com/en/glossary/sandbox",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/sandbox",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/sandbox",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/streaming",
+    "canonical_url": "https://aliansoftware.com/en/glossary/streaming",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/streaming",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/streaming",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/system-prompt",
+    "canonical_url": "https://aliansoftware.com/en/glossary/system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/system-prompt",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/system-prompt",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/token",
+    "canonical_url": "https://aliansoftware.com/en/glossary/token",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/token",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/token",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/en/glossary/vector-database",
+    "canonical_url": "https://aliansoftware.com/en/glossary/vector-database",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  },
+  {
+    "url": "https://aliansoftware.com/hi/glossary/vector-database",
+    "canonical_url": "https://aliansoftware.com/hi/glossary/vector-database",
+    "last_modified": "2026-05-21T07:18:16.721Z",
+    "priority": 0.55,
+    "source_sitemap": "https://aliansoftware.com/sitemap.xml"
+  }
+]

@@ -1,0 +1,19 @@
+crawler:
+  timeout: 30
+  retries: 3
+  rate_limit: 2
+
+chunking:
+  chunk_size: 500
+  overlap: 100
+
+embeddings:
+  provider: huggingface
+  model: BAAI/bge-small-en-v1.5
+  batch_size: 32
+  normalize_embeddings: true
+
+vectordb:
+  provider: chromadb
+  persist_directory: ./data/chromadb
+  collection_name: rag_documents
