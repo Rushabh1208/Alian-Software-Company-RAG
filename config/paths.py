@@ -11,8 +11,10 @@ class PipelinePaths:
     """Single source of truth for pipeline artifact and log locations."""
 
     root: Path
+    workspace_dir: Path
 
     # Crawl / discovery
+    websites_dir: Path
     sitemap_dir: Path
     crawl_targets: Path
     raw_dir: Path
@@ -44,9 +46,11 @@ class PipelinePaths:
     logs_parsing: Path
     logs_embeddings: Path
     logs_vectordb: Path
+    website_registry: Path
 
     def ensure_directories(self) -> None:
         for directory in (
+            self.websites_dir,
             self.sitemap_dir,
             self.raw_dir,
             self.parsed_dir,
@@ -61,36 +65,52 @@ class PipelinePaths:
             self.logs_vectordb,
         ):
             directory.mkdir(parents=True, exist_ok=True)
+        self.website_registry.parent.mkdir(parents=True, exist_ok=True)
 
 
-def get_pipeline_paths(chromadb_dir: Path | None = None) -> PipelinePaths:
+def get_pipeline_paths(
+    chromadb_dir: Path | None = None,
+    *,
+    workspace_name: str | None = None,
+) -> PipelinePaths:
     root = PROJECT_ROOT
     data = root / "data"
     logs = root / "logs"
+    websites_dir = data / "websites"
+
+    if workspace_name:
+        workspace_dir = websites_dir / workspace_name
+        logs_root = logs / "websites" / workspace_name
+    else:
+        workspace_dir = data
+        logs_root = logs
 
     if chromadb_dir is None:
         chromadb_dir = data / "chromadb"
 
     return PipelinePaths(
         root=root,
-        sitemap_dir=data / "sitemap",
-        crawl_targets=data / "sitemap" / "crawl_targets.json",
-        raw_dir=data / "raw",
-        parsed_dir=data / "parsed",
-        parsed_documents=data / "parsed" / "parsed_documents.json",
-        cleaned_dir=data / "cleaned",
-        cleaned_documents=data / "cleaned" / "cleaned_documents.json",
-        rejected_documents=data / "cleaned" / "rejected_documents.json",
-        metadata_dir=data / "metadata",
-        metadata_documents=data / "metadata" / "metadata_documents.json",
-        chunks_dir=data / "chunks",
-        chunked_documents=data / "chunks" / "chunked_documents.json",
-        rejected_chunks=data / "chunks" / "rejected_chunks.json",
-        embeddings_dir=data / "embeddings",
+        workspace_dir=workspace_dir,
+        websites_dir=websites_dir,
+        sitemap_dir=workspace_dir / "sitemap",
+        crawl_targets=workspace_dir / "sitemap" / "crawl_targets.json",
+        raw_dir=workspace_dir / "raw",
+        parsed_dir=workspace_dir / "parsed",
+        parsed_documents=workspace_dir / "parsed" / "parsed_documents.json",
+        cleaned_dir=workspace_dir / "cleaned",
+        cleaned_documents=workspace_dir / "cleaned" / "cleaned_documents.json",
+        rejected_documents=workspace_dir / "cleaned" / "rejected_documents.json",
+        metadata_dir=workspace_dir / "metadata",
+        metadata_documents=workspace_dir / "metadata" / "metadata_documents.json",
+        chunks_dir=workspace_dir / "chunks",
+        chunked_documents=workspace_dir / "chunks" / "chunked_documents.json",
+        rejected_chunks=workspace_dir / "chunks" / "rejected_chunks.json",
+        embeddings_dir=workspace_dir / "embeddings",
         chromadb_dir=chromadb_dir,
-        logs_crawl=logs / "crawl",
-        logs_parsing=logs / "parsing",
-        logs_embeddings=logs / "embeddings",
-        logs_vectordb=logs / "vectordb",
+        logs_crawl=logs_root / "crawl",
+        logs_parsing=logs_root / "parsing",
+        logs_embeddings=logs_root / "embeddings",
+        logs_vectordb=logs_root / "vectordb",
+        website_registry=websites_dir / "websites.json",
     )
 

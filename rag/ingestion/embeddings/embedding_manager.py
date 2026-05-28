@@ -60,7 +60,7 @@ class EmbeddingManager:
             model_name=self.model_name,
             normalize_embeddings=self.normalize_embeddings,
             cache_folder=self.output_dir / "model_cache",
-            local_files_only=True,
+            local_files_only=False,
             logger=self.logger,
         )
         cache = EmbeddingCache(self.output_dir / "embedding_cache.json", logger=self.logger)

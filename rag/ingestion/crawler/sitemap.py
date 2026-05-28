@@ -8,7 +8,12 @@ from urllib.parse import urljoin, urlsplit
 import requests
 from bs4 import BeautifulSoup
 
-from rag.ingestion.crawler.robots_handler import RobotsHandler, USER_AGENT
+from rag.ingestion.crawler.robots_handler import RobotsHandler
+
+# Fallback definition to prevent the website crash
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+from rag.ingestion.crawler.recursive_crawler import RecursiveCrawler
 from rag.ingestion.crawler.sitemap_utils import fetch_url, model_to_jsonable, normalize_url, write_json
 from rag.ingestion.crawler.url_filter import filter_urls
 from rag.models.ingest_models import CrawlTarget, ExtractedUrl, SitemapRecord
@@ -49,6 +54,8 @@ class SitemapProcessor:
     target_url: str
     output_dir: Path
     timeout: int = 30
+    recursive_fallback_depth: int = 2
+    recursive_fallback_pages: int = 80
     logger: logging.Logger = field(default_factory=lambda: logging.getLogger(__name__))
     session: requests.Session = field(default_factory=requests.Session)
 
@@ -75,8 +82,30 @@ class SitemapProcessor:
         discovered_sitemaps = self._merge_sitemap_records(
             [*discovered_sitemaps, *self.parsed_sitemaps]
         )
+
+        if not extracted_urls:
+            fallback_urls, recursive_summary = self._recursive_fallback_urls()
+            if fallback_urls:
+                self.logger.info(
+                    "Recursive crawl fallback discovered %s URLs from %s pages",
+                    recursive_summary.discovered_urls,
+                    recursive_summary.visited_pages,
+                )
+                extracted_urls = fallback_urls
+
         filtered_urls, duplicates_removed, blocked_urls = self.apply_filters(extracted_urls)
         crawl_targets, validation_blocked = self.validate_crawl_targets(filtered_urls)
+
+        if not crawl_targets:
+            fallback_urls, recursive_summary = self._recursive_fallback_urls()
+            if fallback_urls:
+                self.logger.info(
+                    "Recursive crawl fallback discovered %s URLs from %s pages after sitemap filtering",
+                    recursive_summary.discovered_urls,
+                    recursive_summary.visited_pages,
+                )
+                filtered_urls, duplicates_removed, blocked_urls = self.apply_filters(fallback_urls)
+                crawl_targets, validation_blocked = self.validate_crawl_targets(filtered_urls)
 
         summary = SitemapPipelineSummary(
             sitemaps_discovered=len(discovered_sitemaps),
@@ -172,6 +201,18 @@ class SitemapProcessor:
             crawl_targets.append(CrawlTarget.from_extracted_url(extracted_url))
 
         return crawl_targets, blocked_count
+
+    def _recursive_fallback_urls(self) -> tuple[list[ExtractedUrl], object]:
+        crawler = RecursiveCrawler(
+            target_url=self.target_url,
+            session=self.session,
+            timeout=self.timeout,
+            logger=self.logger,
+            robots=self.robots,
+            max_depth=self.recursive_fallback_depth,
+            max_pages=self.recursive_fallback_pages,
+        )
+        return crawler.discover()
 
     def write_outputs(self, result: SitemapPipelineResult) -> None:
         write_json(

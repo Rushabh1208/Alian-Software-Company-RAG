@@ -148,6 +148,8 @@ class EmbeddingBatchProcessor:
             "title": str(metadata.get("title") or ""),
             "category": str(metadata.get("category") or ""),
             "heading": str(metadata.get("heading") or ""),
+            "source_type": str(metadata.get("source_type") or "website"),
+            "collection": str(metadata.get("collection") or ""),
         }
 
     def _record(self, chunk: dict[str, Any], embedding: list[float]) -> dict[str, Any]:

@@ -25,6 +25,14 @@ class RetrievedChunk:
     def heading(self) -> str:
         return str(self.metadata.get("heading") or "")
 
+    @property
+    def source_type(self) -> str:
+        return str(self.metadata.get("source_type") or "website")
+
+    @property
+    def collection(self) -> str:
+        return str(self.metadata.get("collection") or "")
+
 
 @dataclass(frozen=True)
 class QueryResult:

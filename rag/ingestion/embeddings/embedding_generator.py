@@ -20,10 +20,15 @@ class HuggingFaceEmbeddingGenerator:
     ) -> None:
         self.model_name = model_name
         self.logger = logger or logging.getLogger(__name__)
+
+        model_kwargs: dict[str, object] = {
+            "local_files_only": local_files_only,
+        }
+
         self.embedding_model = HuggingFaceEmbeddings(
             model_name=model_name,
             cache_folder=str(cache_folder) if cache_folder else None,
-            model_kwargs={"local_files_only": local_files_only},
+            model_kwargs=model_kwargs,
             encode_kwargs={"normalize_embeddings": normalize_embeddings},
             show_progress=False,
         )

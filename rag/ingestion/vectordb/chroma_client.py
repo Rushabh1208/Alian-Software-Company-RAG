@@ -21,3 +21,18 @@ class ChromaVectorClient:
         result = self.collection.get(ids=ids, include=[])
         return set(result.get("ids") or [])
 
+    def delete_collection(self) -> None:
+        self.client.delete_collection(name=self.collection_name)
+
+    def count(self) -> int:
+        try:
+            return int(self.collection.count())
+        except Exception:
+            return 0
+
+    def list_collections(self) -> list[str]:
+        try:
+            return [collection.name for collection in self.client.list_collections()]
+        except Exception:
+            return []
+

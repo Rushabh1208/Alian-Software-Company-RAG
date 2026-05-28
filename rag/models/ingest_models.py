@@ -70,6 +70,7 @@ class MetadataDocument(BaseModel):
     category: str
     language: str = "en"
     source_type: str = "website"
+    collection: str = ""
     crawl_timestamp: str
     content_hash: str
     content: str
@@ -82,6 +83,8 @@ class ChunkMetadata(BaseModel):
     title: str
     category: str
     heading: str = ""
+    source_type: str = "website"
+    collection: str = ""
 
 
 class ChunkDocument(BaseModel):

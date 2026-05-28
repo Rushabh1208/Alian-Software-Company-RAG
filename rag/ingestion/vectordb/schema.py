@@ -10,6 +10,8 @@ REQUIRED_METADATA_FIELDS = (
     "title",
     "category",
     "heading",
+    "source_type",
+    "collection",
 )
 
 

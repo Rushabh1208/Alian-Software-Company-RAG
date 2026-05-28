@@ -182,6 +182,41 @@ I don't know from the indexed website content.
 - Add small test fixtures for retrieval and generation regression checks.
 - Add structured logging for pipeline stages and query metrics.
 
+## Web App
+
+The repository now includes a thin Express API and a React frontend that reuse the existing Python RAG pipeline.
+
+### Backend
+
+```powershell
+cd backend
+npm install
+npm start
+```
+
+Available routes:
+
+- `POST /api/query`
+- `POST /api/index-website`
+- `GET /api/websites`
+- `DELETE /api/websites/:id`
+
+### Frontend
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Set `VITE_API_BASE_URL` if the backend is not running on `http://localhost:5000`.
+
+### Website Collections
+
+- `alian_software` is the default company collection.
+- `website_<domain>` is used for each indexed site, for example `website_openai_com`.
+- The Python bridge keeps query-time retrieval, reranking, confidence scoring, and metadata handling inside the existing RAG modules.
+
 ## License
 
 Add your preferred license before publishing the repository publicly.

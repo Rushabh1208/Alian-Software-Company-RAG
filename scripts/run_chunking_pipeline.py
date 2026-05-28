@@ -23,6 +23,7 @@ def main() -> None:
         output_dir=paths.chunks_dir,
         chunk_size=int(chunking_config.get("chunk_size", 500)),
         overlap=int(chunking_config.get("overlap", 100)),
+        collection_name=str(settings.config.get("vectordb", {}).get("collection_name", "rag_documents")),
         logger=logger,
     )
     _, _, summary = manager.run()

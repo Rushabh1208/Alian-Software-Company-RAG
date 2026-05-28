@@ -7,8 +7,10 @@ from rag.ingestion.metadata.metadata_generator import MetadataGenerator
 
 
 def main() -> None:
-    paths = get_pipeline_paths(load_settings().chroma_db_path)
+    settings = load_settings()
+    paths = get_pipeline_paths(settings.chroma_db_path)
     paths.ensure_directories()
+    vectordb_config = settings.config.get("vectordb", {})
 
     logger = setup_pipeline_logger(
         name="metadata_pipeline",
@@ -19,6 +21,7 @@ def main() -> None:
     generator = MetadataGenerator(
         cleaned_path=paths.cleaned_documents,
         output_dir=paths.metadata_dir,
+        collection_name=str(vectordb_config.get("collection_name", "rag_documents")),
         logger=logger,
     )
     _, summary = generator.run()

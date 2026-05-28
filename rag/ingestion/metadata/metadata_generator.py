@@ -61,10 +61,12 @@ class MetadataGenerator:
         self,
         cleaned_path: Path,
         output_dir: Path,
+        collection_name: str,
         logger: logging.Logger,
     ) -> None:
         self.cleaned_path = cleaned_path
         self.output_dir = output_dir
+        self.collection_name = collection_name
         self.logger = logger
 
     def run(self) -> tuple[list[MetadataDocument], MetadataSummary]:
@@ -110,6 +112,7 @@ class MetadataGenerator:
                         category=category,
                         language=document.language or "en",
                         source_type="website",
+                        collection=self.collection_name,
                         crawl_timestamp=crawl_timestamp,
                         content_hash=content_hash,
                         content=document.cleaned_content,

@@ -27,7 +27,7 @@ def setup_pipeline_logger(
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler = logging.StreamHandler(sys.stderr)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 

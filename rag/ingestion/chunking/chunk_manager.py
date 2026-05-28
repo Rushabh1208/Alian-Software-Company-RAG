@@ -45,12 +45,14 @@ class ChunkManager:
         output_dir: Path,
         chunk_size: int,
         overlap: int,
+        collection_name: str,
         logger: logging.Logger,
     ) -> None:
         self.metadata_path = metadata_path
         self.output_dir = output_dir
         self.chunk_size = chunk_size
         self.overlap = overlap
+        self.collection_name = collection_name
         self.logger = logger
         self.chunker = SemanticChunker()
 
@@ -116,12 +118,14 @@ class ChunkManager:
                             content=content,
                             token_count=token_count,
                             metadata=ChunkMetadata(
-                                source_url=str(document.source_url),
-                                title=document.title,
-                                category=document.category,
-                                heading=heading,
-                            ),
-                        )
+                            source_url=str(document.source_url),
+                            title=document.title,
+                            category=document.category,
+                            heading=heading,
+                            source_type=document.source_type,
+                            collection=self.collection_name or document.collection,
+                        ),
+                    )
                     )
             except Exception as exc:
                 self.logger.exception("Chunking failed for %s: %s", document.source_url, exc)
