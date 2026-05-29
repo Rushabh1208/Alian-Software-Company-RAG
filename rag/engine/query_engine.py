@@ -26,7 +26,12 @@ except Exception:
     genai = None
 
 
-INITIAL_RETRIEVAL_K = 20
+load_dotenv()
+
+_INITIAL_RETRIEVAL_K = 20
+_EMBEDDING_GENERATOR_CACHE: dict[str, HuggingFaceEmbeddingGenerator] = {}
+_CROSS_ENCODER: object | None = None
+_GEMINI_CLIENT: object | None = None
 
 
 class RagQueryEngine:
@@ -44,13 +49,10 @@ class RagQueryEngine:
         self.collection_name = collection_name
         self.embeddings_path = embeddings_path
 
-        load_dotenv()
-
-        self.embedding_generator = HuggingFaceEmbeddingGenerator(
+        self.embedding_generator = self._get_embedding_generator(
             model_name=model_name,
             normalize_embeddings=normalize_embeddings,
             cache_folder=model_cache_dir,
-            local_files_only=False,
         )
 
         self.query_prefix = (
@@ -61,6 +63,26 @@ class RagQueryEngine:
 
         self.cross_encoder = self._load_cross_encoder()
         self.gemini_client = self._load_gemini_client()
+
+    @classmethod
+    def _get_embedding_generator(
+        cls,
+        *,
+        model_name: str,
+        normalize_embeddings: bool,
+        cache_folder: Path,
+    ) -> HuggingFaceEmbeddingGenerator:
+        cache_key = f"{model_name}|{normalize_embeddings}|{str(cache_folder.resolve())}"
+        embedding_generator = _EMBEDDING_GENERATOR_CACHE.get(cache_key)
+        if embedding_generator is None:
+            embedding_generator = HuggingFaceEmbeddingGenerator(
+                model_name=model_name,
+                normalize_embeddings=normalize_embeddings,
+                cache_folder=cache_folder,
+                local_files_only=False,
+            )
+            _EMBEDDING_GENERATOR_CACHE[cache_key] = embedding_generator
+        return embedding_generator
 
     async def ask(
         self,
@@ -86,23 +108,27 @@ class RagQueryEngine:
             persist_directory=self.persist_directory,
             collection_name=self.collection_name,
             query_embedding=query_embedding,
-            top_k=INITIAL_RETRIEVAL_K,
+            top_k=_INITIAL_RETRIEVAL_K,
         )
         retrieval_latency_ms = (perf_counter() - retrieval_started) * 1000.0
 
+        # Skip expensive reranking when the top semantic match is already very strong
         rerank_started = perf_counter()
-        reranked_chunks = rerank_chunks(
-            cleaned_question,
-            candidate_chunks,
-            self.cross_encoder,
-        )
-        rerank_latency_ms = (perf_counter() - rerank_started) * 1000.0
+        if candidate_chunks and getattr(candidate_chunks[0], "semantic_score", 0.0) > 0.82:
+            reranked_chunks = candidate_chunks
+            rerank_latency_ms = 0.0
+        else:
+            reranked_chunks = rerank_chunks(
+                cleaned_question,
+                candidate_chunks,
+                self.cross_encoder,
+            )
+            rerank_latency_ms = (perf_counter() - rerank_started) * 1000.0
 
         accepted_chunks, confidence, confidence_factors = filter_chunks(
             reranked_chunks,
             top_k=top_k,
         )
-        confidence_label_value = confidence_label(confidence)
 
         if not accepted_chunks:
             metrics = build_metrics(
@@ -129,10 +155,15 @@ class RagQueryEngine:
             )
 
         generation_started = perf_counter()
-        answer, input_tokens, output_tokens = await generate_answer(
+        answer_future = generate_answer(
             gemini_client=self.gemini_client,
             question=cleaned_question,
             chunks=accepted_chunks,
+        )
+        confidence_future = asyncio.to_thread(confidence_label, confidence)
+        (answer, input_tokens, output_tokens), confidence_label_value = await asyncio.gather(
+            answer_future,
+            confidence_future,
         )
         generation_latency_ms = (perf_counter() - generation_started) * 1000.0
         total_latency_ms = (perf_counter() - total_started) * 1000.0
@@ -163,24 +194,33 @@ class RagQueryEngine:
 
     @staticmethod
     def _load_cross_encoder():
+        global _CROSS_ENCODER
         if CrossEncoder is None:
             return None
+        if _CROSS_ENCODER is not None:
+            return _CROSS_ENCODER
+
         try:
-            return CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu")
+            _CROSS_ENCODER = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu")
         except Exception:
-            return None
+            _CROSS_ENCODER = None
+        return _CROSS_ENCODER
 
     @staticmethod
     def _load_gemini_client():
+        global _GEMINI_CLIENT
         if genai is None:
             return None
+        if _GEMINI_CLIENT is not None:
+            return _GEMINI_CLIENT
 
         api_key = os.getenv("GOOGLE_API_KEY", "").strip()
         if not api_key:
             return None
 
         try:
-            return genai.Client(api_key=api_key)
+            _GEMINI_CLIENT = genai.Client(api_key=api_key)
         except Exception:
-            return None
+            _GEMINI_CLIENT = None
+        return _GEMINI_CLIENT
 

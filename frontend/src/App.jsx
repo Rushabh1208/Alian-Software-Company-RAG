@@ -43,21 +43,13 @@ function App() {
       // ignore
     }
 
-    // create default chat
+    // create default blank chat
     const defaultChat = {
       id: crypto.randomUUID(),
-      name: "Default Chat",
+      name: "Chat",
       websiteId: null,
       createdAt: Date.now(),
-      messages: [
-        {
-          id: "welcome",
-          role: "assistant",
-          content:
-            "Index a website above, choose a collection, and ask a question. I'll show the answer, confidence, and the exact chunks that grounded it.",
-          payload: null,
-        },
-      ],
+      messages: [],
     };
 
     setChats([defaultChat]);
@@ -192,6 +184,39 @@ function App() {
       updateChatWithMessage(currentId, userMessage);
     }
 
+    // insert assistant placeholder message for typing/buffering UI
+    const placeholderId = crypto.randomUUID();
+    const placeholderMessage = {
+      id: placeholderId,
+      role: "assistant",
+      content: "",
+      payload: null,
+      status: "pending",
+    };
+
+    const replaceMessageInChat = (chatId, messageId, newMessage) => {
+      setChats((prev) => {
+        const next = prev.map((c) => {
+          if (c.id !== chatId) return c;
+          const messages = c.messages.map((m) => (m.id === messageId ? newMessage : m));
+          const updated = { ...c, messages };
+          return updated;
+        });
+        saveChatsToStorage(next);
+        return next;
+      });
+    };
+
+    const appendPlaceholder = (chatId, placeholder) => {
+      setChats((prev) => {
+        const next = prev.map((c) => (c.id === chatId ? { ...c, messages: [...c.messages, placeholder] } : c));
+        saveChatsToStorage(next);
+        return next;
+      });
+    };
+
+    appendPlaceholder(currentId, placeholderMessage);
+
     setQuestion("");
     setLoading(true);
     setError("");
@@ -212,9 +237,16 @@ function App() {
         content: String(result.answer || "No answer returned."),
         payload: result,
       };
-      if (chatId) updateChatWithMessage(chatId, assistantMessage);
+      if (chatId) replaceMessageInChat(chatId, placeholderId, assistantMessage);
     } catch (err) {
       setError(err.message || "Query failed.");
+      const errorMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: `Error: ${err.message || "Query failed."}`,
+        payload: null,
+      };
+      if (chatId) replaceMessageInChat(chatId, placeholderId, errorMessage);
     } finally {
       setLoading(false);
     }
@@ -258,7 +290,7 @@ function App() {
 
   return (
     <div className="min-h-screen px-4 py-4 text-slate-100 md:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1600px] flex-col gap-4">
+      <div className="mx-auto flex h-[calc(100vh-2rem)] max-w-[1600px] flex-col gap-4 overflow-hidden">
         <header className="rounded-[2rem] border border-white/10 bg-white/5 px-5 py-4 shadow-glow backdrop-blur-xl">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div>
@@ -266,7 +298,7 @@ function App() {
                 MERN RAG Control Room
               </p>
               <h1 className="mt-2 text-2xl font-semibold text-white md:text-3xl">
-                ChatGPT-style interface with website-aware retrieval
+                RAG MODEL
               </h1>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
                 Index a website into its own Chroma collection, then query either the default Alian Software corpus or the selected website collection without changing the underlying RAG pipeline.
@@ -299,7 +331,7 @@ function App() {
           </div>
         ) : null}
 
-        <main className="grid flex-1 gap-4 xl:grid-cols-[320px_1fr]">
+        <main className="grid flex-1 min-h-0 gap-4 overflow-hidden xl:grid-cols-[320px_1fr]">
           <WebsiteSidebar
             onDeleteWebsite={handleDeleteWebsite}
             onSelectWebsite={setSelectedWebsiteId}
@@ -313,7 +345,7 @@ function App() {
             onDeleteChat={handleDeleteChat}
           />
 
-          <section className="flex min-h-[70vh] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-glow backdrop-blur-xl">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-glow backdrop-blur-xl">
             <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Query scope</p>
@@ -329,14 +361,17 @@ function App() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 py-5 md:px-6">
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 md:px-6">
               <div className="space-y-4">
-                {currentChat.messages.map((message) => (
-                  <MessageCard
-                    key={message.id}
-                    message={message}
-                  />
-                ))}
+                {currentChat.messages.length ? (
+                  currentChat.messages.map((message) => (
+                    <MessageCard key={message.id} message={message} />
+                  ))
+                ) : (
+                  <div className="rounded-3xl border border-dashed border-white/10 bg-black/20 p-8 text-center text-sm text-slate-400">
+                    Start a chat by asking a question below.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -385,7 +420,11 @@ function MessageCard({ message }) {
         <div className="max-w-3xl">
           <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/70">Answer</p>
           <p className="mt-3 whitespace-pre-wrap text-[15px] leading-7 text-slate-100">
-            {message.content}
+            {message.status === "pending" ? (
+              <TypingDots />
+            ) : (
+              message.content
+            )}
           </p>
         </div>
 
@@ -436,6 +475,22 @@ function MessageCard({ message }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function TypingDots() {
+  const [dots, setDots] = useState("");
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i = (i + 1) % 4;
+      setDots(".".repeat(i));
+    }, 400);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="inline-block text-lg font-semibold text-slate-200">{`Thinking${dots}`}</span>
   );
 }
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import math
 from rag.models.query_models import RetrievedChunk
 from rag.utils.similarity import sigmoid
 from rag.utils.text_utils import compact, content_body
@@ -56,7 +56,18 @@ def cross_encoder_scores(
 
     try:
         scores = cross_encoder.predict(pairs, convert_to_numpy=True)
-        return [sigmoid(float(score)) for score in scores]
+        raw = [float(s) for s in scores]
+        # normalize across the returned set to [0,1] to avoid extreme sigmoid collapse
+        minv = min(raw) if raw else 0.0
+        maxv = max(raw) if raw else 0.0
+        if math.isclose(maxv, minv):
+            normalized = [0.5 for _ in raw]
+        else:
+            normalized = [(r - minv) / (maxv - minv) for r in raw]
+
+        # small smoothing to avoid absolute extremes
+        smoothed = [0.05 + 0.9 * n for n in normalized]
+        return smoothed
     except Exception:
         return [0.65 for _ in pairs]
 

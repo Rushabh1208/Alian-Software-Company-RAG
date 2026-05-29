@@ -6,6 +6,10 @@ from rag.models.query_models import RetrievedChunk
 from rag.ingestion.vectordb.chroma_client import ChromaVectorClient
 
 
+# Simple module-level client cache to avoid repeated client construction
+_CLIENT_CACHE: dict[str, ChromaVectorClient] = {}
+
+
 def query_embedding_file(
     *,
     persist_directory: Path,
@@ -16,10 +20,14 @@ def query_embedding_file(
     if top_k <= 0:
         return []
 
-    client = ChromaVectorClient(
-        persist_directory=persist_directory,
-        collection_name=collection_name,
-    )
+    cache_key = f"{str(persist_directory.resolve())}:{collection_name}"
+    client = _CLIENT_CACHE.get(cache_key)
+    if client is None:
+        client = ChromaVectorClient(
+            persist_directory=persist_directory,
+            collection_name=collection_name,
+        )
+        _CLIENT_CACHE[cache_key] = client
 
     try:
         result = client.collection.query(
@@ -50,7 +58,8 @@ def query_embedding_file(
         except (TypeError, ValueError):
             raw_distance = 1.0
 
-        semantic_score = 1.0 / (1.0 + max(raw_distance, 0.0))
+        # Normalize distance into a more intuitive semantic score in [0,1]
+        semantic_score = max(0.0, 1.0 - (raw_distance / 2.0))
 
         chunks.append(
             RetrievedChunk(

@@ -1,6 +1,6 @@
 const { runPythonBridge } = require("../../utils/runPython");
 
-function indexWebsite({ url, force = false }) {
+async function indexWebsite({ url, force = false }) {
   return runPythonBridge([
     "index-website",
     "--url",
@@ -9,11 +9,11 @@ function indexWebsite({ url, force = false }) {
   ]);
 }
 
-function listWebsites() {
+async function listWebsites() {
   return runPythonBridge(["list-websites"]);
 }
 
-function deleteWebsite(id) {
+async function deleteWebsite(id) {
   return runPythonBridge(["delete-website", "--id", id]);
 }
 

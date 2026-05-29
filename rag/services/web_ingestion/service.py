@@ -7,6 +7,10 @@ from pathlib import Path
 from typing import Any
 import re
 
+from rag.engine.query_engine import RagQueryEngine
+
+_QUERY_ENGINE_CACHE: dict[str, RagQueryEngine] = {}
+
 from config.constants import DEFAULT_BASE_COLLECTION_NAME, DEFAULT_TARGET_WEBSITE
 from config.logging_setup import setup_pipeline_logger
 from config.paths import get_pipeline_paths
@@ -206,14 +210,28 @@ class WebsiteIngestionService:
         paths.ensure_directories()
         resolved_collection = self._resolve_collection_name(paths.chromadb_dir, collection_name)
 
-        engine = RagQueryEngine(
-            persist_directory=paths.chromadb_dir,
-            collection_name=resolved_collection,
-            model_name=str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
-            normalize_embeddings=bool(self.embedding_config.get("normalize_embeddings", True)),
-            model_cache_dir=paths.embeddings_dir / "model_cache",
-            embeddings_path=paths.embeddings_dir / "embeddings.json",
+        cache_key = "|".join(
+            [
+                str(paths.chromadb_dir.resolve()),
+                resolved_collection,
+                str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
+                str(bool(self.embedding_config.get("normalize_embeddings", True))),
+                str((paths.embeddings_dir / "model_cache").resolve()),
+            ]
         )
+
+        engine = _QUERY_ENGINE_CACHE.get(cache_key)
+        if engine is None:
+            engine = RagQueryEngine(
+                persist_directory=paths.chromadb_dir,
+                collection_name=resolved_collection,
+                model_name=str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
+                normalize_embeddings=bool(self.embedding_config.get("normalize_embeddings", True)),
+                model_cache_dir=paths.embeddings_dir / "model_cache",
+                embeddings_path=paths.embeddings_dir / "embeddings.json",
+            )
+            _QUERY_ENGINE_CACHE[cache_key] = engine
+
         result = await engine.ask(question, top_k=max(top_k, 1))
         return WebsiteQueryResult(collection_name=resolved_collection, result=result)
 

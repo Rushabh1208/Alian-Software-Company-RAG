@@ -11,7 +11,7 @@ async function indexWebsiteController(req, res) {
       return res.status(400).json({ error: "Website URL is required." });
     }
 
-    const payload = indexWebsite({
+    const payload = await indexWebsite({
       url: String(url).trim(),
       force: Boolean(force),
     });
@@ -21,22 +21,22 @@ async function indexWebsiteController(req, res) {
   }
 }
 
-function listWebsitesController(_req, res) {
+async function listWebsitesController(_req, res) {
   try {
-    return res.json(listWebsites());
+    return res.json(await listWebsites());
   } catch (error) {
     return res.status(500).json({ error: error.message || "Failed to list websites." });
   }
 }
 
-function deleteWebsiteController(req, res) {
+async function deleteWebsiteController(req, res) {
   try {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ error: "Website id is required." });
     }
 
-    const payload = deleteWebsite(id);
+    const payload = await deleteWebsite(id);
     return res.json(payload);
   } catch (error) {
     if (error instanceof Error && error.message.includes("cannot be deleted")) {

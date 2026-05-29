@@ -13,7 +13,7 @@ function WebsiteSidebar({
   const baseActive = !selectedWebsiteId;
 
   return (
-    <aside className="flex h-full flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-glow backdrop-blur-xl">
+    <aside className="sticky top-4 self-start h-full overflow-hidden flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-glow backdrop-blur-xl">
       <div>
         <div className="flex items-center justify-between">
           <div>
@@ -30,7 +30,7 @@ function WebsiteSidebar({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex max-h-[32vh] flex-col gap-2 overflow-y-auto pr-1">
         {chats.map((chat) => {
           const active = currentChatId === chat.id;
           return (

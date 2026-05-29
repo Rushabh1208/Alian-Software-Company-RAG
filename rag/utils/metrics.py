@@ -2,9 +2,9 @@ from __future__ import annotations
 
 
 def confidence_label(confidence: float) -> str:
-    if confidence >= 0.75:
+    if confidence >= 0.65:
         return "high"
-    if confidence >= 0.50:
+    if confidence >= 0.40:
         return "med"
     return "low"
 

@@ -1,13 +1,13 @@
 const { askQuestion } = require("../rag_core/queryService");
 
-function queryController(req, res) {
+async function queryController(req, res) {
   try {
     const { question, topK, websiteId, collection } = req.body || {};
     if (!question || !String(question).trim()) {
       return res.status(400).json({ error: "Question is required." });
     }
 
-    const payload = askQuestion({
+    const payload = await askQuestion({
       question: String(question),
       topK: Number(topK || 5),
       collection: String(collection || websiteId || "alian_software"),
