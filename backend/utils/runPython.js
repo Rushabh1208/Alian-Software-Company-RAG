@@ -57,4 +57,5 @@ function runPythonBridge(args) {
 
 module.exports = {
   runPythonBridge,
+  resolvePythonExecutable,
 };

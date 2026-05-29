@@ -19,7 +19,7 @@ def rerank_chunks(
     reranked: list[RetrievedChunk] = []
     for index, chunk in enumerate(chunks):
         rerank_score = ce_scores[index] if index < len(ce_scores) else 0.65
-        final_score = 0.65 * rerank_score + 0.35 * chunk.semantic_score
+        final_score = 0.75 * rerank_score + 0.25 * chunk.semantic_score
         reranked.append(
             RetrievedChunk(
                 rank=chunk.rank,

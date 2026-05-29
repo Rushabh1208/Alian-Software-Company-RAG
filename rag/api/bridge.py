@@ -10,7 +10,7 @@ from rag.services.web_ingestion.service import WebsiteIngestionService
 
 
 def _json_dump(payload: Any) -> None:
-    print(json.dumps(payload, indent=2, ensure_ascii=False))
+    print(json.dumps(payload, indent=2, ensure_ascii=True))
 
 
 async def _index(args: argparse.Namespace) -> None:

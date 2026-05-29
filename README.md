@@ -201,6 +201,8 @@ Available routes:
 - `GET /api/websites`
 - `DELETE /api/websites/:id`
 
+The frontend uses normal query requests and persists chat history in browser local storage.
+
 ### Frontend
 
 ```powershell

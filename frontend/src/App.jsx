@@ -25,29 +25,93 @@ function App() {
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: "welcome",
-      role: "assistant",
-      content:
-        "Index a website above, choose a collection, and ask a question. I'll show the answer, confidence, and the exact chunks that grounded it.",
-      payload: null,
-    },
-  ]);
+
+  // Chats: persistent history stored in localStorage
+  const [chats, setChats] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
+
+  function loadChatsFromStorage() {
+    try {
+      const raw = localStorage.getItem("rag_chats");
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length) {
+        setChats(parsed);
+        setCurrentChatId(parsed[0].id);
+        return parsed;
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // create default chat
+    const defaultChat = {
+      id: crypto.randomUUID(),
+      name: "Default Chat",
+      websiteId: null,
+      createdAt: Date.now(),
+      messages: [
+        {
+          id: "welcome",
+          role: "assistant",
+          content:
+            "Index a website above, choose a collection, and ask a question. I'll show the answer, confidence, and the exact chunks that grounded it.",
+          payload: null,
+        },
+      ],
+    };
+
+    setChats([defaultChat]);
+    setCurrentChatId(defaultChat.id);
+    localStorage.setItem("rag_chats", JSON.stringify([defaultChat]));
+    return [defaultChat];
+  }
+
+  function saveChatsToStorage(nextChats) {
+    try {
+      localStorage.setItem("rag_chats", JSON.stringify(nextChats));
+    } catch (e) {
+      console.warn("Failed to save chats", e);
+    }
+  }
   const [loading, setLoading] = useState(false);
   const [indexing, setIndexing] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    loadChatsFromStorage();
+    loadWebsitesFromStorage();
     void refreshWebsites();
   }, []);
+
+  function loadWebsitesFromStorage() {
+    try {
+      const raw = localStorage.getItem("rag_websites");
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length) {
+        setWebsites(parsed);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function saveWebsitesToStorage(next) {
+    try {
+      localStorage.setItem("rag_websites", JSON.stringify(next));
+    } catch (e) {
+      // ignore
+    }
+  }
 
   async function refreshWebsites() {
     try {
       const payload = await getWebsites();
-      setWebsites(payload.websites || []);
+      const payloadWebsites = payload.websites || [];
+      setWebsites(payloadWebsites);
+      saveWebsitesToStorage(payloadWebsites);
       setError("");
     } catch (err) {
+      // fallback to cached websites
       setError(err.message || "Failed to load websites.");
     }
   }
@@ -99,10 +163,40 @@ function App() {
       payload: null,
     };
 
-    setMessages((current) => [...current, userMessage]);
+    // append message to current chat
+    const updateChatWithMessage = (chatId, message) => {
+      setChats((prev) => {
+        const next = prev.map((c) => (c.id === chatId ? { ...c, messages: [...c.messages, message] } : c));
+        saveChatsToStorage(next);
+        return next;
+      });
+    };
+
+    let currentId = currentChatId || (chats[0] && chats[0].id);
+    if (!currentId) {
+      const newChat = {
+        id: crypto.randomUUID(),
+        name: "Chat",
+        websiteId: selectedWebsiteId || null,
+        createdAt: Date.now(),
+        messages: [userMessage],
+      };
+      currentId = newChat.id;
+      setChats((prev) => {
+        const next = [newChat, ...prev];
+        saveChatsToStorage(next);
+        return next;
+      });
+      setCurrentChatId(newChat.id);
+    } else {
+      updateChatWithMessage(currentId, userMessage);
+    }
+
     setQuestion("");
     setLoading(true);
     setError("");
+
+    const chatId = currentId || (chats[0] && chats[0].id);
 
     try {
       const payload = await queryRag({
@@ -110,17 +204,15 @@ function App() {
         websiteId: selectedWebsiteId || BASE_COLLECTION_ID,
         topK: 5,
       });
-      const result = payload.result || payload;
 
-      setMessages((current) => [
-        ...current,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: result.answer || "No answer returned.",
-          payload: result,
-        },
-      ]);
+      const result = payload.result || payload;
+      const assistantMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: String(result.answer || "No answer returned."),
+        payload: result,
+      };
+      if (chatId) updateChatWithMessage(chatId, assistantMessage);
     } catch (err) {
       setError(err.message || "Query failed.");
     } finally {
@@ -128,9 +220,41 @@ function App() {
     }
   }
 
+  function handleNewChat() {
+    const newChat = {
+      id: crypto.randomUUID(),
+      name: `Chat ${new Date().toLocaleString()}`,
+      websiteId: null,
+      createdAt: Date.now(),
+      messages: [],
+    };
+    setChats((prev) => {
+      const next = [newChat, ...prev];
+      saveChatsToStorage(next);
+      return next;
+    });
+    setCurrentChatId(newChat.id);
+  }
+
+  function handleSelectChat(id) {
+    setCurrentChatId(id);
+  }
+
+  function handleDeleteChat(id) {
+    if (!window.confirm("Delete this chat?")) return;
+    setChats((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      saveChatsToStorage(next);
+      if (currentChatId === id) setCurrentChatId(next[0] ? next[0].id : null);
+      return next;
+    });
+  }
+
   const selectedWebsite = selectedWebsiteId
     ? websites.find((item) => item.id === selectedWebsiteId)
     : null;
+
+  const currentChat = chats.find((c) => c.id === currentChatId) || chats[0] || { messages: [] };
 
   return (
     <div className="min-h-screen px-4 py-4 text-slate-100 md:px-6 lg:px-8">
@@ -181,6 +305,12 @@ function App() {
             onSelectWebsite={setSelectedWebsiteId}
             selectedWebsiteId={selectedWebsiteId}
             websites={websites}
+            // chat props
+            chats={chats}
+            currentChatId={currentChatId}
+            onNewChat={handleNewChat}
+            onSelectChat={handleSelectChat}
+            onDeleteChat={handleDeleteChat}
           />
 
           <section className="flex min-h-[70vh] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-glow backdrop-blur-xl">
@@ -201,7 +331,7 @@ function App() {
 
             <div className="flex-1 overflow-y-auto px-4 py-5 md:px-6">
               <div className="space-y-4">
-                {messages.map((message) => (
+                {currentChat.messages.map((message) => (
                   <MessageCard
                     key={message.id}
                     message={message}
@@ -272,10 +402,12 @@ function MessageCard({ message }) {
       </div>
 
       {result.confidence_factors ? (
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <div className="mt-5 grid gap-3 md:grid-cols-5">
           <FactorCard label="Semantic" value={result.confidence_factors.semantic ?? 0} />
           <FactorCard label="Rerank" value={result.confidence_factors.rerank ?? 0} />
           <FactorCard label="Top score" value={result.confidence_factors.top_score ?? 0} />
+          <FactorCard label="Answerability" value={result.confidence_factors.answerability ?? 0} />
+          <FactorCard label="Grounding" value={result.confidence_factors.grounding ?? 0} />
         </div>
       ) : null}
 

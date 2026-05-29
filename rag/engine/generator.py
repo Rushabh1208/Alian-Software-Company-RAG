@@ -36,11 +36,11 @@ async def generate_answer(
         if isinstance(text, str) and text.strip():
             answer = clean_answer(text)
             if is_bad_answer(answer):
-                answer = build_extractive_answer(chunks)
+                answer = "I don't know from the indexed website content."
             return answer, input_tokens, estimate_tokens(answer)
     except Exception:
         pass
 
-    answer = build_extractive_answer(chunks)
+    answer = "I don't know from the indexed website content."
     return answer, input_tokens, estimate_tokens(answer)
 

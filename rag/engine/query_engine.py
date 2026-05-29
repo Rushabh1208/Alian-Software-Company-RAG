@@ -26,7 +26,7 @@ except Exception:
     genai = None
 
 
-INITIAL_RETRIEVAL_K = 15
+INITIAL_RETRIEVAL_K = 20
 
 
 class RagQueryEngine:
@@ -120,7 +120,7 @@ class RagQueryEngine:
             )
             return QueryResult(
                 question=cleaned_question,
-                answer="I don't know from the indexed website content.",
+                answer="I don’t know based on indexed content.",
                 confidence=0.0,
                 chunks=[],
                 confidence_label="low",
