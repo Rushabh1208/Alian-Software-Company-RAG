@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const queryRoutes = require("./routes/queryRoutes");
+const promptSettingsRoutes = require("./routes/promptSettingsRoutes");
 const websiteRoutes = require("./routes/websiteRoutes");
 
 function createApp() {
@@ -14,6 +15,7 @@ function createApp() {
   });
 
   app.use("/api", queryRoutes);
+  app.use("/api", promptSettingsRoutes);
   app.use("/api", websiteRoutes);
 
   app.use((error, _req, res, _next) => {

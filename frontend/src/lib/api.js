@@ -43,4 +43,25 @@ export function deleteWebsite(id) {
   });
 }
 
+export function getPromptSettings() {
+  return request("/api/prompt-settings");
+}
+
+export function updatePromptSettings({ role, constraints }) {
+  return request("/api/prompt-settings", {
+    method: "PUT",
+    body: JSON.stringify({
+      role,
+      constraints,
+    }),
+  });
+}
+
+export function resetPromptSettings() {
+  return updatePromptSettings({
+    role: "",
+    constraints: [],
+  });
+}
+
 export { API_BASE_URL };

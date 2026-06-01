@@ -1,7 +1,7 @@
 const { URL } = require("url");
 
 const defaultBaseUrl = process.env.RAG_PYTHON_API_URL || "http://127.0.0.1:8000";
-const defaultTimeoutMs = Number(process.env.RAG_PYTHON_API_TIMEOUT_MS || 30000);
+const defaultTimeoutMs = Number(process.env.RAG_PYTHON_API_TIMEOUT_MS || 1200000); // Default to 20 minutes
 const fetchFn = typeof fetch !== "undefined" ? fetch : require("undici").fetch;
 
 function parseArgs(args) {
@@ -88,6 +88,14 @@ async function runPythonBridge(args) {
   }
 
   const request = buildRequest(args);
+  return requestPythonBridge(request);
+}
+
+async function requestPythonBridge(request) {
+  if (!request || typeof request !== "object") {
+    throw new Error("requestPythonBridge requires a request object.");
+  }
+
   const url = new URL(request.path, defaultBaseUrl).toString();
   const headers = { "Accept": "application/json" };
   const options = {
@@ -101,16 +109,28 @@ async function runPythonBridge(args) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), defaultTimeoutMs);
+  let timeout;
+  if (defaultTimeoutMs > 0) {
+    timeout = setTimeout(() => controller.abort(), defaultTimeoutMs);
+  }
   options.signal = controller.signal;
 
   let response;
   try {
     response = await fetchFn(url, options);
   } catch (error) {
-    throw new Error(`Failed to reach Python bridge at ${url}: ${error.message}`);
+    const baseMessage = `Failed to reach Python bridge at ${url}`;
+    if (error && error.name === "AbortError") {
+      if (defaultTimeoutMs > 0) {
+        throw new Error(`${baseMessage}: request timed out after ${defaultTimeoutMs} ms`);
+      }
+      throw new Error(`${baseMessage}: request aborted`);
+    }
+    throw new Error(`${baseMessage}: ${error.message}`);
   } finally {
-    clearTimeout(timeout);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
   }
 
   let payload;
@@ -129,5 +149,6 @@ async function runPythonBridge(args) {
 }
 
 module.exports = {
+  requestPythonBridge,
   runPythonBridge,
 };

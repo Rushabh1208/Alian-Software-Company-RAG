@@ -6,6 +6,11 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from config.constants import DEFAULT_BASE_COLLECTION_NAME
+from rag.prompts.prompt_settings import (
+    load_prompt_settings,
+    normalize_prompt_settings,
+    save_prompt_settings,
+)
 from rag.services.web_ingestion.service import WebsiteIngestionService
 
 
@@ -18,6 +23,11 @@ class QueryRequest(BaseModel):
 class IndexWebsiteRequest(BaseModel):
     url: str = Field(..., min_length=1)
     force: bool = Field(False)
+
+
+class PromptSettingsRequest(BaseModel):
+    role: str = Field("")
+    constraints: list[str] = Field(default_factory=list)
 
 
 app = FastAPI(title="RAG Python Bridge", version="1.0.0")
@@ -69,3 +79,24 @@ async def delete_website_endpoint(website_id: str) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(error))
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Delete failed: {error}")
+
+
+@app.get("/prompt-settings")
+async def get_prompt_settings() -> dict[str, Any]:
+    try:
+        return load_prompt_settings().to_dict()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to load prompt settings: {error}")
+
+
+@app.put("/prompt-settings")
+async def update_prompt_settings(payload: PromptSettingsRequest) -> dict[str, Any]:
+    try:
+        normalized = normalize_prompt_settings(
+            role=payload.role,
+            constraints=payload.constraints,
+        )
+        saved = save_prompt_settings(normalized)
+        return saved.to_dict()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to save prompt settings: {error}")

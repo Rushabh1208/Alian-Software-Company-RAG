@@ -66,19 +66,33 @@ GOOGLE_API_KEY=your_google_api_key
 
 ## Usage
 
+### 1. Prepare the Python environment
+
+```powershell
+cd c:\Users\as\Desktop\JS\RAG-PROJECT
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+python -m playwright install
+Copy-Item .env.example .env
+```
+
+### 2. Run the core RAG ingestion pipeline
+
 Show pipeline status:
 
 ```powershell
 python -m rag.ingestion.main
 ```
 
-Run the ingestion pipeline:
+Run the full implemented ingestion pipeline:
 
 ```powershell
 python -m scripts.run_pipeline
 ```
 
-Run one stage:
+Run one stage at a time:
 
 ```powershell
 python -m scripts.run_sitemap_pipeline
@@ -91,7 +105,7 @@ python -m scripts.run_embedding_pipeline
 python -m scripts.run_vectordb_pipeline
 ```
 
-Query the RAG system:
+Query the local RAG index:
 
 ```powershell
 python -m scripts.query_rag "What AI services does Alian offer?"
@@ -104,6 +118,73 @@ Run a stage range:
 python -m scripts.run_pipeline --from parse --to chunk
 python -m scripts.run_pipeline --from embed --to vectordb
 ```
+
+### 3. Web app wrapper (optional)
+
+The `backend/` and `frontend/` folders provide a thin web UI around the Python pipeline.
+
+Start the backend:
+
+```powershell
+cd backend
+npm install
+npm start
+```
+
+Start the Python bridge separately in another terminal:
+
+```powershell
+cd c:\Users\as\Desktop\JS\RAG-PROJECT
+.venv\Scripts\Activate.ps1
+uvicorn rag.api.server:app --host 127.0.0.1 --port 8000
+```
+
+For long-running index jobs, increase or disable the backend bridge timeout:
+
+```powershell
+$env:RAG_PYTHON_API_TIMEOUT_MS = 3600000
+$env:RAG_PYTHON_API_TIMEOUT_MS = 0
+```
+
+Start the frontend:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+If the backend is not on `http://localhost:5000`, set:
+
+```powershell
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+## What is the core RAG pipeline?
+
+The core pipeline is Python-only and consists of:
+
+- `config/` — configuration, paths, constants, and environment loading
+- `rag/` — the core RAG engine, ingestion stages, utility functions, and API bridge
+- `scripts/` — pipeline entrypoints for stage execution and querying
+- `data/` — generated website artifacts, embeddings, and ChromaDB data
+- `logs/` — runtime logs for crawler, parser, embedding, and vectordb stages
+- `pyproject.toml` / `requirements.txt` — Python packaging and dependencies
+- `.env.example` / `.env` — runtime environment variables
+
+The core pipeline does not require `backend/` or `frontend/`.
+
+## What is optional or not used by the core pipeline?
+
+The following directories and files are not required to run the core ingestion pipeline:
+
+- `backend/` — optional Express API wrapper for the web app
+- `frontend/` — optional React UI for browser access
+- `rag/api/bridge.py` — optional CLI-style JSON bridge wrapper, not required when using `uvicorn rag.api.server:app`
+- `backend/chroma/chromaService.js` — helper file not imported anywhere in the current backend code
+- `backend/utils/paths.js` — helper file not imported anywhere in the current backend code
+- `tests/__init__.py` — placeholder test package, no tests are currently implemented
+- `docs/` — documentation files only, not part of runtime execution
 
 ## Query Output
 
@@ -151,18 +232,35 @@ The factor breakdown currently weights:
 
 ## Folder Structure
 
+The repository is split into a core Python RAG pipeline and an optional web app wrapper.
+
 ```text
-config/              YAML settings, paths, constants, logging
-rag/
-  engine/            retrieval, reranking, generation, confidence, orchestration
-  models/            query and metrics dataclasses
-  ingestion/         crawl, parse, clean, metadata, chunk, embed, vectordb, pipeline
-  prompts/           Gemini prompt and answer helpers
-  utils/             text, similarity, token, and metric utilities
-scripts/             CLI entrypoints
-data/                generated artifacts
-logs/                runtime logs
+config/              YAML settings, paths, constants, environment loading
+rag/                 Python RAG library and ingestion stages
+  api/               optional FastAPI bridge and CLI bridge wrapper
+  engine/            retrieval, reranking, generation, confidence, query orchestration
+  ingestion/         crawler, parser, cleaner, metadata, chunking, embeddings, vectordb pipeline
+  models/            query and metric dataclasses
+  prompts/           prompt construction and response templates
+  utils/             text utilities, website utilities, and helpers
+scripts/             executable Python stage runners and query CLI
+backend/             optional Express API wrapper for the web frontend
+frontend/            optional React UI and browser application
+data/                generated artifacts, embeddings, and ChromaDB persistence
+logs/                runtime logs for crawls, parsing, embeddings, and vectordb
+docs/                project notes and design documentation
+tests/               placeholder test package (no tests implemented yet)
 ```
+
+### Files and folders not required by the core pipeline
+
+- `backend/chroma/chromaService.js` — not imported by the backend or current pipeline
+- `backend/utils/paths.js` — not imported by the backend or current pipeline
+- `rag/api/bridge.py` — optional CLI bridge wrapper, not needed when using `uvicorn rag.api.server:app`
+- `backend/` — optional web API wrapper
+- `frontend/` — optional browser UI
+- `docs/` — documentation only
+- `tests/` — placeholder test package only
 
 ## Current Design Notes
 
@@ -193,6 +291,24 @@ cd backend
 npm install
 npm start
 ```
+
+Before using `POST /api/index-website`, start the Python bridge in a separate terminal:
+
+```powershell
+cd c:\Users\as\Desktop\JS\RAG-PROJECT
+.venv\Scripts\Activate.ps1
+uvicorn rag.api.server:app --host 127.0.0.1 --port 8000
+```
+
+If the bridge runs on a different host or port, set `RAG_PYTHON_API_URL` for the backend.
+
+For long-running website indexing, increase the Python bridge request timeout in the backend environment:
+
+```powershell
+$env:RAG_PYTHON_API_TIMEOUT_MS = 3600000
+```
+
+Set `RAG_PYTHON_API_TIMEOUT_MS=0` to disable the timeout entirely.
 
 Available routes:
 

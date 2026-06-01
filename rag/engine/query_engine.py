@@ -13,6 +13,7 @@ from rag.engine.generator import generate_answer
 from rag.engine.reranker import rerank_chunks
 from rag.engine.retrieval import query_embedding_file
 from rag.models.query_models import QueryResult
+from rag.prompts.prompt_settings import load_prompt_settings
 from rag.utils.metrics import build_metrics, confidence_label
 
 try:
@@ -155,10 +156,12 @@ class RagQueryEngine:
             )
 
         generation_started = perf_counter()
+        prompt_settings = load_prompt_settings()
         answer_future = generate_answer(
             gemini_client=self.gemini_client,
             question=cleaned_question,
             chunks=accepted_chunks,
+            prompt_settings=prompt_settings,
         )
         confidence_future = asyncio.to_thread(confidence_label, confidence)
         (answer, input_tokens, output_tokens), confidence_label_value = await asyncio.gather(
@@ -223,4 +226,3 @@ class RagQueryEngine:
         except Exception:
             _GEMINI_CLIENT = None
         return _GEMINI_CLIENT
-

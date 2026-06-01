@@ -38,6 +38,8 @@ class ChromaVectorClient:
 
     def delete_collection(self) -> None:
         self.client.delete_collection(name=self.collection_name)
+        # Reset init state so the cached instance rebuilds the collection object next time.
+        self._initialized = False
 
     def count(self) -> int:
         try:
