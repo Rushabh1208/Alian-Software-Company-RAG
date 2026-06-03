@@ -111,7 +111,7 @@ def _build_constraints_block(user_constraints: list[str]) -> str:
     base_lines = [
         f"- {MANDATORY_PROMPT_CONSTRAINT}",
         "- Do not invent facts.",
-        "- Cite supporting sources using [S1], [S2], etc.",
+        "- List the multiple points with dash points.",
         "- If the answer is not present, respond exactly:",
         '  "I don\'t know based on the provided context."',
     ]

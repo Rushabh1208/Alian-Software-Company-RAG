@@ -43,6 +43,32 @@ export function deleteWebsite(id) {
   });
 }
 
+export function getWidgets() {
+  return request("/api/widgets");
+}
+
+export function createWidget({ collection, displayName, status = "active" }) {
+  return request("/api/widgets", {
+    method: "POST",
+    body: JSON.stringify({
+      collection,
+      displayName,
+      status,
+    }),
+  });
+}
+
+export function updateWidget(widgetId, { collection, displayName, status = "active" }) {
+  return request(`/api/widgets/${encodeURIComponent(widgetId)}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      collection,
+      displayName,
+      status,
+    }),
+  });
+}
+
 export function getPromptSettings() {
   return request("/api/prompt-settings");
 }

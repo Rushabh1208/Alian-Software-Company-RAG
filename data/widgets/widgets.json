@@ -1,0 +1,29 @@
+[
+  {
+    "widgetId": "widget_2f1195c7945b",
+    "collection": "alian_software",
+    "displayName": "aliansoftware.com",
+    "status": "active",
+    "createdAt": "2026-06-03T03:59:59.952Z",
+    "updatedAt": "2026-06-03T06:00:39.219Z",
+    "mappingVersion": "2026-06-03T06:00:39.219Z"
+  },
+  {
+    "widgetId": "widget_12f6f6bc203a",
+    "collection": "website_mbit_edu_in",
+    "displayName": "mbit.edu.in",
+    "status": "inactive",
+    "createdAt": "2026-06-03T04:18:26.695Z",
+    "updatedAt": "2026-06-03T05:44:58.545Z",
+    "mappingVersion": "2026-06-03T05:44:58.545Z"
+  },
+  {
+    "widgetId": "widget_ac0668964780",
+    "collection": "website_hansalpatel_tech",
+    "displayName": "hansalpatel.tech",
+    "status": "active",
+    "createdAt": "2026-06-03T04:27:31.391Z",
+    "updatedAt": "2026-06-03T06:42:07.549Z",
+    "mappingVersion": "2026-06-03T06:42:07.549Z"
+  }
+]

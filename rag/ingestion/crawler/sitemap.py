@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import time
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -14,6 +14,7 @@ from rag.ingestion.crawler.robots_handler import RobotsHandler
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
 from rag.ingestion.crawler.recursive_crawler import RecursiveCrawler
+from rag.ingestion.crawler.language_filter import looks_english_html
 from rag.ingestion.crawler.sitemap_utils import fetch_url, model_to_jsonable, normalize_url, write_json
 from rag.ingestion.crawler.url_filter import filter_urls
 from rag.models.ingest_models import CrawlTarget, ExtractedUrl, SitemapRecord
@@ -77,6 +78,21 @@ class SitemapProcessor:
         self.parsed_sitemaps: list[SitemapRecord] = []
 
     def run(self) -> SitemapPipelineResult:
+        pipeline_start = time.time()
+
+        self.logger.info(
+            "Starting sitemap pipeline for %s",
+            self.target_url,
+        )
+
+        discovered_sitemaps = self.discover_sitemaps()
+
+        self.logger.info(
+            "Discovered %s sitemap(s)",
+            len(discovered_sitemaps),
+        )
+
+        extracted_urls = self.extract_urls(discovered_sitemaps)
         discovered_sitemaps = self.discover_sitemaps()
         extracted_urls = self.extract_urls(discovered_sitemaps)
         discovered_sitemaps = self._merge_sitemap_records(
@@ -124,6 +140,16 @@ class SitemapProcessor:
             summary=summary,
         )
         self.write_outputs(result)
+        elapsed = time.time() - pipeline_start
+
+        self.logger.info(
+            "Pipeline finished in %.2f seconds",
+            elapsed,
+        )
+
+        self.logger.info(
+            summary.render()
+        )
         return result
 
     def discover_sitemaps(self) -> list[SitemapRecord]:
@@ -152,19 +178,50 @@ class SitemapProcessor:
                 self.logger.info("Discovered sitemap: %s", normalized)
 
         return discovered
-
+        
     def extract_urls(self, sitemaps: list[SitemapRecord]) -> list[ExtractedUrl]:
+        self.logger.info(
+            "Starting sitemap extraction from %s discovered sitemap(s)",
+            len(sitemaps),
+        )
+
         extracted: list[ExtractedUrl] = []
         visited_sitemaps: set[str] = set()
 
-        for sitemap in sitemaps:
+        for index, sitemap in enumerate(sitemaps, start=1):
+            self.logger.info(
+                "[%s/%s] Processing sitemap: %s",
+                index,
+                len(sitemaps),
+                sitemap.url,
+            )
+
+            before_count = len(extracted)
+
             self._parse_sitemap(
                 sitemap_url=str(sitemap.url),
                 extracted=extracted,
                 visited_sitemaps=visited_sitemaps,
             )
 
+            new_urls = len(extracted) - before_count
+
+            self.logger.info(
+                "Completed sitemap %s | URLs found: %s | Total URLs so far: %s",
+                sitemap.url,
+                new_urls,
+                len(extracted),
+            )
+
+        self.logger.info(
+            "Sitemap extraction completed. Total URLs extracted: %s",
+            len(extracted),
+        )
+
         return extracted
+
+
+    
 
     def apply_filters(self, extracted_urls: list[ExtractedUrl]) -> tuple[list[ExtractedUrl], int, int]:
         url_by_canonical = {item.canonical_url: item for item in extracted_urls}
@@ -233,46 +290,112 @@ class SitemapProcessor:
         )
 
     def _parse_sitemap(
-        self,
-        sitemap_url: str,
-        extracted: list[ExtractedUrl],
-        visited_sitemaps: set[str],
+    self,
+    sitemap_url: str,
+    extracted: list[ExtractedUrl],
+    visited_sitemaps: set[str],
     ) -> None:
-        normalized_sitemap_url = normalize_url(sitemap_url)
-        if normalized_sitemap_url in visited_sitemaps:
-            return
-        visited_sitemaps.add(normalized_sitemap_url)
-        self.parsed_sitemaps.append(SitemapRecord(url=normalized_sitemap_url, source="parsed"))
 
-        response = fetch_url(self.session, normalized_sitemap_url, self.timeout, self.logger)
+        normalized_sitemap_url = normalize_url(sitemap_url)
+
+        if normalized_sitemap_url in visited_sitemaps:
+            self.logger.debug(
+                "Skipping already processed sitemap: %s",
+                normalized_sitemap_url,
+            )
+            return
+
+        visited_sitemaps.add(normalized_sitemap_url)
+
+        self.parsed_sitemaps.append(
+            SitemapRecord(
+                url=normalized_sitemap_url,
+                source="parsed",
+            )
+        )
+
+        self.logger.info(
+            "Fetching sitemap: %s",
+            normalized_sitemap_url,
+        )
+
+        response = fetch_url(
+            self.session,
+            normalized_sitemap_url,
+            self.timeout,
+            self.logger,
+        )
+
         if not response or response.status_code != 200:
-            self.logger.warning("Unable to parse sitemap: %s", normalized_sitemap_url)
+            self.logger.warning(
+                "Unable to parse sitemap: %s",
+                normalized_sitemap_url,
+            )
             return
 
         soup = BeautifulSoup(response.text, "xml")
+
         if soup.find("sitemapindex"):
-            for sitemap_tag in soup.find_all("sitemap"):
+
+            child_sitemaps = soup.find_all("sitemap")
+
+            self.logger.info(
+                "Sitemap index detected: %s | Nested sitemaps: %s",
+                normalized_sitemap_url,
+                len(child_sitemaps),
+            )
+
+            for idx, sitemap_tag in enumerate(child_sitemaps, start=1):
+
                 loc = sitemap_tag.find("loc")
-                if loc and loc.text:
-                    self._parse_sitemap(
-                        sitemap_url=loc.text.strip(),
-                        extracted=extracted,
-                        visited_sitemaps=visited_sitemaps,
-                    )
+
+                if not loc or not loc.text:
+                    continue
+
+                child_url = loc.text.strip()
+
+                self.logger.info(
+                    "Processing nested sitemap %s/%s: %s",
+                    idx,
+                    len(child_sitemaps),
+                    child_url,
+                )
+
+                self._parse_sitemap(
+                    sitemap_url=child_url,
+                    extracted=extracted,
+                    visited_sitemaps=visited_sitemaps,
+                )
+
             return
 
         if not soup.find("urlset"):
-            self.logger.warning("Unsupported sitemap format: %s", normalized_sitemap_url)
+            self.logger.warning(
+                "Unsupported sitemap format: %s",
+                normalized_sitemap_url,
+            )
             return
 
-        for url_tag in soup.find_all("url"):
+        urls = soup.find_all("url")
+
+        self.logger.info(
+            "URL sitemap detected: %s | URLs inside: %s",
+            normalized_sitemap_url,
+            len(urls),
+        )
+
+        for count, url_tag in enumerate(urls, start=1):
+
             loc = url_tag.find("loc")
+
             if not loc or not loc.text:
                 continue
 
             canonical_url = normalize_url(loc.text)
+
             last_modified = self._tag_text(url_tag, "lastmod")
             priority = self._priority(url_tag)
+
             extracted.append(
                 ExtractedUrl(
                     url=canonical_url,
@@ -283,6 +406,19 @@ class SitemapProcessor:
                 )
             )
 
+            if count % 100 == 0:
+                self.logger.info(
+                    "Extracted %s URLs from %s",
+                    count,
+                    normalized_sitemap_url,
+                )
+
+        self.logger.info(
+            "Finished sitemap %s | Extracted URLs: %s",
+            normalized_sitemap_url,
+            len(urls),
+        )
+
     def _is_valid_html_page(self, url: str) -> bool:
         try:
             response = self.session.get(url, timeout=self.timeout, stream=True)
@@ -292,6 +428,9 @@ class SitemapProcessor:
                 return False
             if "text/html" not in content_type:
                 self.logger.info("Rejected non-HTML URL %s with content-type %s", url, content_type)
+                return False
+            if not looks_english_html(response.text):
+                self.logger.info("Rejected non-English URL %s", url)
                 return False
             return True
         except requests.RequestException as exc:
@@ -345,4 +484,3 @@ class SitemapProcessor:
             seen.add(normalized_url)
             merged.append(SitemapRecord(url=normalized_url, source=record.source))
         return merged
-

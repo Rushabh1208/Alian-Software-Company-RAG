@@ -331,9 +331,29 @@ Set `VITE_API_BASE_URL` if the backend is not running on `http://localhost:5000`
 
 ### Website Collections
 
-- `alian_software` is the default company collection.
+- `alian_software` is the base collection used internally by the RAG backend.
 - `website_<domain>` is used for each indexed site, for example `website_openai_com`.
 - The Python bridge keeps query-time retrieval, reranking, confidence scoring, and metadata handling inside the existing RAG modules.
+
+### Public Widget
+
+The repository now includes a script-based public widget that does not touch the admin frontend.
+
+Backend widget routes:
+
+- `POST /api/widgets`
+- `GET /api/widgets/:id`
+- `PUT /api/widgets/:id`
+- `POST /api/widget/chat`
+
+Widget script server:
+
+```powershell
+cd widget\widget-app
+npm start
+```
+
+The embeddable script is served from `http://localhost:3001/widget.js` in local development. Embed that script on any website to load the matching widget configuration automatically.
 
 ## License
 

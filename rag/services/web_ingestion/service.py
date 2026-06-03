@@ -250,7 +250,7 @@ class WebsiteIngestionService:
 
     def delete_website(self, website_id: str) -> dict[str, str]:
         if website_id == DEFAULT_BASE_COLLECTION_NAME:
-            raise ValueError("The base Alian Software collection cannot be deleted.")
+            raise ValueError("The base collection cannot be deleted.")
 
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         paths.ensure_directories()

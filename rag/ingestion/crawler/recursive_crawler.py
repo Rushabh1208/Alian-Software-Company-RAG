@@ -6,6 +6,7 @@ from urllib.parse import urljoin, urlsplit
 
 from bs4 import BeautifulSoup
 
+from rag.ingestion.crawler.language_filter import looks_english_html
 from rag.ingestion.crawler.sitemap_utils import fetch_url, normalize_url
 from rag.ingestion.crawler.url_filter import filter_urls
 from rag.models.ingest_models import ExtractedUrl
@@ -61,6 +62,8 @@ class RecursiveCrawler:
 
             content_type = response.headers.get("content-type", "") if hasattr(response, "headers") else ""
             if "text/html" not in content_type.lower():
+                continue
+            if not looks_english_html(response.text):
                 continue
 
             discovered.append(normalized)

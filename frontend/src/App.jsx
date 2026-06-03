@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import {
+  createWidget,
   deleteWebsite,
   getPromptSettings,
   getWebsites,
+  getWidgets,
   indexWebsite,
   resetPromptSettings,
   queryRag,
   updatePromptSettings,
+  updateWidget,
 } from "./lib/api";
 import WebsiteSidebar from "./components/WebsiteSidebar";
 import RightSidebar from "./components/RightSidebar";
@@ -14,6 +17,7 @@ import ChunkModal from "./components/ChunkModal";
 import PromptSettingsModal from "./components/PromptSettingsModal";
 
 const BASE_COLLECTION_ID = "alian_software";
+const DEFAULT_COLLECTION_LABEL = "Default Collection";
 const DEFAULT_PROMPT_SETTINGS = {
   role: "You are a retrieval-augmented QA assistant.",
   constraints: [],
@@ -24,6 +28,13 @@ function App() {
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [question, setQuestion] = useState("");
+  const [widgets, setWidgets] = useState([]);
+  const [widgetCollectionName, setWidgetCollectionName] = useState(BASE_COLLECTION_ID);
+  const [widgetStatus, setWidgetStatus] = useState("active");
+  const [widgetModalOpen, setWidgetModalOpen] = useState(false);
+  const [widgetBusy, setWidgetBusy] = useState(false);
+  const [widgetMessage, setWidgetMessage] = useState("");
+  const [widgetCopied, setWidgetCopied] = useState(false);
 
   // Chats: persistent history stored in localStorage
   const [chats, setChats] = useState([]);
@@ -79,6 +90,7 @@ function App() {
     loadWebsitesFromStorage();
     void loadPromptSettings();
     void refreshWebsites();
+    void refreshWidgets();
   }, []);
 
   async function loadPromptSettings() {
@@ -127,6 +139,18 @@ function App() {
     }
   }
 
+  async function refreshWidgets() {
+    try {
+      const payload = await getWidgets();
+      const payloadWidgets = Array.isArray(payload?.widgets) ? payload.widgets : [];
+      setWidgets(payloadWidgets);
+      setWidgetMessage("");
+    } catch (err) {
+      setWidgets([]);
+      setWidgetMessage(err.message || "Widget controls are unavailable right now.");
+    }
+  }
+
   async function handleIndexWebsite(event) {
     event.preventDefault();
     if (!websiteUrl.trim()) return;
@@ -137,6 +161,7 @@ function App() {
       const payload = await indexWebsite(websiteUrl.trim());
       setWebsiteUrl("");
       await refreshWebsites();
+      await refreshWidgets();
       if (payload?.website?.id) {
         setSelectedWebsiteId(payload.website.id);
       }
@@ -158,8 +183,59 @@ function App() {
         setSelectedWebsiteId(null);
       }
       await refreshWebsites();
+      await refreshWidgets();
     } catch (err) {
       setError(err.message || "Delete failed.");
+    }
+  }
+
+  function handleCopyWidgetScript(script) {
+    if (!script) return;
+
+    const writeText = navigator.clipboard?.writeText;
+    if (!writeText) {
+      setWidgetMessage("Clipboard access is not available in this browser.");
+      return;
+    }
+
+    writeText
+      .call(navigator.clipboard, script)
+      .then(() => {
+        setWidgetCopied(true);
+        window.setTimeout(() => setWidgetCopied(false), 1800);
+      })
+      .catch((err) => {
+        setWidgetMessage(err.message || "Failed to copy widget script.");
+      });
+  }
+
+  async function handleGenerateWidget() {
+    const targetCollection = widgetCollectionName || BASE_COLLECTION_ID;
+    const targetWebsite = websites.find((item) => item.collection_name === targetCollection);
+    const displayName = targetWebsite?.domain || targetWebsite?.collection_name || DEFAULT_COLLECTION_LABEL;
+
+    setWidgetBusy(true);
+    setWidgetMessage("");
+    try {
+      if (activeWidget?.widgetId) {
+        await updateWidget(activeWidget.widgetId, {
+          collection: targetCollection,
+          displayName,
+          status: widgetStatus,
+        });
+      } else {
+        await createWidget({
+          collection: targetCollection,
+          displayName,
+          status: widgetStatus,
+        });
+      }
+      await refreshWidgets();
+      setWidgetCopied(false);
+    } catch (err) {
+      setWidgetMessage(err.message || "Failed to generate widget.");
+    } finally {
+      setWidgetBusy(false);
     }
   }
 
@@ -339,6 +415,22 @@ function App() {
     ? websites.find((item) => item.id === selectedWebsiteId)
     : null;
 
+  const selectedCollectionName = selectedWebsite ? selectedWebsite.collection_name : BASE_COLLECTION_ID;
+  const selectedCollectionLabel = selectedWebsite ? selectedWebsite.domain || selectedWebsite.collection_name : DEFAULT_COLLECTION_LABEL;
+  const activeWidget = widgets.find((item) => item.collection === widgetCollectionName) || null;
+  const widgetStatusLabel = activeWidget
+    ? String(activeWidget.status || "active").charAt(0).toUpperCase() + String(activeWidget.status || "active").slice(1)
+    : "Not generated";
+  const widgetScript = activeWidget?.script || "";
+
+  useEffect(() => {
+    setWidgetCollectionName(selectedCollectionName);
+  }, [selectedCollectionName]);
+
+  useEffect(() => {
+    setWidgetStatus(activeWidget?.status || "active");
+  }, [activeWidget?.status, activeWidget?.widgetId]);
+
   const currentChat = chats.find((c) => c.id === currentChatId) || chats[0] || { messages: [] };
 
   return (
@@ -358,25 +450,36 @@ function App() {
               </p>
             </div>
 
-            <form className="flex w-full flex-col gap-3 xl:max-w-md" onSubmit={handleIndexWebsite}>
-              <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.02] p-3 md:flex-row">
-                <input
-                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-mint/60 focus:bg-black/40 transition"
-                  onChange={(event) => setWebsiteUrl(event.target.value)}
-                  placeholder="https://example.com"
-                  value={websiteUrl}
-                />
+            <div className="flex w-full flex-col gap-3 xl:max-w-md">
+              <form onSubmit={handleIndexWebsite}>
+                <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.02] p-3 md:flex-row">
+                  <input
+                    className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-mint/60 focus:bg-black/40 transition"
+                    onChange={(event) => setWebsiteUrl(event.target.value)}
+                    placeholder="https://example.com"
+                    value={websiteUrl}
+                  />
+                  <button
+                    className="rounded-xl bg-gradient-to-r from-mint via-cyan-300 to-blue-300 px-6 py-3 text-sm font-bold text-ink-950 transition hover:shadow-lg hover:shadow-mint/50 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                    disabled={indexing || !websiteUrl.trim()}
+                    type="submit"
+                  >
+                    {indexing ? "🔄 Indexing..." : "📄 Index"}
+                  </button>
+                </div>
+              </form>
+
+              <div className="flex justify-start">
                 <button
-                  className="rounded-xl bg-gradient-to-r from-mint via-cyan-300 to-blue-300 px-6 py-3 text-sm font-bold text-ink-950 transition hover:shadow-lg hover:shadow-mint/50 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
-                  disabled={indexing || !websiteUrl.trim()}
-                  type="submit"
+                  className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+                  onClick={() => setWidgetModalOpen(true)}
+                  type="button"
                 >
-                  {indexing ? "🔄 Indexing..." : "📄 Index"}
+                  Widget Management
                 </button>
               </div>
-            </form>
+            </div>
 
-           
           </div>
         </header>
 
@@ -389,6 +492,7 @@ function App() {
         <main className="grid flex-1 min-h-0 gap-4 overflow-hidden xl:grid-cols-[320px_1fr_320px]">
           <WebsiteSidebar
             onDeleteWebsite={handleDeleteWebsite}
+            baseWebsiteId={BASE_COLLECTION_ID}
             onSelectWebsite={setSelectedWebsiteId}
             selectedWebsiteId={selectedWebsiteId}
             websites={websites}
@@ -405,7 +509,7 @@ function App() {
               <div>
                 <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-bold">📚 Query Scope</p>
                 <h2 className="mt-2 text-xl font-bold text-white">
-                  {selectedWebsite ? selectedWebsite.domain : "Alian Software"}
+                  {selectedWebsite ? selectedWebsite.domain : DEFAULT_COLLECTION_LABEL}
                 </h2>
                 <p className="mt-1 text-xs text-slate-400 font-medium">
                   {selectedWebsite ? selectedWebsite.collection_name : BASE_COLLECTION_ID}
@@ -469,6 +573,123 @@ function App() {
           saving={promptSettingsSaving}
           settings={promptSettings}
         />
+        {widgetModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-md">
+            <div className="flex w-full max-w-5xl max-h-[calc(100vh-3rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/60">
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.45em] text-cyan-300/70 font-bold">🔗 Widget Management</p>
+                  <h2 className="mt-2 text-xl font-bold text-white">Widget settings</h2>
+                  <p className="mt-1 text-xs text-slate-400 font-medium">
+                    {selectedCollectionLabel} · {selectedCollectionName}
+                  </p>
+                </div>
+                <button
+                  className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/10"
+                  onClick={() => setWidgetModalOpen(false)}
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="grid min-h-0 gap-4 overflow-hidden p-5 lg:grid-cols-[300px_1fr]">
+                <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <label className=" grid gap-2 text-sm text-slate-300">
+                    <span className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">Widget Status</span>
+                    <select
+                      className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none focus:border-mint/60 focus:bg-black/40 transition"
+                      value={widgetStatus}
+                      onChange={(event) => setWidgetStatus(event.target.value)}
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </label>
+
+                  <div className="mt-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs leading-6 text-slate-300">
+                    <p className="font-semibold text-slate-100">Current mapping</p>
+                    <p className="mt-1 text-slate-400">
+                      {activeWidget
+                        ? `${activeWidget.displayName || "Widget"} · ${activeWidget.collection || selectedCollectionName}`
+                        : "No widget exists for this collection yet."}
+                    </p>
+                    <p className="mt-2 text-slate-400">
+                      Status: <span className="text-slate-100">{widgetStatusLabel}</span>
+                    </p>
+                  </div>
+
+                  <div className="mt-4 space-y-2">
+                    <p className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">Saved widgets</p>
+                    <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
+                      {widgets.length ? (
+                        widgets.map((widget) => (
+                          <button
+                            key={widget.widgetId}
+                            className={[
+                              "w-full rounded-xl border px-4 py-3 text-left transition",
+                              widget.collection === widgetCollectionName
+                                ? "border-mint/40 bg-mint/10"
+                                : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/10",
+                            ].join(" ")}
+                            onClick={() => {
+                              setWidgetCollectionName(widget.collection);
+                              setWidgetStatus(widget.status || "active");
+                            }}
+                            type="button"
+                          >
+                            <div className="text-sm font-semibold text-white">
+                              {widget.displayName || widget.collection}
+                            </div>
+                            <div className="mt-1 text-xs text-slate-400">
+                              {widget.collection} · {String(widget.status || "active")}
+                            </div>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-slate-400">
+                          No widget records yet.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="grid gap-4">
+                    <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs leading-6 text-slate-300">
+                      <p className="font-semibold text-slate-100">Embed script</p>
+                      <p className="mt-1 break-all font-mono text-[11px] text-slate-400">
+                        {widgetScript || "Generate or update a widget to create the embed snippet."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <button
+                        className="rounded-xl bg-gradient-to-r from-mint via-cyan-300 to-blue-300 px-4 py-3 text-sm font-bold text-ink-950 transition hover:shadow-lg hover:shadow-mint/50 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                        disabled={widgetBusy}
+                        onClick={handleGenerateWidget}
+                        type="button"
+                      >
+                        {widgetBusy ? "Saving..." : activeWidget ? "Update Widget" : "Generate Widget"}
+                      </button>
+                      <button
+                        className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={!widgetScript}
+                        onClick={() => handleCopyWidgetScript(widgetScript)}
+                        type="button"
+                      >
+                        {widgetCopied ? "Copied" : "Copy Script"}
+                      </button>
+                    </div>
+
+                    {widgetMessage ? <p className="text-xs text-amber-200">{widgetMessage}</p> : null}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <ChunkModal open={chunkModalOpen} onClose={() => setChunkModalOpen(false)} chunks={modalChunks} />
       </div>
     </div>

@@ -3,6 +3,7 @@ function WebsiteSidebar({
   selectedWebsiteId,
   onSelectWebsite,
   onDeleteWebsite,
+  baseWebsiteId = null,
   // chat props
   chats = [],
   currentChatId = null,
@@ -83,8 +84,8 @@ function WebsiteSidebar({
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-white">Alian Software</p>
-            <p className="mt-1 text-xs text-slate-400">Default company collection</p>
+            <p className="text-sm font-semibold text-white">Default Collection</p>
+            <p className="mt-1 text-xs text-slate-400">Base knowledge collection</p>
           </div>
           <span className="rounded-full border border-mint/40 bg-mint/10 px-2 py-1 text-[10px] uppercase tracking-[0.25em] text-mint font-bold">
             Base
@@ -93,7 +94,7 @@ function WebsiteSidebar({
       </button>
 
       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-        {websites.filter((item) => item.id !== "alian_software").map((website) => {
+        {websites.filter((item) => item.id !== baseWebsiteId).map((website) => {
           const active = selectedWebsiteId === website.id;
 
           return (
