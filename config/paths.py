@@ -36,6 +36,7 @@ class PipelinePaths:
     chunks_dir: Path
     chunked_documents: Path
     rejected_chunks: Path
+    checkpoint: Path
 
     # Future stages (placeholders; safe to keep even if modules are empty)
     embeddings_dir: Path
@@ -107,6 +108,7 @@ def get_pipeline_paths(
         rejected_chunks=workspace_dir / "chunks" / "rejected_chunks.json",
         embeddings_dir=workspace_dir / "embeddings",
         chromadb_dir=chromadb_dir,
+        checkpoint=workspace_dir / "ingestion_checkpoint.json",
         logs_crawl=logs_root / "crawl",
         logs_parsing=logs_root / "parsing",
         logs_embeddings=logs_root / "embeddings",

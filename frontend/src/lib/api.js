@@ -42,6 +42,20 @@ export function deleteWebsite(id) {
     method: "DELETE",
   });
 }
+export async function syncWebsites() {
+  const res = await fetch("/api/websites/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getIndexingStatus(collectionId) {
+  const res = await fetch(`/api/websites/${encodeURIComponent(collectionId)}/status`);
+  if (!res.ok) throw new Error(`Status fetch failed: ${res.status}`);
+  return res.json();
+}
 
 export function getWidgets() {
   return request("/api/widgets");

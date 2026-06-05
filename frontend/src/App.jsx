@@ -496,12 +496,12 @@ function App() {
             onSelectWebsite={setSelectedWebsiteId}
             selectedWebsiteId={selectedWebsiteId}
             websites={websites}
-            // chat props
             chats={chats}
             currentChatId={currentChatId}
             onNewChat={handleNewChat}
             onSelectChat={handleSelectChat}
             onDeleteChat={handleDeleteChat}
+            onWebsitesSync={refreshWebsites}
           />
 
           <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/[0.03] shadow-xl shadow-black/30 backdrop-blur-xl">

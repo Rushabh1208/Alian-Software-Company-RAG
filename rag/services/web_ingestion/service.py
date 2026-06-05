@@ -1,42 +1,39 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import shutil
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 import re
-
-from rag.engine.query_engine import RagQueryEngine
-
-_QUERY_ENGINE_CACHE: dict[str, RagQueryEngine] = {}
 
 from config.constants import DEFAULT_BASE_COLLECTION_NAME, DEFAULT_TARGET_WEBSITE
 from config.logging_setup import setup_pipeline_logger
 from config.paths import get_pipeline_paths
 from config.settings import AppSettings, load_settings
 from rag.engine.query_engine import RagQueryEngine
-from rag.ingestion.chunking.chunk_manager import ChunkManager
-from rag.ingestion.cleaner.cleaning_manager import CleaningManager
-from rag.ingestion.crawler.crawl_manager import CrawlManager
-from rag.ingestion.crawler.sitemap import SitemapProcessor
-from rag.ingestion.embeddings.embedding_manager import EmbeddingManager
-from rag.ingestion.metadata.metadata_generator import MetadataGenerator
-from rag.ingestion.parser.parser_manager import ParserManager
+from rag.ingestion.streaming_indexer import (
+    StreamingIngestionConfig,
+    StreamingWebsiteIndexer,
+)
 from rag.ingestion.vectordb.chroma_client import ChromaVectorClient
-from rag.ingestion.vectordb.upsert import ChromaUpserter
 from rag.models.query_models import QueryResult
 from rag.utils.websites import (
     WebsiteRecord,
     build_website_record,
     load_json_records,
     normalize_website_url,
+    now_iso,
     remove_website_record,
     upsert_website_record,
     website_collection_name,
     website_domain,
     website_workspace_name,
 )
+
+
+_QUERY_ENGINE_CACHE: dict[str, RagQueryEngine] = {}
 
 
 @dataclass(frozen=True)
@@ -88,6 +85,7 @@ class WebsiteIngestionService:
         self.vectordb_config = self.settings.config.get("vectordb", {})
         self.crawler_config = self.settings.config.get("crawler", {})
         self.chunking_config = self.settings.config.get("chunking", {})
+        self.streaming_config = self.settings.config.get("streaming_ingestion", {})
 
     async def index_website(
         self,
@@ -109,96 +107,181 @@ class WebsiteIngestionService:
 
         if force:
             self._delete_collection_safely(paths.chromadb_dir, collection_name)
+            if paths.checkpoint.exists():
+                try:
+                    paths.checkpoint.unlink()
+                except Exception:
+                    pass
 
-        sitemap_processor = SitemapProcessor(
-            target_url=normalized_url,
-            output_dir=paths.sitemap_dir,
-            timeout=int(self.crawler_config.get("timeout", 30)),
-            recursive_fallback_depth=int(self.crawler_config.get("recursive_fallback_depth", 2)),
-            recursive_fallback_pages=int(self.crawler_config.get("recursive_fallback_pages", 80)),
-            logger=logger,
-        )
-        sitemap_result = sitemap_processor.run()
-
-        crawl_manager = CrawlManager(
-            targets_path=paths.crawl_targets,
-            raw_dir=paths.raw_dir,
-            timeout=int(self.crawler_config.get("timeout", 30)),
-            retries=int(self.crawler_config.get("retries", 3)),
-            rate_limit=int(self.crawler_config.get("rate_limit", 2)),
-            logger=logger,
-        )
-        _, crawl_summary = await crawl_manager.run()
-
-        parser_manager = ParserManager(
-            raw_dir=paths.raw_dir,
-            parsed_dir=paths.parsed_dir,
-            logger=logger,
-        )
-        _, parsing_summary = parser_manager.run()
-
-        cleaner = CleaningManager(
-            parsed_dir=paths.parsed_dir,
-            cleaned_dir=paths.cleaned_dir,
-            logger=logger,
-        )
-        _, _, cleaning_summary = cleaner.run()
-
-        metadata_generator = MetadataGenerator(
-            cleaned_path=paths.cleaned_documents,
-            output_dir=paths.metadata_dir,
-            collection_name=collection_name,
-            logger=logger,
-        )
-        _, metadata_summary = metadata_generator.run()
-
-        chunk_manager = ChunkManager(
-            metadata_path=paths.metadata_documents,
-            output_dir=paths.chunks_dir,
-            chunk_size=int(self.chunking_config.get("chunk_size", 500)),
-            overlap=int(self.chunking_config.get("overlap", 100)),
-            collection_name=collection_name,
-            logger=logger,
-        )
-        _, _, chunking_summary = chunk_manager.run()
-
-        embedding_manager = EmbeddingManager(
-            chunks_path=paths.chunked_documents,
-            output_dir=paths.embeddings_dir,
-            model_name=str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
-            batch_size=int(self.embedding_config.get("batch_size", 32)),
-            normalize_embeddings=bool(self.embedding_config.get("normalize_embeddings", True)),
-            logger=logger,
-        )
-        _, _, embedding_summary = await embedding_manager.run()
-
-        upserter = ChromaUpserter(
-            embeddings_path=paths.embeddings_dir / "embeddings.json",
-            persist_directory=paths.chromadb_dir,
-            collection_name=collection_name,
-            logger=logger,
-        )
-        vectordb_summary = upserter.run()
-
+        # Register website immediately so sidebar shows it before indexing finishes
         website_record = upsert_website_record(
             paths.website_registry,
             build_website_record(normalized_url, collection_name=collection_name),
         )
 
+        # Write initial "indexing" progress file immediately
+        progress_path = paths.workspace_dir / "indexing_progress.json"
+        try:
+            progress_path.parent.mkdir(parents=True, exist_ok=True)
+            progress_path.write_text(
+                json.dumps({
+                    "status": "indexing",
+                    "collection_name": collection_name,
+                    "website": normalized_url,
+                    "current_batch": 0,
+                    "total_batches": 0,
+                    "stored_chunks": 0,
+                    "crawled_pages": 0,
+                    "message": "Starting...",
+                    "updated_at": now_iso(),
+                }, indent=2),
+                encoding="utf-8",
+            )
+        except Exception:
+            pass
+
+        streaming_indexer = StreamingWebsiteIndexer(
+            target_url=normalized_url,
+            workspace_dir=paths.workspace_dir,
+            sitemap_dir=paths.sitemap_dir,
+            chromadb_dir=paths.chromadb_dir,
+            collection_name=collection_name,
+            progress_path=progress_path,
+            config=StreamingIngestionConfig(
+                batch_size=int(self.streaming_config.get("batch_size", 100)),
+                batch_pause_seconds=float(self.streaming_config.get("batch_pause_seconds", 0)),
+                embedding_batch_size=int(
+                    self.streaming_config.get(
+                        "embedding_batch_size",
+                        self.embedding_config.get("batch_size", 32),
+                    )
+                ),
+                max_retries=int(
+                    self.streaming_config.get(
+                        "max_retries",
+                        self.crawler_config.get("retries", 3),
+                    )
+                ),
+                backoff_multiplier=float(
+                    self.streaming_config.get(
+                        "backoff_multiplier",
+                        2.0,
+                    )
+                ),
+                chunk_size=int(self.chunking_config.get("chunk_size", 500)),
+                overlap=int(self.chunking_config.get("overlap", 100)),
+                max_backoff_seconds=float(self.crawler_config.get("max_backoff_seconds", 120.0)),
+                rate_limit_retries=int(self.crawler_config.get("rate_limit_retries", 5)),
+                rate_limit_base_seconds=float(self.crawler_config.get("rate_limit_base_seconds", 30.0)),
+            ),
+            timeout=int(self.crawler_config.get("timeout", 30)),
+            logger=logger,
+            embedding_model=str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
+            normalize_embeddings=bool(self.embedding_config.get("normalize_embeddings", True)),
+            checkpoint_path=paths.checkpoint,
+        )
+
+        # Fire indexing as background task — returns immediately, no bridge timeout
+        async def _run_and_finalize() -> None:
+            try:
+                await streaming_indexer.run(force=force)
+            except Exception as exc:
+                logger.error("Background indexing failed: %s", exc)
+                try:
+                    progress_path.write_text(
+                        json.dumps({
+                            "status": "error",
+                            "collection_name": collection_name,
+                            "website": normalized_url,
+                            "current_batch": 0,
+                            "total_batches": 0,
+                            "stored_chunks": 0,
+                            "crawled_pages": 0,
+                            "message": str(exc),
+                            "updated_at": now_iso(),
+                        }, indent=2),
+                        encoding="utf-8",
+                    )
+                except Exception:
+                    pass
+
+        asyncio.ensure_future(_run_and_finalize())
+
         return WebsiteIngestionResult(
             website=website_record,
             collection_name=collection_name,
             workspace_name=workspace_name,
-            sitemap_summary=sitemap_result.summary.render(),
-            crawl_summary=crawl_summary.render(),
-            parsing_summary=parsing_summary.render(),
-            cleaning_summary=cleaning_summary.render(),
-            metadata_summary=metadata_summary.render(),
-            chunking_summary=chunking_summary.render(),
-            embedding_summary=embedding_summary.render(),
-            vectordb_summary=vectordb_summary.render(),
+            sitemap_summary="Indexing started in background",
+            crawl_summary="",
+            parsing_summary="",
+            cleaning_summary="",
+            metadata_summary="",
+            chunking_summary="",
+            embedding_summary="",
+            vectordb_summary="",
         )
 
+    def get_indexing_status(self, collection_name: str) -> dict:
+        """Read the live progress file for a given collection."""
+        paths_base = get_pipeline_paths(self.settings.chroma_db_path)
+        registry = load_json_records(paths_base.website_registry)
+        record = next((r for r in registry if str(r.get("id") or "") == collection_name), None)
+
+        if not record:
+            return {"status": "unknown", "collection_name": collection_name}
+
+        workspace_name = str(record.get("workspace_name") or collection_name)
+        paths = get_pipeline_paths(self.settings.chroma_db_path, workspace_name=workspace_name)
+        progress_path = paths.workspace_dir / "indexing_progress.json"
+
+        if not progress_path.exists():
+            return {"status": "done", "collection_name": collection_name}
+
+        try:
+            return json.loads(progress_path.read_text(encoding="utf-8"))
+        except Exception:
+            return {"status": "unknown", "collection_name": collection_name}
+
+    def sync_collections(self) -> dict:
+        """
+        Reconcile website registry against actual ChromaDB collections.
+        Removes registry entries whose ChromaDB collection no longer exists.
+        Returns the cleaned list.
+        """
+        from chromadb import PersistentClient
+
+        paths = get_pipeline_paths(self.settings.chroma_db_path)
+        paths.ensure_directories()
+
+        try:
+            chroma_client = PersistentClient(path=str(paths.chromadb_dir))
+            live_collections = {col.name for col in chroma_client.list_collections()}
+        except Exception:
+            live_collections = set()
+
+        registry = load_json_records(paths.website_registry)
+        cleaned = []
+        for record in registry:
+            record_id = str(record.get("id") or "")
+            # Always keep base collection entry
+            if record_id == DEFAULT_BASE_COLLECTION_NAME:
+                cleaned.append(record)
+                continue
+            # Keep only if ChromaDB collection still exists
+            if record_id in live_collections:
+                cleaned.append(record)
+
+        paths.website_registry.write_text(
+            json.dumps(cleaned, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        return {
+            "synced": len(cleaned),
+            "removed": len(registry) - len(cleaned),
+            "websites": cleaned,
+        }
+    
     async def query(
         self,
         question: str,

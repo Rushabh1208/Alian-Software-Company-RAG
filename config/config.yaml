@@ -2,6 +2,19 @@ crawler:
   timeout: 30
   retries: 3
   rate_limit: 2
+  recursive_fallback_depth: 2
+  recursive_fallback_pages: 80
+  # Rate limiting behaviour
+  max_backoff_seconds: 120.0      # hard ceiling on any single sleep
+  rate_limit_retries: 5           # how many 429s to tolerate per URL before skipping
+  rate_limit_base_seconds: 30.0   # minimum wait on first 429 with no Retry-After header
+
+streaming_ingestion:
+  batch_size: 100
+  batch_pause_seconds: 5
+  embedding_batch_size: 32
+  max_retries: 3
+  backoff_multiplier: 2.0
 
 chunking:
   chunk_size: 500

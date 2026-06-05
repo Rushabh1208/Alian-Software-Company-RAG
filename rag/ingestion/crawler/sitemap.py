@@ -86,14 +86,7 @@ class SitemapProcessor:
         )
 
         discovered_sitemaps = self.discover_sitemaps()
-
-        self.logger.info(
-            "Discovered %s sitemap(s)",
-            len(discovered_sitemaps),
-        )
-
-        extracted_urls = self.extract_urls(discovered_sitemaps)
-        discovered_sitemaps = self.discover_sitemaps()
+        self.logger.info("Discovered %s sitemap(s)", len(discovered_sitemaps))
         extracted_urls = self.extract_urls(discovered_sitemaps)
         discovered_sitemaps = self._merge_sitemap_records(
             [*discovered_sitemaps, *self.parsed_sitemaps]
@@ -334,7 +327,7 @@ class SitemapProcessor:
             return
 
         soup = BeautifulSoup(response.text, "xml")
-
+        child_sitemaps = []
         if soup.find("sitemapindex"):
 
             child_sitemaps = soup.find_all("sitemap")
@@ -345,27 +338,35 @@ class SitemapProcessor:
                 len(child_sitemaps),
             )
 
-            for idx, sitemap_tag in enumerate(child_sitemaps, start=1):
+            # UPDATED CODE — adds locale filter before recursing
+        for idx, sitemap_tag in enumerate(child_sitemaps, start=1):
+            loc = sitemap_tag.find("loc")
+            if not loc or not loc.text:
+                continue
+            child_url = loc.text.strip()
 
-                loc = sitemap_tag.find("loc")
-
-                if not loc or not loc.text:
-                    continue
-
-                child_url = loc.text.strip()
-
+            # ── Locale + content-type filter ──────────────────────────
+            if not self._should_index_sitemap(child_url):
                 self.logger.info(
-                    "Processing nested sitemap %s/%s: %s",
+                    "Skipping sitemap %s/%s (locale/type filtered): %s",
                     idx,
                     len(child_sitemaps),
                     child_url,
                 )
+                continue
+            # ──────────────────────────────────────────────────────────
 
-                self._parse_sitemap(
-                    sitemap_url=child_url,
-                    extracted=extracted,
-                    visited_sitemaps=visited_sitemaps,
-                )
+            self.logger.info(
+                "Processing nested sitemap %s/%s: %s",
+                idx,
+                len(child_sitemaps),
+                child_url,
+            )
+            self._parse_sitemap(
+                sitemap_url=child_url,
+                extracted=extracted,
+                visited_sitemaps=visited_sitemaps,
+            )
 
             return
 
@@ -484,3 +485,30 @@ class SitemapProcessor:
             seen.add(normalized_url)
             merged.append(SitemapRecord(url=normalized_url, source=record.source))
         return merged
+    # Add this as a static method inside SitemapProcessor class
+
+    @staticmethod
+    def _should_index_sitemap(sitemap_url: str) -> bool:
+        """
+        Returns True only for English, high-value sitemaps.
+        Skips Arabic locales, regional duplicates, and low-value sitemaps.
+        """
+        from urllib.parse import urlsplit
+        path = urlsplit(sitemap_url).path.lower()
+
+        # Skip all Arabic locale paths
+        ARABIC_PREFIXES = ("/ar/", "/ar-kw/", "/ar-sa/", "/ar-qa/", "/ar-om/", "/ar-bh/")
+        if any(path.startswith(prefix) for prefix in ARABIC_PREFIXES):
+            return False
+
+        # Skip regional English duplicates (same content as base, different pricing)
+        # Remove this block if regional pricing differs and you want region-specific content
+        REGIONAL_EN_PREFIXES = ("/en-kw/", "/en-sa/", "/en-qa/", "/en-om/", "/en-bh/")
+        if any(path.startswith(prefix) for prefix in REGIONAL_EN_PREFIXES):
+            return False
+
+        # Skip agentic discovery - not useful for RAG
+        if "agentic_discovery" in path:
+            return False
+
+        return True

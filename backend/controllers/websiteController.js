@@ -44,10 +44,34 @@ async function deleteWebsiteController(req, res) {
     }
     return res.status(500).json({ error: error.message || "Delete failed." });
   }
+
 }
+const getIndexingStatusController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await runPython("get_indexing_status", {
+      collection_name: id,
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const syncCollectionsController = async (req, res) => {
+  try {
+    const result = await runPython("sync_collections", {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 module.exports = {
   deleteWebsiteController,
   indexWebsiteController,
+  getIndexingStatusController,
+  syncCollectionsController,
   listWebsitesController,
 };

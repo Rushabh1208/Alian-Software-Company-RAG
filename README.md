@@ -8,6 +8,15 @@ https://aliansoftware.com/en
 
 This project crawls the site, parses and cleans pages, generates chunks and local embeddings, stores them in ChromaDB, and answers questions with deterministic retrieval, cross-encoder reranking, confidence gating, and Gemini-based final generation.
 
+Website indexing now runs as a streaming batch pipeline:
+
+- discover and dedupe URLs first
+- process one URL batch at a time
+- detect and skip non-English pages after extraction
+- chunk and embed only the current batch
+- upsert into ChromaDB immediately
+- persist a checkpoint after each batch so indexing can resume
+
 ## Overview
 
 The system is designed to stay small, local, and production-friendly:
@@ -59,10 +68,20 @@ Copy-Item .env.example .env
 ```text
 CHROMA_DB_PATH=./data/chromadb
 GOOGLE_API_KEY=your_google_api_key
+RAG_BATCH_SIZE=100
+RAG_BATCH_PAUSE_SECONDS=5
+RAG_EMBEDDING_BATCH_SIZE=32
+RAG_MAX_RETRIES=3
+RAG_BACKOFF_MULTIPLIER=2.0
 ```
 
 - `CHROMA_DB_PATH` overrides the local ChromaDB persistence directory.
 - `GOOGLE_API_KEY` enables Gemini 2.5 Flash for final answer generation.
+- `RAG_BATCH_SIZE` controls how many URLs are processed per streaming batch.
+- `RAG_BATCH_PAUSE_SECONDS` adds a pause between batches.
+- `RAG_EMBEDDING_BATCH_SIZE` controls embedding flush size within a batch.
+- `RAG_MAX_RETRIES` controls retry attempts for crawl requests.
+- `RAG_BACKOFF_MULTIPLIER` scales exponential backoff for crawl retries.
 
 ## Usage
 

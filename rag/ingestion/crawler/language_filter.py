@@ -73,14 +73,17 @@ def _normalized_language_values(html: str) -> list[str]:
 
 
 def looks_english_html(html: str) -> bool:
-    language_values = _normalized_language_values(html)
-    for value in language_values:
-        if value.startswith("en"):
-            return True
-        if value and not value.startswith(("en", "x-default")):
-            return False
-
     text = extract_visible_text(html)
+    return looks_english_text(text, html=html)
+
+
+def looks_english_text(text: str, *, html: str | None = None) -> bool:
+    if html:
+        language_values = _normalized_language_values(html)
+        if any(value.startswith("en") or value == "x-default" for value in language_values):
+            return True
+
+    text = (text or "").strip()
     if not text:
         return False
 
@@ -103,6 +106,14 @@ def looks_english_html(html: str) -> bool:
     stopword_ratio = stopword_hits / len(words)
 
     if len(words) < 25:
-        return stopword_hits >= 2 and ascii_ratio >= 0.9
+        return (stopword_hits >= 1 and ascii_ratio >= 0.85) or (
+            stopword_hits >= 2 and ascii_ratio >= 0.8
+        )
 
-    return stopword_ratio >= 0.05 or (stopword_hits >= 4 and ascii_ratio >= 0.9)
+    return stopword_ratio >= 0.03 or (stopword_hits >= 3 and ascii_ratio >= 0.85)
+
+
+def detect_language(text: str, *, html: str | None = None) -> str:
+    if looks_english_text(text, html=html):
+        return "en"
+    return "other"
