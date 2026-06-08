@@ -77,6 +77,21 @@ function buildRequest(args) {
         path: `/websites/${encodeURIComponent(parsed.id)}`,
       };
     }
+    case "get-indexing-status": {
+      const collectionName = String(parsed.collection_name || parsed.collection || "");
+      if (!collectionName) {
+        throw new Error("Missing collection name for get-indexing-status command.");
+      }
+      return {
+        method: "GET",
+        path: `/websites/${encodeURIComponent(collectionName)}/status`,
+      };
+    }
+    case "sync-collections":
+      return {
+        method: "POST",
+        path: "/websites/sync",
+      };
     default:
       throw new Error(`Unsupported bridge command: ${command}`);
   }

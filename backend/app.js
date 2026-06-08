@@ -4,6 +4,8 @@ const queryRoutes = require("./routes/queryRoutes");
 const promptSettingsRoutes = require("./routes/promptSettingsRoutes");
 const websiteRoutes = require("./routes/websiteRoutes");
 const widgetRoutes = require("./routes/widgetRoutes");
+const guardrailsRoutes = require('./routes/guardrailsRoutes');
+
 
 function createApp() {
   const app = express();
@@ -19,7 +21,7 @@ function createApp() {
   app.use("/api", promptSettingsRoutes);
   app.use("/api", websiteRoutes);
   app.use("/api", widgetRoutes);
-
+  app.use('/api/guardrails', guardrailsRoutes);
   app.use((error, _req, res, _next) => {
     res.status(500).json({ error: error.message || "Internal server error" });
   });

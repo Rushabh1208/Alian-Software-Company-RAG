@@ -100,3 +100,19 @@ async def update_prompt_settings(payload: PromptSettingsRequest) -> dict[str, An
         return saved.to_dict()
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Failed to save prompt settings: {error}")
+
+
+@app.get("/websites/{website_id}/status")
+async def website_status(website_id: str) -> dict[str, Any]:
+    try:
+        return service.get_indexing_status(website_id)
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to get indexing status: {error}")
+
+
+@app.post("/websites/sync")
+async def sync_websites() -> dict[str, Any]:
+    try:
+        return service.sync_collections()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to sync collections: {error}")

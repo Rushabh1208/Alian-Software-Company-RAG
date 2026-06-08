@@ -19,6 +19,7 @@ async function request(path, options = {}) {
   return payload;
 }
 
+
 export function queryRag({ question, websiteId, topK = 5 }) {
   return request("/api/query", {
     method: "POST",
@@ -42,19 +43,17 @@ export function deleteWebsite(id) {
     method: "DELETE",
   });
 }
-export async function syncWebsites() {
-  const res = await fetch("/api/websites/sync", {
+export function syncWebsites() {
+  return request("/api/websites/sync", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
   });
-  if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
-  return res.json();
 }
 
 export async function getIndexingStatus(collectionId) {
-  const res = await fetch(`/api/websites/${encodeURIComponent(collectionId)}/status`);
   if (!res.ok) throw new Error(`Status fetch failed: ${res.status}`);
-  return res.json();
+  return request(`/api/websites/${encodeURIComponent(collectionId)}/status`);
+  
+  
 }
 
 export function getWidgets() {
@@ -103,5 +102,10 @@ export function resetPromptSettings() {
     constraints: [],
   });
 }
-
+export function checkGuardrails({ role, constraints }) {
+  return request("/api/guardrails/check", {
+    method: "POST",
+    body: JSON.stringify({ role, constraints }),
+  });
+}
 export { API_BASE_URL };

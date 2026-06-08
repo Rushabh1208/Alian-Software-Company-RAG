@@ -3,6 +3,7 @@ const {
   indexWebsite,
   listWebsites,
 } = require("../services/web_ingestion/websiteService");
+const { runPythonBridge } = require("../utils/runPython");
 
 async function indexWebsiteController(req, res) {
   try {
@@ -49,9 +50,7 @@ async function deleteWebsiteController(req, res) {
 const getIndexingStatusController = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await runPython("get_indexing_status", {
-      collection_name: id,
-    });
+    const result = await runPythonBridge(["get-indexing-status", "--collection", id]);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -60,7 +59,7 @@ const getIndexingStatusController = async (req, res) => {
 
 const syncCollectionsController = async (req, res) => {
   try {
-    const result = await runPython("sync_collections", {});
+    const result = await runPythonBridge(["sync-collections"]);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
