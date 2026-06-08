@@ -43,7 +43,7 @@ def filter_chunks(
     ]
 
     if not filtered:
-        filtered = chunks[:top_k]
+        filtered = chunks
 
     top_chunks = filtered[:top_k]
 

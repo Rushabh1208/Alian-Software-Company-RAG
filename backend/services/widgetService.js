@@ -185,11 +185,39 @@ async function queryWidget(widgetId, message) {
   };
 }
 
+function deleteWidget(widgetId) {
+  const widgetList = readWidgets().map(toStoredWidget);
+  const index = widgetList.findIndex((item) => String(item.widgetId) === String(widgetId || ""));
+  if (index < 0) {
+    throw new Error(`Widget ${widgetId} not found.`);
+  }
+  const removed = widgetList.splice(index, 1)[0];
+  writeWidgets(widgetList);
+  return removed;
+}
+
+/**
+ * Remove all widget records whose collection is not in the provided set of
+ * valid collection names.  Called after a website/collection is deleted so
+ * the saved-widgets list stays in sync.
+ */
+function pruneWidgetsForCollections(validCollectionNames) {
+  const validSet = new Set(Array.isArray(validCollectionNames) ? validCollectionNames.map(String) : []);
+  const widgetList = readWidgets().map(toStoredWidget);
+  const kept = widgetList.filter((w) => validSet.has(String(w.collection || "")));
+  if (kept.length !== widgetList.length) {
+    writeWidgets(kept);
+  }
+  return kept;
+}
+
 module.exports = {
   buildWidgetScript,
   createWidget,
+  deleteWidget,
   findWidgetRecord,
   listWidgets,
+  pruneWidgetsForCollections,
   queryWidget,
   toPublicWidgetConfig,
   updateWidget,

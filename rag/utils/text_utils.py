@@ -94,7 +94,7 @@ def is_bad_answer(answer: str) -> bool:
     cleaned = answer.strip().lower()
     if not cleaned:
         return True
-    if cleaned == "i don't know from the indexed website content.":
+    if "i couldn't find a specific answer" in cleaned:
         return True
     generic_bad_patterns = [
         "no information available",

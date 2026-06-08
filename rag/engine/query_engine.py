@@ -15,6 +15,7 @@ from rag.engine.retrieval import query_embedding_file
 from rag.models.query_models import QueryResult
 from rag.prompts.prompt_settings import load_prompt_settings
 from rag.utils.metrics import build_metrics, confidence_label
+from rag.engine.query_expander import expand_query
 
 try:
     from sentence_transformers import CrossEncoder
@@ -89,7 +90,7 @@ class RagQueryEngine:
         self,
         question: str,
         *,
-        top_k: int = 5,
+        top_k: int = 10,
     ) -> QueryResult:
         total_started = perf_counter()
 
@@ -98,24 +99,38 @@ class RagQueryEngine:
             raise ValueError("Question cannot be empty")
 
         embedding_started = perf_counter()
-        query_embedding = await self.embedding_generator.embed_query(
-            f"{self.query_prefix}{cleaned_question}"
-        )
+        sub_questions = await expand_query(cleaned_question, self.gemini_client)
         embedding_latency_ms = (perf_counter() - embedding_started) * 1000.0
 
         retrieval_started = perf_counter()
-        candidate_chunks = await asyncio.to_thread(
-            query_embedding_file,
-            persist_directory=self.persist_directory,
-            collection_name=self.collection_name,
-            query_embedding=query_embedding,
-            top_k=_INITIAL_RETRIEVAL_K,
-        )
+        seen_chunk_ids: set[str] = set()
+        candidate_chunks: list = []
+
+        for sub_q in sub_questions:
+            sub_embedding = await self.embedding_generator.embed_query(
+                f"{self.query_prefix}{sub_q}"
+            )
+            sub_chunks = await asyncio.to_thread(
+                query_embedding_file,
+                persist_directory=self.persist_directory,
+                collection_name=self.collection_name,
+                query_embedding=sub_embedding,
+                top_k=_INITIAL_RETRIEVAL_K,
+            )
+            for chunk in sub_chunks:
+                if chunk.chunk_id not in seen_chunk_ids:
+                    seen_chunk_ids.add(chunk.chunk_id)
+                    candidate_chunks.append(chunk)
+
         retrieval_latency_ms = (perf_counter() - retrieval_started) * 1000.0
 
         # Skip expensive reranking when the top semantic match is already very strong
         rerank_started = perf_counter()
-        if candidate_chunks and getattr(candidate_chunks[0], "semantic_score", 0.0) > 0.82:
+        if (
+            len(sub_questions) == 1
+            and candidate_chunks
+            and getattr(candidate_chunks[0], "semantic_score", 0.0) > 0.82
+        ):
             reranked_chunks = candidate_chunks
             rerank_latency_ms = 0.0
         else:

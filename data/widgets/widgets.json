@@ -5,17 +5,8 @@
     "displayName": "aliansoftware.com",
     "status": "active",
     "createdAt": "2026-06-03T03:59:59.952Z",
-    "updatedAt": "2026-06-03T06:00:39.219Z",
-    "mappingVersion": "2026-06-03T06:00:39.219Z"
-  },
-  {
-    "widgetId": "widget_12f6f6bc203a",
-    "collection": "website_mbit_edu_in",
-    "displayName": "mbit.edu.in",
-    "status": "inactive",
-    "createdAt": "2026-06-03T04:18:26.695Z",
-    "updatedAt": "2026-06-03T05:44:58.545Z",
-    "mappingVersion": "2026-06-03T05:44:58.545Z"
+    "updatedAt": "2026-06-08T04:31:34.622Z",
+    "mappingVersion": "2026-06-08T04:31:34.622Z"
   },
   {
     "widgetId": "widget_ac0668964780",
@@ -25,5 +16,23 @@
     "createdAt": "2026-06-03T04:27:31.391Z",
     "updatedAt": "2026-06-03T06:42:07.549Z",
     "mappingVersion": "2026-06-03T06:42:07.549Z"
+  },
+  {
+    "widgetId": "widget_b0fadba84809",
+    "collection": "website_minimalist_ae",
+    "displayName": "minimalist.ae",
+    "status": "active",
+    "createdAt": "2026-06-08T04:14:03.544Z",
+    "updatedAt": "2026-06-08T04:14:03.544Z",
+    "mappingVersion": "2026-06-08T04:14:03.544Z"
+  },
+  {
+    "widgetId": "widget_b392c85024d9",
+    "collection": "website_mbit_edu_in",
+    "displayName": "mbit.edu.in",
+    "status": "active",
+    "createdAt": "2026-06-08T06:02:01.979Z",
+    "updatedAt": "2026-06-08T06:02:01.979Z",
+    "mappingVersion": "2026-06-08T06:02:01.979Z"
   }
 ]

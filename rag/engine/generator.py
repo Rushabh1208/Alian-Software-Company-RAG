@@ -38,11 +38,11 @@ async def generate_answer(
         if isinstance(text, str) and text.strip():
             answer = clean_answer(text)
             if is_bad_answer(answer):
-                answer = "I don't know from the indexed website content."
+                answer = "I couldn't find a specific answer to that in the indexed content. Please try rephrasing your question, or explore the website directly for more details."
             return answer, input_tokens, estimate_tokens(answer)
     except Exception:
         pass
 
-    answer = "I don't know from the indexed website content."
+    answer = "I couldn't find a specific answer to that in the indexed content. Please try rephrasing your question, or explore the website directly for more details."
     return answer, input_tokens, estimate_tokens(answer)
 

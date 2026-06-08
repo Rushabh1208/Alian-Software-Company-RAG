@@ -248,9 +248,11 @@ class StreamingWebsiteIndexer:
             logger=self.logger,
         )
 
-        discovered_sitemaps = sitemap_processor.discover_sitemaps()
-        extracted_urls = sitemap_processor.extract_urls(discovered_sitemaps)
-        filtered_urls, duplicates_removed, blocked_urls = sitemap_processor.apply_filters(extracted_urls)
+        sitemap_result = sitemap_processor.run()
+        extracted_urls = sitemap_result.extracted_urls
+        filtered_urls = sitemap_result.filtered_urls
+        duplicates_removed = sitemap_result.summary.duplicates_removed
+        blocked_urls = sitemap_result.summary.blocked_urls
 
         self.logger.info("Discovered %s URLs", len(extracted_urls))
         self.logger.info("Created %s batches", math.ceil(len(filtered_urls) / max(self.config.batch_size, 1)))

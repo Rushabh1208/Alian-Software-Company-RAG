@@ -4,6 +4,7 @@ const {
   listWebsites,
 } = require("../services/web_ingestion/websiteService");
 const { runPythonBridge } = require("../utils/runPython");
+const { pruneWidgetsForCollections } = require("../services/widgetService");
 
 async function indexWebsiteController(req, res) {
   try {
@@ -38,6 +39,16 @@ async function deleteWebsiteController(req, res) {
     }
 
     const payload = await deleteWebsite(id);
+
+    // Prune any saved widgets whose collection no longer exists
+    try {
+      const remaining = await listWebsites();
+      const validCollections = (remaining.websites || []).map((w) => w.collection_name).filter(Boolean);
+      pruneWidgetsForCollections(validCollections);
+    } catch (_pruneErr) {
+      // Non-fatal — widget pruning failure should not block the delete response
+    }
+
     return res.json(payload);
   } catch (error) {
     if (error instanceof Error && error.message.includes("cannot be deleted")) {

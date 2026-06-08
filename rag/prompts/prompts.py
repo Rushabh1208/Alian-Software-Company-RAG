@@ -14,7 +14,7 @@ MAX_GEMINI_CHARS = 7000
 
 def build_extractive_answer(chunks: list[RetrievedChunk]) -> str:
     if not chunks:
-        return "I don't know from the indexed website content."
+        return "I couldn't find specific information about that. You may want to browse the website directly or try rephrasing your question."
 
     parts: list[str] = []
     for chunk in chunks[:3]:
@@ -24,7 +24,7 @@ def build_extractive_answer(chunks: list[RetrievedChunk]) -> str:
 
     combined = "\n\n".join(parts).strip()
     if not combined:
-        return "I don't know from the indexed website content."
+        return "I couldn't find specific information about that. You may want to browse the website directly or try rephrasing your question."
     return combined
 
 
@@ -40,7 +40,7 @@ def build_gemini_prompt(
     user_constraints = list(settings.constraints or [])
 
     context_parts: list[str] = []
-    for index, chunk in enumerate(chunks[:5], start=1):
+    for index, chunk in enumerate(chunks[:10], start=1):
         context_parts.append(
             f"""
 [S{index}]
@@ -110,10 +110,14 @@ def _sanitize_prompt_text(text: str) -> str:
 def _build_constraints_block(user_constraints: list[str]) -> str:
     base_lines = [
         f"- {MANDATORY_PROMPT_CONSTRAINT}",
-        "- Do not invent facts.",
-        "- List the multiple points with dash points.",
-        "- If the answer is not present, respond exactly:",
-        '  "I don\'t know based on the provided context."',
+        "- Respond in a warm, friendly, conversational tone like a real customer support agent.",
+        "- Address the user directly. Use 'you' and 'your'.",
+        "- Write in short paragraphs or clean bullet points. Never write walls of text.",
+        "- If the answer is fully available, give it confidently and clearly.",
+        "- If the answer is only partially available, share what you know and naturally suggest the user visit the website or contact support for more.",
+        "- Never say 'I don't know', 'not in the context', or anything that makes the user feel dismissed.",
+        "- Never mention chunks, context, sources, or any internal technical details.",
+        "- Never invent facts not present in the provided context.",
     ]
 
     base_keys = {_constraint_key(line) for line in base_lines if line.strip()}

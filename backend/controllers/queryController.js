@@ -9,7 +9,7 @@ async function queryController(req, res) {
 
     const payload = await askQuestion({
       question: String(question),
-      topK: Number(topK || 5),
+      topK: Number(topK || 10),
       collection: String(collection || websiteId || "alian_software"),
     });
     return res.json(payload);

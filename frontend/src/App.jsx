@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createWidget,
   deleteWebsite,
+  deleteWidget,
   getPromptSettings,
   getWebsites,
   getWidgets,
@@ -239,6 +240,22 @@ function App() {
     }
   }
 
+  async function handleDeleteWidget(widgetId) {
+    if (!widgetId) return;
+    if (!window.confirm("Delete this widget? The embed script will stop working.")) return;
+    setWidgetBusy(true);
+    setWidgetMessage("");
+    try {
+      await deleteWidget(widgetId);
+      await refreshWidgets();
+      setWidgetCollectionName(BASE_COLLECTION_ID);
+    } catch (err) {
+      setWidgetMessage(err.message || "Failed to delete widget.");
+    } finally {
+      setWidgetBusy(false);
+    }
+  }
+
   async function handleSavePromptSettings(nextSettings) {
     setPromptSettingsSaving(true);
     setError("");
@@ -356,7 +373,7 @@ function App() {
       const payload = await queryRag({
         question: userMessage.content,
         websiteId: selectedWebsiteId || BASE_COLLECTION_ID,
-        topK: 5,
+        topK: 10,
       });
 
       const result = payload.result || payload;
@@ -595,7 +612,23 @@ function App() {
 
               <div className="grid min-h-0 gap-4 overflow-hidden p-5 lg:grid-cols-[300px_1fr]">
                 <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <label className=" grid gap-2 text-sm text-slate-300">
+                  <label className="grid gap-2 text-sm text-slate-300">
+                    <span className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">Collection</span>
+                    <select
+                      className="w-full min-w-0 rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none focus:border-mint/60 focus:bg-black/40 transition"
+                      value={widgetCollectionName}
+                      onChange={(event) => setWidgetCollectionName(event.target.value)}
+                    >
+                      <option value={BASE_COLLECTION_ID}>Default Collection ({BASE_COLLECTION_ID})</option>
+                      {websites.map((site) => (
+                        <option key={site.id} value={site.collection_name}>
+                          {site.domain || site.collection_name} 
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="mt-4 grid gap-2 text-sm text-slate-300">
                     <span className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">Widget Status</span>
                     <select
                       className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none focus:border-mint/60 focus:bg-black/40 transition"
@@ -624,27 +657,40 @@ function App() {
                     <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
                       {widgets.length ? (
                         widgets.map((widget) => (
-                          <button
+                          <div
                             key={widget.widgetId}
                             className={[
-                              "w-full rounded-xl border px-4 py-3 text-left transition",
+                              "flex items-start gap-2 rounded-xl border px-3 py-3 transition",
                               widget.collection === widgetCollectionName
                                 ? "border-mint/40 bg-mint/10"
-                                : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/10",
+                                : "border-white/10 bg-white/[0.03]",
                             ].join(" ")}
-                            onClick={() => {
-                              setWidgetCollectionName(widget.collection);
-                              setWidgetStatus(widget.status || "active");
-                            }}
-                            type="button"
                           >
-                            <div className="text-sm font-semibold text-white">
-                              {widget.displayName || widget.collection}
-                            </div>
-                            <div className="mt-1 text-xs text-slate-400">
-                              {widget.collection} · {String(widget.status || "active")}
-                            </div>
-                          </button>
+                            <button
+                              className="min-w-0 flex-1 text-left"
+                              onClick={() => {
+                                setWidgetCollectionName(widget.collection);
+                                setWidgetStatus(widget.status || "active");
+                              }}
+                              type="button"
+                            >
+                              <div className="text-sm font-semibold text-white">
+                                {widget.displayName || widget.collection}
+                              </div>
+                              <div className="mt-1 text-xs text-slate-400">
+                                {widget.collection} · {String(widget.status || "active")}
+                              </div>
+                            </button>
+                            <button
+                              className="shrink-0 rounded-lg border border-rose-500/30 bg-rose-500/10 px-2 py-1 text-[11px] font-semibold text-rose-300 transition hover:border-rose-500/60 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                              disabled={widgetBusy}
+                              onClick={() => handleDeleteWidget(widget.widgetId)}
+                              title="Delete widget"
+                              type="button"
+                            >
+                              ✕
+                            </button>
+                          </div>
                         ))
                       ) : (
                         <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-slate-400">

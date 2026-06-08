@@ -151,14 +151,7 @@ function RightSidebar({ message }) {
               <span className="text-slate-400">Retrieval Time:</span>
               <span className="font-semibold">{metrics.retrieval_latency_ms || 0}ms</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Processing Time:</span>
-              <span className="font-semibold">{metrics.processing_latency_ms || 0}ms</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">LLM Time:</span>
-              <span className="font-semibold">{metrics.llm_latency_ms || 0}ms</span>
-            </div>
+            
             {Object.keys(metrics)
               .filter((k) => k.endsWith("_ms") && !["retrieval_latency_ms", "processing_latency_ms", "llm_latency_ms", "total_latency_ms"].includes(k))
               .map((k) => (

@@ -91,9 +91,11 @@ class SitemapProcessor:
         discovered_sitemaps = self._merge_sitemap_records(
             [*discovered_sitemaps, *self.parsed_sitemaps]
         )
+        used_fallback = False
 
         if not extracted_urls:
             fallback_urls, recursive_summary = self._recursive_fallback_urls()
+            used_fallback = True
             if fallback_urls:
                 self.logger.info(
                     "Recursive crawl fallback discovered %s URLs from %s pages",
@@ -105,7 +107,7 @@ class SitemapProcessor:
         filtered_urls, duplicates_removed, blocked_urls = self.apply_filters(extracted_urls)
         crawl_targets, validation_blocked = self.validate_crawl_targets(filtered_urls)
 
-        if not crawl_targets:
+        if not crawl_targets and not used_fallback:
             fallback_urls, recursive_summary = self._recursive_fallback_urls()
             if fallback_urls:
                 self.logger.info(
@@ -368,7 +370,7 @@ class SitemapProcessor:
                 visited_sitemaps=visited_sitemaps,
             )
 
-            return
+        return
 
         if not soup.find("urlset"):
             self.logger.warning(

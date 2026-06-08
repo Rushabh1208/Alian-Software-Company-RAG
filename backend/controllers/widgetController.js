@@ -1,6 +1,7 @@
 const {
   buildWidgetScript,
   createWidget,
+  deleteWidget,
   findWidgetRecord,
   listWidgets,
   queryWidget,
@@ -93,8 +94,22 @@ async function widgetChatController(req, res) {
   }
 }
 
+async function deleteWidgetController(req, res) {
+  try {
+    const { id } = req.params;
+    const removed = deleteWidget(id);
+    return res.json({ deleted: true, widgetId: removed.widgetId });
+  } catch (error) {
+    if (String(error.message || "").includes("not found")) {
+      return res.status(404).json({ error: error.message });
+    }
+    return res.status(500).json({ error: error.message || "Failed to delete widget." });
+  }
+}
+
 module.exports = {
   createWidgetController,
+  deleteWidgetController,
   getWidgetController,
   listWidgetsController,
   updateWidgetController,

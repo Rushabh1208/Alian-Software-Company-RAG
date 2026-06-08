@@ -56,6 +56,12 @@ export async function getIndexingStatus(collectionId) {
   
 }
 
+export function deleteWidget(widgetId) {
+  return request(`/api/widgets/${encodeURIComponent(widgetId)}`, {
+    method: "DELETE",
+  });
+}
+
 export function getWidgets() {
   return request("/api/widgets");
 }
