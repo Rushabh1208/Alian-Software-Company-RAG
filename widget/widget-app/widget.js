@@ -11,9 +11,31 @@
   }
 
   const widgetId = String(currentScript.dataset.widgetId || "").trim();
-  const apiBaseUrl = String(currentScript.dataset.apiBaseUrl || "http://localhost:5000").replace(/\/+$/, "");
+  const apiBaseUrl = (() => {
+    const explicitBaseUrl = String(currentScript.dataset.apiBaseUrl || "").trim().replace(/\/+$/, "");
+    if (explicitBaseUrl) {
+      return explicitBaseUrl;
+    }
+
+    try {
+      const scriptUrl = new URL(currentScript.src, window.location.href);
+      const scriptOrigin = `${scriptUrl.protocol}//${scriptUrl.host}`;
+      if (scriptOrigin === window.location.origin) {
+        return scriptOrigin;
+      }
+    } catch (_error) {
+      // Ignore URL parsing issues and fall through to the guard below.
+    }
+
+    return "";
+  })();
 
   if (!widgetId) {
+    return;
+  }
+
+  if (!apiBaseUrl) {
+    console.error("RAG widget: missing api base url. Provide data-api-base-url on the script tag.");
     return;
   }
 
@@ -26,7 +48,23 @@
 
   const root = document.createElement("div");
   root.setAttribute("data-rag-widget-root", widgetId);
-  currentScript.insertAdjacentElement("afterend", root);
+
+  // Always mount on <body> so the fixed-position widget is visible regardless
+  // of where in the HTML the <script> tag is placed (head, body, deferred, etc.)
+  function mountRoot() {
+    if (document.body) {
+      document.body.appendChild(root);
+    } else {
+      // Script ran before body exists — wait for it.
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.appendChild(root);
+        bootstrap();
+      }, { once: true });
+      return false; // signal: bootstrap will be called by the listener
+    }
+    return true;
+  }
+  if (!mountRoot()) return; // early return; bootstrap deferred to DOMContentLoaded
 
   const state = {
     config: {
@@ -35,6 +73,13 @@
       displayName: "Chatbot",
       status: "active",
       mappingVersion: "",
+    },
+    widgetSettings: {
+      theme: "dark",
+      accentColor: "#00d992",
+      welcomeMessage: "",
+      suggestedQuestions: [],
+      widgetTitle: "Voltagent Assistant",
     },
     sessions: [],
     currentSessionId: null,
@@ -139,6 +184,7 @@
           sessions: state.sessions,
           currentSessionId: state.currentSessionId,
           view: state.view,
+          widgetSettings: state.widgetSettings,
         })
       );
     } catch (_error) {
@@ -146,8 +192,10 @@
     }
   }
 
+    
+
   function loadState() {
-    try {
+     try {
       const raw = localStorage.getItem(storageKey);
       if (!raw) {
         return;
@@ -169,10 +217,25 @@
       if (parsed.view === "history" || parsed.view === "chat") {
         state.view = parsed.view;
       }
+
+      // Restore saved theme/accent so applyTheme() in bootstrap uses the
+      // correct values immediately — before refreshConfig() returns.
+      if (parsed.widgetSettings && typeof parsed.widgetSettings === "object") {
+        const ws = parsed.widgetSettings;
+        state.widgetSettings = {
+          theme: ws.theme === "dark" || ws.theme === "light" ? ws.theme : state.widgetSettings.theme,
+          accentColor: typeof ws.accentColor === "string" && ws.accentColor ? ws.accentColor : state.widgetSettings.accentColor,
+          welcomeMessage: typeof ws.welcomeMessage === "string" ? ws.welcomeMessage : state.widgetSettings.welcomeMessage,
+          suggestedQuestions: Array.isArray(ws.suggestedQuestions) ? ws.suggestedQuestions : state.widgetSettings.suggestedQuestions,
+          widgetTitle: typeof ws.widgetTitle === "string" && ws.widgetTitle ? ws.widgetTitle : state.widgetSettings.widgetTitle,
+        };
+      }
     } catch (_error) {
       // Ignore bad persistence payloads.
     }
   }
+
+    
 
   function setState(nextState, options = {}) {
     Object.assign(state, nextState);
@@ -249,6 +312,22 @@
         status: String(payload.status || state.config.status || "active"),
         mappingVersion: String(payload.mappingVersion || state.config.mappingVersion || ""),
       };
+
+      // Apply widget appearance settings when included in the config response.
+      if (payload.widgetSettings) {
+        const ws = payload.widgetSettings;
+        state.widgetSettings = {
+          theme: String(ws.theme || state.widgetSettings.theme || "dark"),
+          accentColor: String(ws.accentColor || state.widgetSettings.accentColor || "#00d992"),
+          welcomeMessage: String(ws.welcomeMessage ?? state.widgetSettings.welcomeMessage ?? ""),
+          suggestedQuestions: Array.isArray(ws.suggestedQuestions)
+            ? ws.suggestedQuestions
+            : state.widgetSettings.suggestedQuestions,
+          widgetTitle: String(ws.widgetTitle || state.widgetSettings.widgetTitle || "Voltagent Assistant"),
+        };
+        applyTheme();
+      }
+
       syncCurrentSessionCollection();
       state.ready = true;
       state.error = "";
@@ -260,6 +339,53 @@
         render();
       }
     }
+  }
+
+  // Inject / update CSS custom properties on the widget root so theme and accent
+  // color changes take effect without a full re-render.
+  function applyTheme() {
+    const ws = state.widgetSettings;
+    const accent = ws.accentColor || "#00d992";
+    const isDark = ws.theme === "dark";
+
+    const styleId = `rag-widget-theme-vars-${widgetId}`;
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+
+    styleEl.textContent = `
+      [data-rag-widget-root="${widgetId}"] {
+        --rag-accent: ${accent};
+        --rag-accent-shadow: ${accent}42;
+        --rag-panel-bg: ${isDark ? "#0f1720" : "#ffffff"};
+        --rag-panel-border: ${isDark ? "rgba(255,255,255,0.08)" : "rgba(18,24,32,0.08)"};
+        --rag-title-color: ${isDark ? "#ffffff" : "#0f1720"};
+        --rag-subtitle-color: ${isDark ? "#94a3b8" : "#667085"};
+        --rag-body-color: ${isDark ? "#cbd5e1" : "#374151"};
+        --rag-msg-bg: ${isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,32,0.05)"};
+        --rag-input-bg: ${isDark ? "rgba(255,255,255,0.06)" : "#f9fafb"};
+        --rag-input-border: ${isDark ? "rgba(255,255,255,0.10)" : "rgba(18,24,32,0.10)"};
+        --rag-chip-border: ${isDark ? "rgba(255,255,255,0.14)" : "rgba(18,24,32,0.14)"};
+        --rag-chip-bg: ${isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,32,0.06)"};
+        --rag-chip-color: ${isDark ? "#ffffff" : "#0f1720"};
+        --rag-surface-bg: ${isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,32,0.03)"};
+        --rag-surface-border: ${isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,32,0.08)"};
+        --rag-heading-color: ${isDark ? "#94a3b8" : "#667085"};
+        --rag-user-bubble-bg: ${isDark ? "rgba(255,255,255,0.10)" : "linear-gradient(135deg, rgba(0,0,0,0.04), rgba(0,0,0,0.02))"};
+        --rag-user-bubble-border: ${isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)"};
+        --rag-composer-bg: ${isDark ? "rgba(15,23,32,0.4)" : "rgba(255,255,255,0.92)"};
+        --rag-text-color: ${isDark ? "#e5e7eb" : "#101418"};
+        --rag-destructive-bg: ${isDark ? "rgba(248,113,113,0.14)" : "rgba(208,46,61,0.08)"};
+        --rag-destructive-color: ${isDark ? "#fca5a5" : "#b42318"};
+        --rag-header-bg: ${accent}22;
+        --rag-header-border: ${accent}44;
+        --rag-chip-accent-border: ${accent}66;
+        --rag-chip-accent-bg: ${accent}11;
+      }
+    `;
   }
 
   function setCurrentSession(sessionId) {
@@ -464,11 +590,26 @@
   }
 
   function renderMessages(session) {
+    const ws = state.widgetSettings;
     if (!session.messages.length) {
+      const welcomeMsg = ws.welcomeMessage || "";
+      const chips = Array.isArray(ws.suggestedQuestions) ? ws.suggestedQuestions.slice(0, 3) : [];
+      const chipsHtml = chips.length
+        ? `<div class="rag-widget-chips-row">${chips
+            .map((q) => `<button type="button" class="rag-widget-suggestion-chip" data-action="suggestion-click" data-question="${escapeHtml(q)}">${escapeHtml(q)}</button>`)
+            .join("")}</div>`
+        : "";
       return `
         <div class="rag-widget-empty">
-          <div class="rag-widget-empty-title">Start a new conversation</div>
-          <div class="rag-widget-empty-text">Ask a question and the widget will answer from the mapped knowledge source.</div>
+          ${welcomeMsg
+            ? `<div class="rag-widget-welcome-row">
+                 <div class="rag-widget-avatar">🤖</div>
+                 <div class="rag-widget-welcome-bubble">${escapeHtml(welcomeMsg)}</div>
+               </div>`
+            : `<div class="rag-widget-empty-title">Start a new conversation</div>
+               <div class="rag-widget-empty-text">Ask a question and the widget will answer from the mapped knowledge source.</div>`
+          }
+          ${chipsHtml}
         </div>
       `;
     }
@@ -479,8 +620,10 @@
         const content = message.pending
           ? `<span class="rag-widget-typing"><i></i><i></i><i></i></span>`
           : escapeHtml(message.content).replace(/\n/g, "<br>");
+        const avatar = message.role === "assistant" ? `<div class="rag-widget-avatar">🤖</div>` : "";
         return `
           <div class="${cls}">
+            ${avatar}
             <div class="rag-widget-message-bubble">${content}</div>
           </div>
         `;
@@ -519,7 +662,8 @@
   }
 
   function renderPanel(session) {
-    const title = escapeHtml(state.config.displayName || "Chatbot");
+    const ws = state.widgetSettings;
+    const title = escapeHtml(ws.widgetTitle || state.config.displayName || "Chatbot");
     const currentChatTitle = escapeHtml(session.title || "New Chat");
     const actionButtons =
       state.view === "history"
@@ -538,6 +682,7 @@
     return `
       <section class="rag-widget-panel" role="dialog" aria-label="Widget chat">
         <header class="rag-widget-header">
+          <div class="rag-widget-header-avatar">💬</div>
           <div class="rag-widget-header-copy">
             <h2 class="rag-widget-title">${title}</h2>
             <div class="rag-widget-subtitle">${currentChatTitle}</div>
@@ -552,19 +697,17 @@
   }
 
   function renderStyles() {
+    const isDark = state.widgetSettings.theme === "dark";
     return `
       <style data-rag-widget-styles="${widgetId}">
-        :root {
-          color-scheme: light;
-        }
-
         [data-rag-widget-root="${widgetId}"] {
+          color-scheme: ${isDark ? "dark" : "light"};
           position: fixed;
           right: 18px;
           bottom: 18px;
           z-index: 2147483000;
           font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          color: #101418;
+          color: var(--rag-text-color, #101418);
         }
 
         [data-rag-widget-root="${widgetId}"] *,
@@ -587,11 +730,11 @@
           border: 0;
           border-radius: 999px;
           padding: 0 18px;
-          background: linear-gradient(135deg, #1c6f58, #0d8f69);
+          background: linear-gradient(135deg, var(--rag-accent, #0d8f69), color-mix(in srgb, var(--rag-accent, #0d8f69) 80%, #000));
           color: #ffffff;
           font-weight: 700;
           cursor: pointer;
-          box-shadow: 0 18px 44px rgba(13, 143, 105, 0.26);
+          box-shadow: 0 18px 44px var(--rag-accent-shadow, rgba(13,143,105,0.26));
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-panel {
@@ -601,8 +744,8 @@
           display: flex;
           flex-direction: column;
           border-radius: 24px;
-          border: 1px solid rgba(18, 24, 32, 0.08);
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 251, 0.98));
+          border: 1px solid var(--rag-panel-border, rgba(18, 24, 32, 0.08));
+          background: var(--rag-panel-bg, #ffffff);
           box-shadow: 0 32px 90px rgba(11, 17, 28, 0.26);
           overflow: hidden;
         }
@@ -613,8 +756,38 @@
           align-items: center;
           gap: 14px;
           padding: 16px 16px 14px;
-          border-bottom: 1px solid rgba(18, 24, 32, 0.08);
-          background: linear-gradient(180deg, rgba(16, 24, 32, 0.03), rgba(16, 24, 32, 0));
+          border-bottom: 1px solid var(--rag-header-border, var(--rag-panel-border));
+          background: var(--rag-header-bg, linear-gradient(180deg, rgba(16, 24, 32, 0.03), rgba(16, 24, 32, 0)));
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-header-avatar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 999px;
+          background: var(--rag-accent, #0d8f69);
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-avatar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 999px;
+          background: var(--rag-accent, #0d8f69);
+          font-size: 11px;
+          flex-shrink: 0;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-welcome-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-header-copy {
@@ -626,7 +799,7 @@
           margin: 0;
           font-size: 17px;
           line-height: 1.2;
-          color: #0f1720;
+          color: var(--rag-title-color, #0f1720);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -636,7 +809,7 @@
           margin-top: 4px;
           font-size: 12px;
           line-height: 1.4;
-          color: #667085;
+          color: var(--rag-subtitle-color, #667085);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -663,8 +836,8 @@
         [data-rag-widget-root="${widgetId}"] .rag-widget-chip {
           border-radius: 999px;
           padding: 8px 12px;
-          background: rgba(15, 23, 32, 0.06);
-          color: #0f1720;
+          background: var(--rag-chip-bg);
+          color: var(--rag-chip-color);
           font-size: 12px;
           font-weight: 700;
         }
@@ -673,8 +846,8 @@
           width: 32px;
           height: 32px;
           border-radius: 999px;
-          background: rgba(15, 23, 32, 0.06);
-          color: #0f1720;
+          background: var(--rag-chip-bg);
+          color: var(--rag-chip-color);
           font-size: 22px;
           line-height: 1;
         }
@@ -719,28 +892,66 @@
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-empty {
           margin: auto 18px;
-          border: 1px dashed rgba(15, 23, 32, 0.14);
-          border-radius: 18px;
-          padding: 18px;
-          text-align: center;
-          background: rgba(15, 23, 32, 0.02);
+          padding: 18px 14px 14px;
+          text-align: left;
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-empty-title {
           font-size: 14px;
           font-weight: 800;
-          color: #0f1720;
+          color: var(--rag-title-color, #0f1720);
+          text-align: center;
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-empty-text {
           margin-top: 8px;
           font-size: 13px;
           line-height: 1.6;
-          color: #667085;
+          color: var(--rag-subtitle-color, #667085);
+          text-align: center;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-welcome-bubble {
+          display: inline-block;
+          background: var(--rag-msg-bg, rgba(15,23,32,0.05));
+          border-radius: 4px 14px 14px 14px;
+          padding: 10px 14px;
+          font-size: 13px;
+          line-height: 1.55;
+          color: var(--rag-title-color, #0f1720);
+          max-width: 88%;
+          margin-bottom: 12px;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-chips-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 7px;
+          margin-top: 8px;
+          padding-left: 32px;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-suggestion-chip {
+          border: 1px solid var(--rag-chip-accent-border, var(--rag-chip-border));
+          border-radius: 999px;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--rag-accent, #0d8f69);
+          background: var(--rag-chip-accent-bg, transparent);
+          cursor: pointer;
+          transition: background-color 120ms ease, border-color 120ms ease;
+          text-align: left;
+        }
+
+        [data-rag-widget-root="${widgetId}"] .rag-widget-suggestion-chip:hover {
+          background: var(--rag-accent-shadow, rgba(13,143,105,0.12));
+          border-color: var(--rag-accent, #00d992);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-message {
           display: flex;
+          gap: 8px;
           margin-bottom: 12px;
         }
 
@@ -759,15 +970,15 @@
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-message.is-user .rag-widget-message-bubble {
-          background: linear-gradient(135deg, rgba(13, 143, 105, 0.16), rgba(13, 143, 105, 0.08));
-          border: 1px solid rgba(13, 143, 105, 0.18);
-          color: #0f1720;
+          background: var(--rag-user-bubble-bg);
+          border: 1px solid var(--rag-user-bubble-border);
+          color: var(--rag-text-color, #0f1720);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-message.is-assistant .rag-widget-message-bubble {
-          background: rgba(15, 23, 32, 0.04);
-          border: 1px solid rgba(15, 23, 32, 0.08);
-          color: #101418;
+          background: var(--rag-msg-bg);
+          border: 1px solid var(--rag-panel-border);
+          color: var(--rag-body-color);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-typing {
@@ -781,7 +992,7 @@
           width: 6px;
           height: 6px;
           border-radius: 999px;
-          background: #0d8f69;
+          background: var(--rag-accent, #0d8f69);
           display: inline-block;
           animation: rag-widget-bounce 1.05s infinite ease-in-out;
         }
@@ -798,8 +1009,8 @@
           display: flex;
           gap: 10px;
           padding: 14px 14px 16px;
-          border-top: 1px solid rgba(18, 24, 32, 0.08);
-          background: rgba(255, 255, 255, 0.92);
+          border-top: 1px solid var(--rag-panel-border);
+          background: var(--rag-composer-bg);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-input {
@@ -808,20 +1019,20 @@
           min-height: 52px;
           max-height: 140px;
           border-radius: 16px;
-          border: 1px solid rgba(15, 23, 32, 0.12);
+          border: 1px solid var(--rag-input-border);
           padding: 14px 14px;
           font: inherit;
           font-size: 14px;
           line-height: 1.55;
-          color: #101418;
-          background: #ffffff;
+          color: var(--rag-text-color, #101418);
+          background: var(--rag-input-bg);
           outline: none;
           overflow-y: auto;
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-input:focus {
-          border-color: rgba(13, 143, 105, 0.45);
-          box-shadow: 0 0 0 3px rgba(13, 143, 105, 0.12);
+          border-color: var(--rag-accent, #0d8f69);
+          box-shadow: 0 0 0 3px var(--rag-accent-shadow, rgba(13,143,105,0.12));
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-send {
@@ -829,10 +1040,10 @@
           height: 52px;
           border-radius: 16px;
           padding: 0 16px;
-          background: linear-gradient(135deg, #0d8f69, #1c6f58);
+          background: linear-gradient(135deg, var(--rag-accent, #0d8f69), color-mix(in srgb, var(--rag-accent, #0d8f69) 75%, #000));
           color: #ffffff;
           font-weight: 700;
-          box-shadow: 0 12px 28px rgba(13, 143, 105, 0.18);
+          box-shadow: 0 12px 28px var(--rag-accent-shadow, rgba(13,143,105,0.18));
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-send:disabled {
@@ -857,7 +1068,7 @@
           font-weight: 800;
           letter-spacing: 0.16em;
           text-transform: uppercase;
-          color: #667085;
+          color: var(--rag-heading-color, #667085);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-session {
@@ -868,13 +1079,13 @@
           margin-bottom: 10px;
           padding: 14px;
           border-radius: 18px;
-          border: 1px solid rgba(15, 23, 32, 0.08);
-          background: rgba(15, 23, 32, 0.03);
+          border: 1px solid var(--rag-surface-border);
+          background: var(--rag-surface-bg);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-session.is-active {
-          border-color: rgba(13, 143, 105, 0.26);
-          background: rgba(13, 143, 105, 0.06);
+          border-color: var(--rag-accent, #0d8f69);
+          background: var(--rag-accent-shadow, rgba(13,143,105,0.06));
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-session-main {
@@ -889,22 +1100,22 @@
         [data-rag-widget-root="${widgetId}"] .rag-widget-session-title {
           font-size: 14px;
           font-weight: 800;
-          color: #0f1720;
+          color: var(--rag-title-color, #0f1720);
           margin-bottom: 6px;
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-session-meta {
           font-size: 12px;
           line-height: 1.5;
-          color: #667085;
+          color: var(--rag-subtitle-color, #667085);
         }
 
         [data-rag-widget-root="${widgetId}"] .rag-widget-session-delete {
           align-self: start;
           border-radius: 999px;
           padding: 7px 11px;
-          background: rgba(208, 46, 61, 0.08);
-          color: #b42318;
+          background: var(--rag-destructive-bg);
+          color: var(--rag-destructive-color);
           font-size: 12px;
           font-weight: 700;
         }
@@ -1025,6 +1236,20 @@
           persistState();
           render();
         }
+        // Suggested question chip — fill the textarea and auto-submit
+        if (action === "suggestion-click") {
+          const question = element.getAttribute("data-question") || "";
+          if (!question) return;
+          state.input = question;
+          render();
+          // Submit after next paint so the textarea value is in state
+          requestAnimationFrame(() => {
+            const composer = root.querySelector("[data-role='composer']");
+            if (composer) {
+              composer.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+            }
+          });
+        }
       });
     });
 
@@ -1061,6 +1286,7 @@
     loadState();
     ensureActiveSession();
     persistState();
+    applyTheme();
     render();
     void refreshConfig();
     startConfigPolling();

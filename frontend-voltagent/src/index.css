@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #00d992;
+  --color-primary-soft: #2fd6a1;
+  --color-primary-deep: #10b981;
+  --color-on-primary: #101010;
+  --color-ink: #f2f2f2;
+  --color-ink-strong: #ffffff;
+  --color-body: #bdbdbd;
+  --color-mute: #8b949e;
+  --color-hairline: #3d3a39;
+  --color-canvas: #101010;
+  --color-canvas-soft: #1a1a1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: "calt", "rlig";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-canvas-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Code font */
+code, pre, .font-mono {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+
+/* Green glow effect for primary button */
+.btn-primary-glow:hover {
+  box-shadow: 0 0 20px rgba(0, 217, 146, 0.3);
+}
+
+/* Hairline card */
+.card-hairline {
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  border-radius: 8px;
+}
+
+/* Section dashed divider */
+.dashed-divider {
+  border-top: 1px dashed rgba(79, 93, 117, 0.4);
+}
+
+/* Green typing cursor animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '▋';
+  color: var(--color-primary);
+  animation: blink 1s infinite;
+}
+
+/* Subtle pulse for indexing badge */
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse-green {
+  animation: pulse-green 1.5s ease-in-out infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}

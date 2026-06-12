@@ -1,4 +1,5 @@
 const express = require("express");
+const { requireAuth } = require("../middleware/authMiddleware");
 const {
   deleteWebsiteController,
   indexWebsiteController,
@@ -9,10 +10,10 @@ const {
 
 const router = express.Router();
 
-router.post("/index-website", indexWebsiteController);
-router.get("/websites", listWebsitesController);
-router.post("/websites/sync", syncCollectionsController);      // ← move this UP
-router.delete("/websites/:id", deleteWebsiteController);
-router.get("/websites/:id/status", getIndexingStatusController);
+router.post("/index-website", requireAuth, indexWebsiteController);
+router.get("/websites", requireAuth, listWebsitesController);
+router.post("/websites/sync", requireAuth, syncCollectionsController);      // ← move this UP
+router.delete("/websites/:id", requireAuth, deleteWebsiteController);
+router.get("/websites/:id/status", requireAuth, getIndexingStatusController);
 
 module.exports = router;

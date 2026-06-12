@@ -1,20 +1,31 @@
-const { runPythonBridge } = require("../../utils/runPython");
+const { runPythonBridge, requestPythonBridge } = require("../../utils/runPython");
 
-async function indexWebsite({ url, force = false }) {
-  return runPythonBridge([
-    "index-website",
-    "--url",
-    url,
-    ...(force ? ["--force"] : []),
-  ]);
+async function indexWebsite({ url, force = false, userId = null }) {
+  return requestPythonBridge({
+    method: "POST",
+    path: "/index-website",
+    body: {
+      url: String(url).trim(),
+      force: Boolean(force),
+    },
+    headers: userId ? { "x-user-id": String(userId) } : {},
+  });
 }
 
-async function listWebsites() {
-  return runPythonBridge(["list-websites"]);
+async function listWebsites({ userId = null } = {}) {
+  return requestPythonBridge({
+    method: "GET",
+    path: "/websites",
+    headers: userId ? { "x-user-id": String(userId) } : {},
+  });
 }
 
-async function deleteWebsite(id) {
-  return runPythonBridge(["delete-website", "--id", id]);
+async function deleteWebsite(id, { userId = null } = {}) {
+  return requestPythonBridge({
+    method: "DELETE",
+    path: `/websites/${encodeURIComponent(id)}`,
+    headers: userId ? { "x-user-id": String(userId) } : {},
+  });
 }
 
 module.exports = {

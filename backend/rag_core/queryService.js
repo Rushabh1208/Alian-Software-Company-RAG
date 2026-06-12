@@ -1,17 +1,13 @@
-const { runPythonBridge } = require("../utils/runPython");
+// REPLACE entire file content:
+const { requestPythonBridge } = require("../utils/runPython");
 
-async function askQuestion({ question, topK = 10, collection = "alian_software" }) {
-  return runPythonBridge([
-    "query",
-    "--question",
-    question,
-    "--collection",
-    collection,
-    "--top-k",
-    String(topK),
-  ]);
+async function askQuestion({ question, topK = 10, collection = "alian_software", userId = null }) {
+  return requestPythonBridge({
+    method: "POST",
+    path: "/query",
+    body: { question, collection, top_k: Number(topK) },
+    headers: userId ? { "x-user-id": String(userId) } : {},
+  });
 }
 
-module.exports = {
-  askQuestion,
-};
+module.exports = { askQuestion };

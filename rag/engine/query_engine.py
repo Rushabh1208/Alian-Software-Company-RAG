@@ -13,7 +13,7 @@ from rag.engine.generator import generate_answer
 from rag.engine.reranker import rerank_chunks
 from rag.engine.retrieval import query_embedding_file
 from rag.models.query_models import QueryResult
-from rag.prompts.prompt_settings import load_prompt_settings
+from rag.prompts.prompt_settings import load_prompt_settings_for_user
 from rag.utils.metrics import build_metrics, confidence_label
 from rag.engine.query_expander import expand_query
 
@@ -46,10 +46,13 @@ class RagQueryEngine:
         normalize_embeddings: bool,
         model_cache_dir: Path,
         embeddings_path: Path,
+        # NEW: optional user id for per-user prompt settings
+        user_id: str | None = None,
     ) -> None:
         self.persist_directory = persist_directory
         self.collection_name = collection_name
         self.embeddings_path = embeddings_path
+        self.user_id = user_id  # NEW
 
         self.embedding_generator = self._get_embedding_generator(
             model_name=model_name,
@@ -91,6 +94,8 @@ class RagQueryEngine:
         question: str,
         *,
         top_k: int = 10,
+        # NEW: per-request override (e.g. from widget queries)
+        user_id: str | None = None,
     ) -> QueryResult:
         total_started = perf_counter()
 
@@ -124,7 +129,6 @@ class RagQueryEngine:
 
         retrieval_latency_ms = (perf_counter() - retrieval_started) * 1000.0
 
-        # Skip expensive reranking when the top semantic match is already very strong
         rerank_started = perf_counter()
         if (
             len(sub_questions) == 1
@@ -162,7 +166,7 @@ class RagQueryEngine:
             )
             return QueryResult(
                 question=cleaned_question,
-                answer="I don’t know based on indexed content.",
+                answer="I don't know based on indexed content.",
                 confidence=0.0,
                 chunks=[],
                 confidence_label="low",
@@ -171,7 +175,14 @@ class RagQueryEngine:
             )
 
         generation_started = perf_counter()
-        prompt_settings = load_prompt_settings()
+
+        # Resolve prompt settings with user-scoped fallback chain
+        # (user-specific → global collection → defaults)
+        prompt_settings = load_prompt_settings_for_user(
+            user_id or self.user_id,
+            self.collection_name,
+        )
+
         answer_future = generate_answer(
             gemini_client=self.gemini_client,
             question=cleaned_question,
@@ -217,7 +228,6 @@ class RagQueryEngine:
             return None
         if _CROSS_ENCODER is not None:
             return _CROSS_ENCODER
-
         try:
             _CROSS_ENCODER = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu")
         except Exception:
@@ -231,11 +241,9 @@ class RagQueryEngine:
             return None
         if _GEMINI_CLIENT is not None:
             return _GEMINI_CLIENT
-
         api_key = os.getenv("GOOGLE_API_KEY", "").strip()
         if not api_key:
             return None
-
         try:
             _GEMINI_CLIENT = genai.Client(api_key=api_key)
         except Exception:

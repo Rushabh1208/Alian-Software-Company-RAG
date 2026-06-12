@@ -1,0 +1,24 @@
+[
+  {
+    "id": "daily_1",
+    "user_id": "user_seed",
+    "label": "Mon",
+    "chats": 12,
+    "queries": 42
+  },
+  {
+    "id": "daily_2",
+    "user_id": "user_seed",
+    "label": "Tue",
+    "chats": 18,
+    "queries": 56
+  },
+  {
+    "id": "adly_86669743fc75",
+    "user_id": "user_930e0351055b",
+    "date": "2026-06-12",
+    "label": "Fri, Jun 12",
+    "queries": 8,
+    "chats": 8
+  }
+]

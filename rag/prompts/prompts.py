@@ -108,6 +108,8 @@ def _sanitize_prompt_text(text: str) -> str:
 
 
 def _build_constraints_block(user_constraints: list[str]) -> str:
+    # Base grounding rules that always apply — these are safety/quality
+    # guardrails and must always be present.
     base_lines = [
         f"- {MANDATORY_PROMPT_CONSTRAINT}",
         "- Respond in a warm, friendly, conversational tone like a real customer support agent.",
@@ -128,13 +130,21 @@ def _build_constraints_block(user_constraints: list[str]) -> str:
         if _constraint_key(constraint) not in base_keys
     ]
 
-    if extra_constraints:
-        base_lines.append("")
-        base_lines.extend(_format_constraint_line(constraint) for constraint in extra_constraints)
+    if not extra_constraints:
+        return "\n".join(base_lines)
 
-    return "\n".join(base_lines)
+    # FIX: user constraints go FIRST so Gemini treats them as highest priority.
+    # Base grounding rules follow — they act as a safety floor, not the lead.
+    result_lines: list[str] = []
+
+    result_lines.append("IMPORTANT — follow these custom instructions first:")
+    result_lines.extend(_format_constraint_line(c) for c in extra_constraints)
+    result_lines.append("")
+    result_lines.append("Then also follow these grounding rules:")
+    result_lines.extend(base_lines)
+
+    return "\n".join(result_lines)
 
 
 def _constraint_key(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
-

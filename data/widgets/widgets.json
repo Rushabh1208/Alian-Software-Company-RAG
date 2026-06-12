@@ -1,38 +1,32 @@
 [
   {
-    "widgetId": "widget_2f1195c7945b",
+    "widgetId": "widget_3536c046b6bb",
+    "ownerId": "user_c1a8c73bb3f3",
     "collection": "alian_software",
-    "displayName": "aliansoftware.com",
+    "displayName": "Alian Software",
     "status": "active",
-    "createdAt": "2026-06-03T03:59:59.952Z",
-    "updatedAt": "2026-06-08T04:31:34.622Z",
-    "mappingVersion": "2026-06-08T04:31:34.622Z"
+    "createdAt": "2026-06-11T07:16:53.415Z",
+    "updatedAt": "2026-06-11T08:02:54.051Z",
+    "mappingVersion": "2026-06-11T08:02:54.051Z"
   },
   {
-    "widgetId": "widget_ac0668964780",
-    "collection": "website_hansalpatel_tech",
-    "displayName": "hansalpatel.tech",
+    "widgetId": "widget_3eb69f5b8c54",
+    "ownerId": "user_930e0351055b",
+    "collection": "alian_software",
+    "displayName": "ALIAN",
     "status": "active",
-    "createdAt": "2026-06-03T04:27:31.391Z",
-    "updatedAt": "2026-06-03T06:42:07.549Z",
-    "mappingVersion": "2026-06-03T06:42:07.549Z"
+    "createdAt": "2026-06-11T08:03:55.332Z",
+    "updatedAt": "2026-06-12T05:56:24.942Z",
+    "mappingVersion": "2026-06-12T05:56:24.942Z"
   },
   {
-    "widgetId": "widget_b0fadba84809",
-    "collection": "website_minimalist_ae",
-    "displayName": "minimalist.ae",
-    "status": "active",
-    "createdAt": "2026-06-08T04:14:03.544Z",
-    "updatedAt": "2026-06-08T04:14:03.544Z",
-    "mappingVersion": "2026-06-08T04:14:03.544Z"
-  },
-  {
-    "widgetId": "widget_b392c85024d9",
+    "widgetId": "widget_5bc906ecbc72",
+    "ownerId": "user_930e0351055b",
     "collection": "website_mbit_edu_in",
-    "displayName": "mbit.edu.in",
+    "displayName": "MBIT",
     "status": "active",
-    "createdAt": "2026-06-08T06:02:01.979Z",
-    "updatedAt": "2026-06-08T06:02:01.979Z",
-    "mappingVersion": "2026-06-08T06:02:01.979Z"
+    "createdAt": "2026-06-11T12:28:53.419Z",
+    "updatedAt": "2026-06-12T05:56:16.246Z",
+    "mappingVersion": "2026-06-12T05:56:16.246Z"
   }
 ]

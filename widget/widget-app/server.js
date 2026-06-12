@@ -23,6 +23,8 @@ function sendFile(res, filePath) {
     res.writeHead(200, {
       "Content-Type": contentType,
       "Cache-Control": "no-cache",
+      // Allow any website to load the widget script.
+      "Access-Control-Allow-Origin": "*",
     });
     res.end(payload);
   } catch (_error) {
@@ -34,6 +36,16 @@ function sendFile(res, filePath) {
 const server = http.createServer((req, res) => {
   const requestUrl = new URL(req.url || "/", "http://localhost");
   const pathname = requestUrl.pathname;
+
+  // Handle preflight OPTIONS for CORS.
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    });
+    return res.end();
+  }
 
   if (pathname === "/widget.js") {
     return sendFile(res, path.join(ROOT, "widget.js"));

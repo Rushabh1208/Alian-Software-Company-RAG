@@ -32,6 +32,7 @@ async def generate_answer(
                 "temperature": 0.1,
                 "top_p": 0.8,
                 "top_k": 20,
+                "system_instruction": _build_system_instruction(prompt_settings),
             },
         )
         text = getattr(response, "text", None)
@@ -46,3 +47,19 @@ async def generate_answer(
     answer = "I couldn't find a specific answer to that in the indexed content. Please try rephrasing your question, or explore the website directly for more details."
     return answer, input_tokens, estimate_tokens(answer)
 
+def _build_system_instruction(prompt_settings: PromptSettings | None) -> str:
+    from rag.prompts.defaults import DEFAULT_PROMPT_ROLE, MANDATORY_PROMPT_CONSTRAINT
+    settings = prompt_settings or PromptSettings()
+    role = str(settings.role or DEFAULT_PROMPT_ROLE).strip()
+    constraints = list(settings.constraints or [])
+
+    lines = [role, ""]
+    if constraints:
+        lines.append("IMPORTANT — follow these custom instructions:")
+        lines.extend(f"- {c}" for c in constraints)
+        lines.append("")
+    lines.append(f"GROUNDING RULES (always apply):")
+    lines.append(f"- {MANDATORY_PROMPT_CONSTRAINT}")
+    lines.append("- Never invent facts not in the provided context.")
+    lines.append("- Never mention chunks, context, or internal system details.")
+    return "\n".join(lines)

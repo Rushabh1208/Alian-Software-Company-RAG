@@ -22,6 +22,7 @@ from rag.models.query_models import QueryResult
 from rag.utils.websites import (
     WebsiteRecord,
     build_website_record,
+    filter_records_by_user,
     load_json_records,
     normalize_website_url,
     now_iso,
@@ -92,10 +93,19 @@ class WebsiteIngestionService:
         url: str,
         *,
         force: bool = False,
+        user_id: str | None = None,
     ) -> WebsiteIngestionResult:
+        """
+        Index a website for a given user.
+
+        When *user_id* is supplied every artifact (ChromaDB collection,
+        workspace directory, registry entry) is scoped to that user so that
+        multiple users can index the same URL without any conflict.
+        """
         normalized_url = normalize_website_url(url)
-        collection_name = website_collection_name(normalized_url)
-        workspace_name = website_workspace_name(normalized_url)
+        # Generate a user-scoped collection/workspace name.
+        collection_name = website_collection_name(normalized_url, user_id=user_id)
+        workspace_name = website_workspace_name(normalized_url, user_id=user_id)
         paths = get_pipeline_paths(self.settings.chroma_db_path, workspace_name=workspace_name)
         paths.ensure_directories()
 
@@ -116,7 +126,7 @@ class WebsiteIngestionService:
         # Register website immediately so sidebar shows it before indexing finishes
         website_record = upsert_website_record(
             paths.website_registry,
-            build_website_record(normalized_url, collection_name=collection_name),
+            build_website_record(normalized_url, collection_name=collection_name, user_id=user_id),
         )
 
         # Write initial "indexing" progress file immediately
@@ -281,14 +291,22 @@ class WebsiteIngestionService:
             "removed": len(registry) - len(cleaned),
             "websites": cleaned,
         }
-    
+
     async def query(
         self,
         question: str,
         *,
         collection_name: str = DEFAULT_BASE_COLLECTION_NAME,
         top_k: int = 5,
+        user_id: str | None = None,
     ) -> WebsiteQueryResult:
+        """
+        Query a ChromaDB collection.
+
+        The collection name is expected to already be user-scoped (set by the
+        Node layer from the ownership table). The *user_id* parameter is kept
+        for API consistency and logging only.
+        """
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         paths.ensure_directories()
         resolved_collection = self._resolve_collection_name(paths.chromadb_dir, collection_name)
@@ -315,23 +333,40 @@ class WebsiteIngestionService:
             )
             _QUERY_ENGINE_CACHE[cache_key] = engine
 
-        result = await engine.ask(question, top_k=max(top_k, 1))
+        result = await engine.ask(question, top_k=max(top_k, 1), user_id=user_id)
         return WebsiteQueryResult(collection_name=resolved_collection, result=result)
 
-    def list_websites(self) -> list[dict[str, str]]:
+    def list_websites(self, *, user_id: str | None = None) -> list[dict[str, str]]:
+        """
+        Return website registry entries.
+
+        When *user_id* is provided only that user's entries are returned (plus
+        the shared base collection).  When *user_id* is None (admin) all entries
+        are returned.
+        """
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         registry = load_json_records(paths.website_registry)
-        website_entries = [item for item in registry if str(item.get("source_type") or "") == "website"]
+        website_entries = [
+            item for item in registry if str(item.get("source_type") or "") == "website"
+        ]
 
+        # Ensure the shared base collection is always present
         if not any(str(item.get("id") or "") == DEFAULT_BASE_COLLECTION_NAME for item in website_entries):
             website_entries.insert(
                 0,
                 build_website_record(DEFAULT_TARGET_WEBSITE, collection_name=DEFAULT_BASE_COLLECTION_NAME).to_json(),
             )
 
-        return website_entries
+        # Apply per-user filter (shared collection always included)
+        return filter_records_by_user(website_entries, user_id, include_shared=True)
 
-    def delete_website(self, website_id: str) -> dict[str, str]:
+    def delete_website(self, website_id: str, *, user_id: str | None = None) -> dict[str, str]:
+        """
+        Delete a website collection and all associated data.
+
+        *user_id* is accepted for API consistency and future audit logging
+        (the Node layer already enforces ownership checks before calling here).
+        """
         if website_id == DEFAULT_BASE_COLLECTION_NAME:
             raise ValueError("The base collection cannot be deleted.")
 

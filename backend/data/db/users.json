@@ -1,0 +1,35 @@
+[
+  {
+    "id": "user_930e0351055b",
+    "role_id": "role_user",
+    "name": "prit",
+    "email": "pritvadodariya@gmail.com",
+    "password_hash": "5cd224f35131b0dce1872beee364158f:634b56958caffd415dd096da27eb2f4516a47d93c92030a7a61f40064e5e869183626ae7f05d6217d0394b883cffddc9cf458f1cd87c2eb6cc58e164f663ebdf",
+    "status": "active",
+    "created_at": "2026-06-10T09:00:28.736Z",
+    "updated_at": "2026-06-12T08:50:12.192Z",
+    "last_login_at": "2026-06-12T08:50:12.192Z"
+  },
+  {
+    "id": "user_7af4e371e146",
+    "role_id": "role_admin",
+    "name": "rushabh",
+    "email": "shahrushabh1208@gmail.com",
+    "password_hash": "fa5d4f57c2eddce2ab8f6bf8b9b9c19f:2f0d75cef8eabd0e24b29a5ad2167fa28d32f1f2341d97259a60e57dde4a235a88d7467a6c50d4a14e264e30f601719ee7ee38f02b5ed8049860d5eaf6ddefe0",
+    "status": "active",
+    "created_at": "2026-06-10T09:30:33.361Z",
+    "updated_at": "2026-06-12T08:56:40.317Z",
+    "last_login_at": "2026-06-12T08:56:40.317Z"
+  },
+  {
+    "id": "user_c1a8c73bb3f3",
+    "role_id": "role_user",
+    "name": "Soham",
+    "email": "soham@gmail.com",
+    "password_hash": "a66e69d733be8a6d1e9bbc16d7f8d39e:4e22e79e92b52a29b290e6c1151880c9deb5335565991dc5b37ee7d4d08c50d73649297de3a66222ce3f0c5609a652ffa00f6a647c067186ee587e2ba0cde9c2",
+    "status": "active",
+    "created_at": "2026-06-11T04:09:29.965Z",
+    "updated_at": "2026-06-12T08:50:33.086Z",
+    "last_login_at": "2026-06-12T08:50:33.086Z"
+  }
+]

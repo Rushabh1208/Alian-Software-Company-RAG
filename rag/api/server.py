@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel, Field
 
 from config.constants import DEFAULT_BASE_COLLECTION_NAME
 from rag.prompts.prompt_settings import (
-    load_prompt_settings,
+    load_prompt_settings_for_user,
     normalize_prompt_settings,
-    save_prompt_settings,
+    prompt_settings_path_for_collection,
+    reset_prompt_settings_for_user,
+    save_prompt_settings_for_user,
 )
 from rag.services.web_ingestion.service import WebsiteIngestionService
 
@@ -34,18 +36,27 @@ app = FastAPI(title="RAG Python Bridge", version="1.0.0")
 service = WebsiteIngestionService()
 
 
+# ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
+
 @app.get("/health")
 async def health() -> dict[str, bool]:
     return {"ok": True}
 
 
+# ---------------------------------------------------------------------------
+# Query / indexing
+# ---------------------------------------------------------------------------
+
 @app.post("/query")
-async def query_endpoint(payload: QueryRequest) -> dict[str, Any]:
+async def query_endpoint(payload: QueryRequest, x_user_id: str | None = Header(default=None)):
     try:
         result = await service.query(
             payload.question,
             collection_name=payload.collection,
             top_k=payload.top_k,
+            user_id=x_user_id,
         )
         return result.to_dict()
     except ValueError as error:
@@ -55,55 +66,64 @@ async def query_endpoint(payload: QueryRequest) -> dict[str, Any]:
 
 
 @app.post("/index-website")
-async def index_website_endpoint(payload: IndexWebsiteRequest) -> dict[str, Any]:
+async def index_website_endpoint(
+    payload: IndexWebsiteRequest,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
+    """
+    Index a website for a specific user.
+
+    When x_user_id is provided the Python layer generates a user-scoped
+    collection name (website_<slug>_u_<sanitised_user_id>) so that each user
+    gets a completely isolated ChromaDB collection and data directory.
+
+    Multiple users can index the same URL without any conflict — they each
+    receive their own independent collection.
+    """
     try:
-        result = await service.index_website(payload.url, force=payload.force)
+        result = await service.index_website(
+            payload.url,
+            force=payload.force,
+            user_id=x_user_id,
+        )
         return result.to_dict()
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Indexing failed: {error}")
 
 
 @app.get("/websites")
-async def list_websites_endpoint() -> dict[str, Any]:
+async def list_websites_endpoint(
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
+    """
+    List websites.  When x_user_id is supplied, only that user's websites are
+    returned (plus the shared base collection).  Without it (admin calls) all
+    websites are returned.
+    """
     try:
-        return {"websites": service.list_websites()}
+        return {"websites": service.list_websites(user_id=x_user_id)}
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Failed to list websites: {error}")
 
 
 @app.delete("/websites/{website_id}")
-async def delete_website_endpoint(website_id: str) -> dict[str, Any]:
+async def delete_website_endpoint(
+    website_id: str,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
     try:
-        return service.delete_website(website_id)
+        return service.delete_website(website_id, user_id=x_user_id)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error))
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Delete failed: {error}")
 
 
-@app.get("/prompt-settings")
-async def get_prompt_settings() -> dict[str, Any]:
-    try:
-        return load_prompt_settings().to_dict()
-    except Exception as error:
-        raise HTTPException(status_code=500, detail=f"Failed to load prompt settings: {error}")
-
-
-@app.put("/prompt-settings")
-async def update_prompt_settings(payload: PromptSettingsRequest) -> dict[str, Any]:
-    try:
-        normalized = normalize_prompt_settings(
-            role=payload.role,
-            constraints=payload.constraints,
-        )
-        saved = save_prompt_settings(normalized)
-        return saved.to_dict()
-    except Exception as error:
-        raise HTTPException(status_code=500, detail=f"Failed to save prompt settings: {error}")
-
-
 @app.get("/websites/{website_id}/status")
-async def website_status(website_id: str) -> dict[str, Any]:
+async def website_status(
+    website_id: str,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
     try:
         return service.get_indexing_status(website_id)
     except Exception as error:
@@ -116,3 +136,62 @@ async def sync_websites() -> dict[str, Any]:
         return service.sync_collections()
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Failed to sync collections: {error}")
+
+
+# ---------------------------------------------------------------------------
+# Prompt settings — user-scoped, per-collection
+#
+# The Node layer passes x-user-id (the authenticated user's id) in every
+# request.  When present, settings are stored under:
+#   data/prompt_settings_users/<user_id>/<collection>.json
+#
+# When absent (e.g. admin tooling, legacy calls), the global per-collection
+# fallback is used instead.
+# ---------------------------------------------------------------------------
+
+@app.get("/prompt-settings")
+async def get_prompt_settings(
+    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
+    try:
+        return load_prompt_settings_for_user(x_user_id, collection).to_dict()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to load prompt settings: {error}")
+
+
+@app.put("/prompt-settings")
+async def update_prompt_settings(
+    payload: PromptSettingsRequest,
+    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
+    try:
+        normalized = normalize_prompt_settings(
+            role=payload.role,
+            constraints=payload.constraints,
+        )
+        saved = save_prompt_settings_for_user(
+            normalized,
+            user_id=x_user_id,
+            collection=collection,
+        )
+        return saved.to_dict()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to save prompt settings: {error}")
+
+
+@app.delete("/prompt-settings")
+async def reset_prompt_settings_endpoint(
+    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    x_user_id: str | None = Header(default=None),
+) -> dict[str, Any]:
+    """Delete user-specific override and return the effective settings."""
+    try:
+        effective = reset_prompt_settings_for_user(
+            user_id=x_user_id,
+            collection=collection,
+        )
+        return effective.to_dict()
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Failed to reset prompt settings: {error}")

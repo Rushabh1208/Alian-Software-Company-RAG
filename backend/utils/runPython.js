@@ -1,3 +1,7 @@
+// backend/utils/runPython.js
+// CHANGE: requestPythonBridge now merges request.headers into the fetch call
+// so callers can forward x-user-id (and any other headers) to the Python bridge.
+
 const { URL } = require("url");
 
 const defaultBaseUrl = process.env.RAG_PYTHON_API_URL || "http://127.0.0.1:8000";
@@ -112,7 +116,14 @@ async function requestPythonBridge(request) {
   }
 
   const url = new URL(request.path, defaultBaseUrl).toString();
-  const headers = { "Accept": "application/json" };
+
+  // CHANGED: merge any caller-supplied headers (e.g. x-user-id) into the
+  // request headers so the Python bridge can scope operations per user.
+  const headers = {
+    Accept: "application/json",
+    ...(request.headers && typeof request.headers === "object" ? request.headers : {}),
+  };
+
   const options = {
     method: request.method,
     headers,

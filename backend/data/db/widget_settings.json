@@ -1,0 +1,26 @@
+[
+  {
+    "id": "widget_settings_eb65aeee0a65",
+    "user_id": "user_930e0351055b",
+    "theme": "light",
+    "welcome_message": "Hello! How can i help you",
+    "suggested_questions": [
+      "who is ceo?",
+      "full form of mbit?",
+      "who?"
+    ],
+    "widget_title": "CHATBOT",
+    "accent_color": "#6366f1",
+    "updated_at": "2026-06-12T06:45:06.989Z"
+  },
+  {
+    "id": "widget_settings_033a43683e69",
+    "user_id": "user_c1a8c73bb3f3",
+    "theme": "dark",
+    "welcome_message": "",
+    "suggested_questions": [],
+    "widget_title": "Voltagent Assistant",
+    "accent_color": "#00d992",
+    "updated_at": "2026-06-11T08:02:31.168Z"
+  }
+]

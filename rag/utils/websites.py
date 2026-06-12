@@ -9,6 +9,15 @@ from urllib.parse import urlsplit
 
 from config.constants import DEFAULT_BASE_COLLECTION_NAME, WEBSITE_COLLECTION_PREFIX
 
+# Separator used between the URL slug and the user-id suffix in collection names.
+# Must not appear in normal slugs (which use only [a-z0-9_]).
+_USER_SUFFIX_SEP = "_u_"
+
+# Maximum characters to use from a sanitised user-id in the collection name.
+# ChromaDB collection names must be 3–63 characters, all lowercase
+# alphanumeric + underscores/hyphens, no consecutive dots.
+_MAX_USER_SLUG_LEN = 20
+
 
 @dataclass(frozen=True)
 class WebsiteRecord:
@@ -22,6 +31,8 @@ class WebsiteRecord:
     status: str = "indexed"
     indexed_at: str = ""
     updated_at: str = ""
+    # Multi-tenancy: which user owns this collection (may be empty for legacy/shared records)
+    owner_user_id: str = ""
 
     def to_json(self) -> dict[str, str]:
         return {key: str(value) for key, value in asdict(self).items()}
@@ -56,20 +67,49 @@ def website_slug(url: str) -> str:
     return slug or DEFAULT_BASE_COLLECTION_NAME
 
 
-def website_collection_name(url: str) -> str:
+def _sanitise_user_id(user_id: str) -> str:
+    """Convert an arbitrary user-id string to a safe slug usable in a collection name."""
+    slug = re.sub(r"[^a-z0-9]", "_", user_id.lower()).strip("_")
+    slug = re.sub(r"_+", "_", slug)  # collapse consecutive underscores
+    return slug[:_MAX_USER_SLUG_LEN].strip("_") or "user"
+
+
+def website_collection_name(url: str, *, user_id: str | None = None) -> str:
+    """
+    Return the ChromaDB collection name for a URL, optionally scoped to a user.
+
+    When *user_id* is provided the name is user-scoped:
+        website_<slug>_u_<sanitised_user_id>
+
+    This guarantees that two different users indexing the same URL each get
+    their own, fully isolated ChromaDB collection.
+
+    The base/shared collection (aliansoftware.com) is never user-scoped.
+    """
     if _is_default_company_site(url):
         return DEFAULT_BASE_COLLECTION_NAME
-    return f"{WEBSITE_COLLECTION_PREFIX}{website_slug(url)}"
+
+    base = f"{WEBSITE_COLLECTION_PREFIX}{website_slug(url)}"
+    if user_id:
+        user_slug = _sanitise_user_id(str(user_id))
+        return f"{base}{_USER_SUFFIX_SEP}{user_slug}"
+    return base
 
 
-def website_workspace_name(url: str) -> str:
-    return website_collection_name(url)
+def website_workspace_name(url: str, *, user_id: str | None = None) -> str:
+    """Return the filesystem workspace name (mirrors the collection name)."""
+    return website_collection_name(url, user_id=user_id)
 
 
-def build_website_record(url: str, *, collection_name: str | None = None) -> WebsiteRecord:
+def build_website_record(
+    url: str,
+    *,
+    collection_name: str | None = None,
+    user_id: str | None = None,
+) -> WebsiteRecord:
     normalized = normalize_website_url(url)
     domain = website_domain(normalized)
-    collection = collection_name or website_collection_name(normalized)
+    collection = collection_name or website_collection_name(normalized, user_id=user_id)
     now = now_iso()
     return WebsiteRecord(
         id=collection,
@@ -80,6 +120,7 @@ def build_website_record(url: str, *, collection_name: str | None = None) -> Web
         source_url=normalized,
         indexed_at=now,
         updated_at=now,
+        owner_user_id=str(user_id) if user_id else "",
     )
 
 
@@ -109,7 +150,7 @@ def upsert_website_record(path: Path, record: WebsiteRecord) -> WebsiteRecord:
     filtered = [item for item in records if str(item.get("id") or "") != record.id]
     filtered.append(payload)
     save_json_records(path, filtered)
-    return WebsiteRecord(**payload)
+    return WebsiteRecord(**{k: payload.get(k, "") for k in WebsiteRecord.__dataclass_fields__})
 
 
 def remove_website_record(path: Path, record_id: str) -> WebsiteRecord | None:
@@ -130,12 +171,39 @@ def remove_website_record(path: Path, record_id: str) -> WebsiteRecord | None:
                 status=str(item.get("status") or "indexed"),
                 indexed_at=str(item.get("indexed_at") or ""),
                 updated_at=str(item.get("updated_at") or ""),
+                owner_user_id=str(item.get("owner_user_id") or ""),
             )
             continue
         remaining.append(item)
 
     save_json_records(path, remaining)
     return removed
+
+
+def filter_records_by_user(
+    records: list[dict[str, str]],
+    user_id: str | None,
+    *,
+    include_shared: bool = True,
+) -> list[dict[str, str]]:
+    """
+    Filter a list of website registry records to only those belonging to *user_id*.
+
+    When *include_shared* is True (default) the shared base collection
+    (owner_user_id == "") is always included regardless of user_id.
+    """
+    if user_id is None:
+        return records  # admin / unauthenticated → return all
+
+    result = []
+    for item in records:
+        owner = str(item.get("owner_user_id") or "")
+        if include_shared and not owner:
+            result.append(item)
+            continue
+        if owner == str(user_id):
+            result.append(item)
+    return result
 
 
 def _is_default_company_site(url: str) -> bool:
