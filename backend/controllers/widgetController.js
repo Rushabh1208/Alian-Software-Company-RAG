@@ -10,10 +10,10 @@ const {
   updateWidget,
 } = require("../services/widgetService");
 const { getWidgetSettings, saveWidgetSettings } = require("../services/widgetSettingsService");
+const { loadAdminConfig } = require("../services/adminConfigService");
 const { readTable } = require("../utils/dbStore");
 const {
   assertWebsiteAccess,
-  DEFAULT_BASE_COLLECTION_NAME,
 } = require("../services/websiteOwnershipService");
 
 // Extract authenticated user id from request (set by requireAuth middleware).
@@ -61,12 +61,26 @@ async function createWidgetController(req, res) {
     if (!ownerId) return res.status(401).json({ error: "Unauthorised." });
 
     const { collection, displayName, status } = req.body || {};
-    const targetCollection = String(collection || "").trim() || DEFAULT_BASE_COLLECTION_NAME;
+    const targetCollection = String(collection || "").trim();
+    if (!targetCollection) {
+      return res.status(400).json({ error: "Collection is required." });
+    }
+
+    const adminConfig = loadAdminConfig();
+    const registrationConfig = adminConfig.registration || {};
+    const maxWidgets = Number(registrationConfig.max_chatbots_per_user || 0);
+    const isAdmin = String(req.auth?.role || "").toLowerCase() === "admin";
+    if (!isAdmin && maxWidgets > 0) {
+      const currentWidgets = listWidgetsByOwner(ownerId);
+      if (currentWidgets.length >= maxWidgets) {
+        return res.status(403).json({
+          error: `You can create up to ${maxWidgets} chatbot${maxWidgets === 1 ? "" : "s"} per user.`,
+        });
+      }
+    }
 
     // A widget exposes a collection's RAG content publicly (via /widget/chat),
-    // so users may only point widgets at collections they own (or the shared
-    // base collection).
-    const isAdmin = String(req.auth?.role || "").toLowerCase() === "admin";
+    // so users may only point widgets at collections they own.
     try {
       assertWebsiteAccess(targetCollection, { userId: ownerId, isAdmin });
     } catch (accessError) {
@@ -119,7 +133,10 @@ async function updateWidgetController(req, res) {
 
     if (updates.collection) {
       const isAdmin = String(req.auth?.role || "").toLowerCase() === "admin";
-      const targetCollection = String(updates.collection).trim() || DEFAULT_BASE_COLLECTION_NAME;
+      const targetCollection = String(updates.collection).trim();
+      if (!targetCollection) {
+        return res.status(400).json({ error: "Collection is required." });
+      }
       try {
         assertWebsiteAccess(targetCollection, { userId: ownerId, isAdmin });
       } catch (accessError) {

@@ -1,6 +1,7 @@
 const { randomUUID } = require("crypto");
 const { createAccessToken, createRefreshToken, hashPassword, verifyPassword, verifyRefreshToken } = require("../utils/auth");
 const { ensureSeeded, nextId, readTable, writeTable } = require("../utils/dbStore");
+const { loadAdminConfig } = require("./adminConfigService");
 
 function getRoleByName(name) {
   ensureSeeded();
@@ -27,6 +28,8 @@ function toPublicUser(user) {
     status: user.status,
     lastLoginAt: user.last_login_at || null,
     createdAt: user.created_at,
+    defaultModel: user.default_model || null,
+    tokenLimit: user.token_limit || null,
   };
 }
 
@@ -47,11 +50,18 @@ function persistRefreshToken(userId, refreshToken) {
 
 function register({ name, email, password, role = "User" }) {
   ensureSeeded();
+  const adminConfig = loadAdminConfig();
+  const registrationConfig = adminConfig.registration || {};
+  if (!Boolean(registrationConfig.enabled)) {
+    throw new Error("Registration is currently disabled.");
+  }
   if (!name || !String(name).trim()) throw new Error("Name is required.");
   if (!email || !String(email).trim()) throw new Error("Email is required.");
   if (!password || String(password).length < 8) throw new Error("Password must be at least 8 characters.");
   if (getUserByEmail(email)) throw new Error("Email already exists.");
   const roleRecord = getRoleByName(role) || getRoleByName("User");
+  const defaultModel = String(registrationConfig.signup_default_model || "gemini-3.1-flash-lite");
+  const tokenLimit = Number(registrationConfig.signup_default_token_limit || 50000);
   const now = new Date().toISOString();
   const users = readTable("users");
   const user = {
@@ -64,6 +74,8 @@ function register({ name, email, password, role = "User" }) {
     created_at: now,
     updated_at: now,
     last_login_at: null,
+    default_model: defaultModel,
+    token_limit: Number.isFinite(tokenLimit) ? tokenLimit : 50000,
   };
   users.push(user);
   writeTable("users", users);

@@ -30,9 +30,8 @@ except Exception:
 
 load_dotenv()
 
-_INITIAL_RETRIEVAL_K = 20
 _EMBEDDING_GENERATOR_CACHE: dict[str, HuggingFaceEmbeddingGenerator] = {}
-_CROSS_ENCODER: object | None = None
+_CROSS_ENCODER_CACHE: dict[str, object | None] = {}
 _GEMINI_CLIENT: object | None = None
 
 
@@ -46,6 +45,8 @@ class RagQueryEngine:
         normalize_embeddings: bool,
         model_cache_dir: Path,
         embeddings_path: Path,
+        retrieval_config: dict[str, object] | None = None,
+        reranking_config: dict[str, object] | None = None,
         # NEW: optional user id for per-user prompt settings
         user_id: str | None = None,
     ) -> None:
@@ -53,6 +54,8 @@ class RagQueryEngine:
         self.collection_name = collection_name
         self.embeddings_path = embeddings_path
         self.user_id = user_id  # NEW
+        self.retrieval_config = retrieval_config or {}
+        self.reranking_config = reranking_config or {}
 
         self.embedding_generator = self._get_embedding_generator(
             model_name=model_name,
@@ -66,7 +69,11 @@ class RagQueryEngine:
             else ""
         )
 
-        self.cross_encoder = self._load_cross_encoder()
+        self.cross_encoder = self._load_cross_encoder(
+            model_name=str(self.reranking_config.get("model", "cross-encoder/ms-marco-MiniLM-L-6-v2")),
+            backend=str(self.reranking_config.get("backend", "auto")),
+            enabled=bool(self.reranking_config.get("enabled", True)),
+        )
         self.gemini_client = self._load_gemini_client()
 
     @classmethod
@@ -120,9 +127,11 @@ class RagQueryEngine:
                 persist_directory=self.persist_directory,
                 collection_name=self.collection_name,
                 query_embedding=sub_embedding,
-                top_k=_INITIAL_RETRIEVAL_K,
+                top_k=self._initial_retrieval_k(),
             )
             for chunk in sub_chunks:
+                if chunk.semantic_score < self._minimum_semantic_score():
+                    continue
                 if chunk.chunk_id not in seen_chunk_ids:
                     seen_chunk_ids.add(chunk.chunk_id)
                     candidate_chunks.append(chunk)
@@ -130,11 +139,16 @@ class RagQueryEngine:
         retrieval_latency_ms = (perf_counter() - retrieval_started) * 1000.0
 
         rerank_started = perf_counter()
-        if (
-            len(sub_questions) == 1
-            and candidate_chunks
-            and getattr(candidate_chunks[0], "semantic_score", 0.0) > 0.82
-        ):
+        reranking_enabled = bool(self.reranking_config.get("enabled", True))
+        skip_rerank = (
+            not reranking_enabled
+            or (
+                len(sub_questions) == 1
+                and candidate_chunks
+                and getattr(candidate_chunks[0], "semantic_score", 0.0) > 0.82
+            )
+        )
+        if skip_rerank:
             reranked_chunks = candidate_chunks
             rerank_latency_ms = 0.0
         else:
@@ -145,9 +159,10 @@ class RagQueryEngine:
             )
             rerank_latency_ms = (perf_counter() - rerank_started) * 1000.0
 
+        final_top_k = self._final_top_k(top_k)
         accepted_chunks, confidence, confidence_factors = filter_chunks(
             reranked_chunks,
-            top_k=top_k,
+            top_k=final_top_k,
         )
 
         if not accepted_chunks:
@@ -215,24 +230,47 @@ class RagQueryEngine:
             question=cleaned_question,
             answer=answer,
             confidence=confidence,
-            chunks=accepted_chunks[:top_k],
+            chunks=accepted_chunks[:final_top_k],
             confidence_label=confidence_label_value,
             confidence_factors=confidence_factors,
             metrics=metrics,
         )
 
     @staticmethod
-    def _load_cross_encoder():
-        global _CROSS_ENCODER
+    def _load_cross_encoder(model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2", backend: str = "auto", enabled: bool = True):
+        if not enabled:
+            return None
         if CrossEncoder is None:
             return None
-        if _CROSS_ENCODER is not None:
-            return _CROSS_ENCODER
+        cache_key = f"{backend}|{model_name}"
+        if cache_key in _CROSS_ENCODER_CACHE:
+            return _CROSS_ENCODER_CACHE[cache_key]
         try:
-            _CROSS_ENCODER = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu")
+            cross_encoder = CrossEncoder(model_name, device="cpu")
         except Exception:
-            _CROSS_ENCODER = None
-        return _CROSS_ENCODER
+            cross_encoder = None
+        _CROSS_ENCODER_CACHE[cache_key] = cross_encoder
+        return cross_encoder
+
+    def _initial_retrieval_k(self) -> int:
+        try:
+            return max(1, int(self.retrieval_config.get("vector_top_k", 20)))
+        except (TypeError, ValueError):
+            return 20
+
+    def _final_top_k(self, requested_top_k: int) -> int:
+        try:
+            configured = max(1, int(self.retrieval_config.get("final_top_k", requested_top_k)))
+        except (TypeError, ValueError):
+            configured = max(1, requested_top_k)
+        return max(1, min(max(1, requested_top_k), configured))
+
+    def _minimum_semantic_score(self) -> float:
+        try:
+            max_distance = float(self.retrieval_config.get("max_search_distance", 1.15))
+        except (TypeError, ValueError):
+            max_distance = 1.15
+        return max(0.0, min(1.0, 1.0 - (max_distance / 2.0)))
 
     @staticmethod
     def _load_gemini_client():

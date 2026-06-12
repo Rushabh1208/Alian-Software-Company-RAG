@@ -11,8 +11,9 @@ function getAdminOverviewMetrics() {
   };
 }
 
-// Record one query event for a user on today's date
-function recordDailyQuery(userId) {
+// Record one query event (and token count) for a user on today's date.
+// Pass tokensUsed = 0 if you don't have a count yet; update later via recordDailyTokens.
+function recordDailyQuery(userId, tokensUsed = 0) {
   if (!userId) return;
   ensureSeeded();
   const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
@@ -21,7 +22,8 @@ function recordDailyQuery(userId) {
   const idx = rows.findIndex((r) => r.user_id === userId && r.date === today);
   if (idx >= 0) {
     rows[idx].queries = (rows[idx].queries || 0) + 1;
-    rows[idx].chats = (rows[idx].chats || 0) + 1;
+    rows[idx].chats   = (rows[idx].chats   || 0) + 1;
+    rows[idx].tokens  = (rows[idx].tokens  || 0) + tokensUsed;
   } else {
     rows.push({
       id: nextId("adly"),
@@ -30,18 +32,20 @@ function recordDailyQuery(userId) {
       label,
       queries: 1,
       chats: 1,
+      tokens: tokensUsed,
     });
   }
   writeTable("analytics_daily", rows);
 
   // Also update monthly bucket
-  const monthKey = today.slice(0, 7); // "YYYY-MM"
+  const monthKey   = today.slice(0, 7); // "YYYY-MM"
   const monthLabel = new Date().toLocaleDateString("en", { month: "short", year: "numeric" });
-  const monthly = readTable("analytics_monthly");
-  const mi = monthly.findIndex((r) => r.user_id === userId && r.month === monthKey);
+  const monthly    = readTable("analytics_monthly");
+  const mi         = monthly.findIndex((r) => r.user_id === userId && r.month === monthKey);
   if (mi >= 0) {
     monthly[mi].queries = (monthly[mi].queries || 0) + 1;
-    monthly[mi].chats = (monthly[mi].chats || 0) + 1;
+    monthly[mi].chats   = (monthly[mi].chats   || 0) + 1;
+    monthly[mi].tokens  = (monthly[mi].tokens  || 0) + tokensUsed;
   } else {
     monthly.push({
       id: nextId("amly"),
@@ -50,6 +54,7 @@ function recordDailyQuery(userId) {
       label: monthLabel,
       queries: 1,
       chats: 1,
+      tokens: tokensUsed,
     });
   }
   writeTable("analytics_monthly", monthly);
@@ -73,7 +78,8 @@ function getUserAnalytics(userId) {
       id: `week_${i}`,
       label: `Week ${Math.floor(i / 7) + 1}`,
       queries: chunk.reduce((s, r) => s + (r.queries || 0), 0),
-      chats: chunk.reduce((s, r) => s + (r.chats || 0), 0),
+      chats:   chunk.reduce((s, r) => s + (r.chats   || 0), 0),
+      tokens:  chunk.reduce((s, r) => s + (r.tokens  || 0), 0),
     });
   }
 
@@ -83,15 +89,16 @@ function getUserAnalytics(userId) {
     .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
     .slice(-6);
 
-  // queriesToday
-  const todayRow = allDaily.find((r) => r.date === today);
+  // Today's figures
+  const todayRow     = allDaily.find((r) => r.date === today);
   const queriesToday = todayRow?.queries || 0;
+  const tokensToday  = todayRow?.tokens  || 0;
 
-  return { daily, weekly, monthly, queriesToday };
+  return { daily, weekly, monthly, queriesToday, tokensToday };
 }
 
 function seedAnalytics() {
-  // No-op: we no longer seed fake data. Real data comes from recordDailyQuery.
+  // No-op: real data comes from recordDailyQuery.
 }
 
 module.exports = { getAdminOverviewMetrics, getUserAnalytics, recordDailyQuery, seedAnalytics };

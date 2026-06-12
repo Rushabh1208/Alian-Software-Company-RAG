@@ -14,7 +14,7 @@ const { requestPythonBridge } = require("../utils/runPython");
  * @param {string} collection  - ChromaDB collection / website id
  * @param {string|null} userId - Authenticated user id (from JWT)
  */
-async function getPromptSettings(collection = "alian_software", userId = null) {
+async function getPromptSettings(collection = "", userId = null) {
   return requestPythonBridge({
     method: "GET",
     path: `/prompt-settings?collection=${encodeURIComponent(collection)}`,
@@ -32,7 +32,7 @@ async function getPromptSettings(collection = "alian_software", userId = null) {
  * @param {string|null} options.userId
  */
 async function updatePromptSettings({
-  collection = "alian_software",
+  collection = "",
   role = "",
   constraints = [],
   userId = null,
@@ -51,7 +51,7 @@ async function updatePromptSettings({
  * @param {string} collection
  * @param {string|null} userId
  */
-async function resetPromptSettings(collection = "alian_software", userId = null) {
+async function resetPromptSettings(collection = "", userId = null) {
   return requestPythonBridge({
     method: "DELETE",
     path: `/prompt-settings?collection=${encodeURIComponent(collection)}`,

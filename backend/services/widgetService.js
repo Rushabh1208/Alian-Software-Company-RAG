@@ -10,7 +10,7 @@ const DEFAULT_WIDGET_SCRIPT_URL =
   process.env.WIDGET_SCRIPT_URL || "http://localhost:3001/widget.js";
 const DEFAULT_WIDGET_API_BASE_URL =
   process.env.WIDGET_API_BASE_URL || process.env.API_BASE_URL || "http://localhost:5000";
-const DEFAULT_WIDGET_COLLECTION = "alian_software";
+const DEFAULT_WIDGET_COLLECTION = "";
 
 function ensureWidgetStoreSeeded() {
   const directory = path.dirname(WIDGET_STORE_PATH);
@@ -59,8 +59,7 @@ function generateWidgetId(existingWidgets) {
 
 function humanizeLabel(value) {
   const normalizedValue = String(value || "").trim();
-  if (!normalizedValue) return "Default Collection";
-  if (normalizedValue === DEFAULT_WIDGET_COLLECTION) return "Default Collection";
+  if (!normalizedValue) return "Untitled Collection";
   return String(value || "")
     .replace(/^website_/, "")
     .replace(/_/g, " ")
@@ -128,10 +127,14 @@ function createWidget({ collection, displayName, status, ownerId }) {
   const widgetList = readWidgets().map(toStoredWidget);
   const widgetId = generateWidgetId(widgetList);
   const now = new Date().toISOString();
+  const targetCollection = String(collection || "").trim();
+  if (!targetCollection) {
+    throw new Error("Collection is required.");
+  }
   const record = {
     widgetId,
     ownerId: String(ownerId || ""),
-    collection: String(collection || DEFAULT_WIDGET_COLLECTION).trim() || DEFAULT_WIDGET_COLLECTION,
+    collection: targetCollection,
     displayName: resolveDisplayName({ collection, displayName }),
     status: String(status || "active").trim() || "active",
     createdAt: now,
@@ -156,7 +159,7 @@ function updateWidget(widgetId, updates, ownerId) {
     throw new Error(`Widget ${widgetId} not found.`);
   }
 
-  const nextCollection = String(updates.collection || current.collection || DEFAULT_WIDGET_COLLECTION).trim() || DEFAULT_WIDGET_COLLECTION;
+  const nextCollection = String(updates.collection || current.collection || DEFAULT_WIDGET_COLLECTION).trim() || current.collection || DEFAULT_WIDGET_COLLECTION;
   const nextDisplayName = Object.prototype.hasOwnProperty.call(updates, "displayName")
     ? resolveDisplayName({ collection: nextCollection, displayName: updates.displayName })
     : resolveDisplayName({ collection: nextCollection });

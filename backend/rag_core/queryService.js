@@ -1,7 +1,7 @@
 // REPLACE entire file content:
 const { requestPythonBridge } = require("../utils/runPython");
 
-async function askQuestion({ question, topK = 10, collection = "alian_software", userId = null }) {
+async function askQuestion({ question, topK = 10, collection = "", userId = null }) {
   return requestPythonBridge({
     method: "POST",
     path: "/query",

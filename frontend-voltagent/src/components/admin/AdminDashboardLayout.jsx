@@ -2,11 +2,10 @@ const navItems = [
   { href: "/admin", label: "Overview", icon: "O" },
   { href: "/admin/users", label: "User Management", icon: "U" },
   { href: "/admin/websites", label: "Website Management", icon: "W" },
-  { href: "/admin/jobs", label: "Indexing Jobs", icon: "J" },
   { href: "/admin/analytics", label: "Analytics", icon: "A" },
   { href: "/admin/system-health", label: "System Health", icon: "S" },
   { href: "/admin/subscriptions", label: "Subscription Management", icon: "$" },
-  { href: "/admin/settings", label: "Settings", icon: "C" },
+  { href: "/admin/settings", label: "Configuration", icon: "C" },
 ];
 
 export function AdminDashboardLayout({ children, currentPath, onNavigate, onLogout, authUser }) {
@@ -72,7 +71,7 @@ export function AdminDashboardLayout({ children, currentPath, onNavigate, onLogo
                 <p className="text-[11px] text-body">Voltagent</p>
               </div>
             </button>
-            <button className="rounded-full border border-hairline px-3 py-2 text-sm text-body" onClick={() => onNavigate("/admin/settings")}>Settings</button>
+            <button className="rounded-full border border-hairline px-3 py-2 text-sm text-body" onClick={() => onNavigate("/admin/settings")}>Config</button>
             <button
               onClick={onLogout}
               className="rounded-full border border-hairline px-3 py-2 text-sm text-body hover:border-red-500/40 hover:text-red-400"

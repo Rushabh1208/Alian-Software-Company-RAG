@@ -32,7 +32,12 @@ export function WidgetsPage() {
   const refresh = async () => {
     const [widgetPayload, websitePayload] = await Promise.all([getWidgets(), getWebsites()]);
     setWidgets(widgetPayload.widgets || []);
-    setWebsites(websitePayload.websites || []);
+    const nextWebsites = websitePayload.websites || [];
+    setWebsites(nextWebsites);
+    setForm((current) => {
+      if (current.collection || nextWebsites.length === 0) return current;
+      return { ...current, collection: nextWebsites[0].collection_name || nextWebsites[0].id || "" };
+    });
   };
 
   useEffect(() => {
@@ -51,6 +56,9 @@ export function WidgetsPage() {
     setBusy(true);
     setError("");
     try {
+      if (!form.collection) {
+        throw new Error("Select a collection first.");
+      }
       const active = widgets.find((item) => item.collection === form.collection);
       if (active) {
         await updateWidget(active.widgetId, form);
@@ -114,6 +122,9 @@ export function WidgetsPage() {
                 </option>
               ))}
             </select>
+            {websites.length === 0 && (
+              <p className="mt-2 text-xs text-mute">Index a website first before creating a widget.</p>
+            )}
           </div>
 
           <div>

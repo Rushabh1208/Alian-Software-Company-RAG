@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from config.settings import PROJECT_ROOT
 from rag.prompts.defaults import (
-    DEFAULT_PROMPT_CONSTRAINTS,
-    DEFAULT_PROMPT_ROLE,
+    default_prompt_constraints,
+    default_prompt_role,
     MAX_PROMPT_CONSTRAINTS,
     MAX_PROMPT_CONSTRAINT_CHARS,
     MAX_PROMPT_ROLE_CHARS,
@@ -47,10 +47,8 @@ def prompt_settings_path_for_collection(collection: str | None = None) -> Path:
     Used as the fallback when no user-specific override exists, and by
     legacy callers that don't pass a user_id.
     """
-    from config.constants import DEFAULT_BASE_COLLECTION_NAME
-
     normalized = str(collection or "").strip()
-    if not normalized or normalized == DEFAULT_BASE_COLLECTION_NAME:
+    if not normalized:
         return PROMPT_SETTINGS_PATH
 
     return PROMPT_SETTINGS_DIR / f"{_safe(normalized)}.json"
@@ -68,13 +66,13 @@ def prompt_settings_path_for_user_collection(
     If user_id is absent or blank, falls back to the global per-collection
     path so callers can always get *some* path without extra branching.
     """
-    from config.constants import DEFAULT_BASE_COLLECTION_NAME
-
     uid = str(user_id or "").strip()
     if not uid:
         return prompt_settings_path_for_collection(collection)
 
-    col = str(collection or "").strip() or DEFAULT_BASE_COLLECTION_NAME
+    col = str(collection or "").strip()
+    if not col:
+        return prompt_settings_path_for_collection(collection)
     return PROMPT_SETTINGS_USERS_DIR / _safe(uid) / f"{_safe(col)}.json"
 
 
@@ -84,8 +82,8 @@ def prompt_settings_path_for_user_collection(
 
 @dataclass(frozen=True)
 class PromptSettings:
-    role: str = DEFAULT_PROMPT_ROLE
-    constraints: list[str] | tuple[str, ...] = ()
+    role: str = field(default_factory=default_prompt_role)
+    constraints: list[str] | tuple[str, ...] = field(default_factory=tuple)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -110,7 +108,7 @@ def _load_from_path(path: Path) -> PromptSettings | None:
     if not isinstance(payload, dict):
         return None
 
-    role = payload.get("role", DEFAULT_PROMPT_ROLE)
+    role = payload.get("role", default_prompt_role())
     constraints = payload.get("constraints", [])
     if not isinstance(constraints, list):
         constraints = []
@@ -220,7 +218,7 @@ def normalize_prompt_settings(*, role: str, constraints: list[str]) -> PromptSet
 
 def normalize_role(role: str) -> str:
     cleaned = sanitize_text(role, max_chars=MAX_PROMPT_ROLE_CHARS)
-    return cleaned or DEFAULT_PROMPT_ROLE
+    return cleaned or default_prompt_role()
 
 
 def normalize_constraints(constraints: list[str]) -> list[str]:
@@ -273,4 +271,4 @@ def merge_constraints(*constraint_groups: list[str]) -> list[str]:
 
 
 def default_constraints() -> list[str]:
-    return list(DEFAULT_PROMPT_CONSTRAINTS)
+    return list(default_prompt_constraints())

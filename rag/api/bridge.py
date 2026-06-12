@@ -5,7 +5,6 @@ import asyncio
 import json
 from typing import Any
 
-from config.constants import DEFAULT_BASE_COLLECTION_NAME
 from rag.services.web_ingestion.service import WebsiteIngestionService
 
 
@@ -23,7 +22,7 @@ async def _query(args: argparse.Namespace) -> None:
     service = WebsiteIngestionService()
     result = await service.query(
         args.question,
-        collection_name=str(args.collection or DEFAULT_BASE_COLLECTION_NAME),
+        collection_name=str(args.collection or ""),
         top_k=int(args.top_k),
     )
     _json_dump(result.to_dict())
@@ -50,7 +49,7 @@ def main() -> None:
 
     query_parser = subparsers.add_parser("query", help="Query the current RAG collection")
     query_parser.add_argument("--question", required=True)
-    query_parser.add_argument("--collection", default=DEFAULT_BASE_COLLECTION_NAME)
+    query_parser.add_argument("--collection", default="")
     query_parser.add_argument("--top-k", default=5, type=int)
     query_parser.set_defaults(handler=_query)
 

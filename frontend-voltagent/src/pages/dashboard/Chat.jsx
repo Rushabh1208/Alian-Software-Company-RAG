@@ -2,8 +2,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { DashboardShell } from "../../components/dashboard/DashboardShell";
 import { queryRag, getWebsites, listChatsApi, createChatApi, updateChatApi, deleteChatApi, addMessageApi } from "../../lib/api";
 
-const BASE_COLLECTION_ID = "alian_software";
-
 // ─── Typing dots ─────────────────────────────────────────────────────────────
 function TypingDots() {
   const [dots, setDots] = useState(0);
@@ -313,6 +311,16 @@ export function ChatPage() {
     getWebsites().then((payload) => setWebsites(payload.websites || [])).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (websites.length === 0) {
+      if (selectedWebsiteId !== null) setSelectedWebsiteId(null);
+      return;
+    }
+    if (!selectedWebsiteId || !websites.some((site) => site.id === selectedWebsiteId)) {
+      setSelectedWebsiteId(websites[0].id);
+    }
+  }, [websites, selectedWebsiteId]);
+
   const currentChat = chats.find((c) => c.id === currentChatId) || chats[0] || { messages: [] };
 
   useEffect(() => {
@@ -322,8 +330,8 @@ export function ChatPage() {
   }, [currentChat?.messages?.length]);
 
   const selectedWebsite = websites.find((w) => w.id === selectedWebsiteId) || null;
-  const collectionId = selectedWebsite?.collection_name || BASE_COLLECTION_ID;
-  const collectionLabel = selectedWebsite?.domain || selectedWebsite?.collection_name || "Default Collection";
+  const collectionId = selectedWebsite?.collection_name || "";
+  const collectionLabel = selectedWebsite?.domain || selectedWebsite?.collection_name || "No collection selected";
 
   // ── Chat management ────────────────────────────────────────────────────────
   const handleNewChat = useCallback(async () => {
@@ -332,7 +340,6 @@ export function ChatPage() {
       const { conversation } = await createChatApi({ title, source: "Dashboard" });
       setChats((prev) => [conversation, ...prev]);
       setCurrentChatId(conversation.id);
-      setSelectedWebsiteId(null);
     } catch (err) {
       setError(err.message || "Failed to create conversation.");
     }
@@ -424,6 +431,10 @@ export function ChatPage() {
       ));
 
       // Run RAG query
+      if (!collectionId) {
+        throw new Error("Please select a collection first.");
+      }
+
       const rawPayload = await queryRag({ question: questionText, websiteId: collectionId, topK: 10 });
       const result = rawPayload.result || rawPayload;
       const answerContent = String(result.answer || "No answer returned.");
@@ -470,13 +481,6 @@ export function ChatPage() {
       {/* Collection selector */}
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-mute shrink-0">Collection:</p>
-        <button
-          type="button"
-          onClick={() => setSelectedWebsiteId(null)}
-          className={["rounded-full border px-4 py-2 text-sm font-medium transition", !selectedWebsiteId ? "border-primary/40 bg-primary/10 text-primary" : "border-hairline text-body hover:text-ink"].join(" ")}
-        >
-          Default
-        </button>
         {websites.map((site) => (
           <button
             key={site.id}
@@ -487,6 +491,9 @@ export function ChatPage() {
             {site.domain || site.collection_name}
           </button>
         ))}
+        {websites.length === 0 && (
+          <p className="text-sm text-mute">Index a website first to start chatting.</p>
+        )}
       </div>
 
       {/* Main layout: History | Chat | Analytics */}
@@ -511,7 +518,7 @@ export function ChatPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-mute">Query Scope</p>
                 <h2 className="mt-0.5 text-sm font-semibold text-ink-strong">{collectionLabel}</h2>
               </div>
-              <span className="rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] text-mute">{collectionId}</span>
+              <span className="rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] text-mute">{collectionId || "—"}</span>
             </div>
             {loading && (
               <span className="flex items-center gap-1.5 text-[11px] text-mute">
@@ -550,15 +557,15 @@ export function ChatPage() {
               <div className="flex items-center gap-2 rounded-2xl border border-hairline bg-canvas-soft px-4 py-3 focus-within:border-primary/50 transition">
                 <input
                   className="flex-1 min-w-0 bg-transparent text-sm text-ink outline-none placeholder:text-mute"
-                  placeholder="Ask a question about the selected collection…"
+                  placeholder={collectionId ? "Ask a question about the selected collection…" : "Index a website to begin…"}
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  disabled={loading}
+                  disabled={loading || !collectionId}
                 />
                 <button
                   type="submit"
                   className="shrink-0 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-on-primary transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={loading || !question.trim()}
+                  disabled={loading || !question.trim() || !collectionId}
                 >
                   {loading ? "…" : "Ask"}
                 </button>

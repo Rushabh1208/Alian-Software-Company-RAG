@@ -18,7 +18,8 @@
     "user_id": "user_930e0351055b",
     "date": "2026-06-12",
     "label": "Fri, Jun 12",
-    "queries": 8,
-    "chats": 8
+    "queries": 13,
+    "chats": 13,
+    "tokens": 2342
   }
 ]

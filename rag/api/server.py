@@ -5,11 +5,9 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel, Field
 
-from config.constants import DEFAULT_BASE_COLLECTION_NAME
 from rag.prompts.prompt_settings import (
     load_prompt_settings_for_user,
     normalize_prompt_settings,
-    prompt_settings_path_for_collection,
     reset_prompt_settings_for_user,
     save_prompt_settings_for_user,
 )
@@ -18,7 +16,7 @@ from rag.services.web_ingestion.service import WebsiteIngestionService
 
 class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1)
-    collection: str = Field(DEFAULT_BASE_COLLECTION_NAME)
+    collection: str = Field("")
     top_k: int = Field(5, ge=1)
 
 
@@ -51,6 +49,8 @@ async def health() -> dict[str, bool]:
 
 @app.post("/query")
 async def query_endpoint(payload: QueryRequest, x_user_id: str | None = Header(default=None)):
+    if not str(payload.collection or "").strip():
+        raise HTTPException(status_code=400, detail="Collection is required.")
     try:
         result = await service.query(
             payload.question,
@@ -97,8 +97,7 @@ async def list_websites_endpoint(
 ) -> dict[str, Any]:
     """
     List websites.  When x_user_id is supplied, only that user's websites are
-    returned (plus the shared base collection).  Without it (admin calls) all
-    websites are returned.
+    returned.  Without it (admin calls) all websites are returned.
     """
     try:
         return {"websites": service.list_websites(user_id=x_user_id)}
@@ -151,9 +150,11 @@ async def sync_websites() -> dict[str, Any]:
 
 @app.get("/prompt-settings")
 async def get_prompt_settings(
-    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    collection: str = "",
     x_user_id: str | None = Header(default=None),
 ) -> dict[str, Any]:
+    if not str(collection or "").strip():
+        raise HTTPException(status_code=400, detail="Collection is required.")
     try:
         return load_prompt_settings_for_user(x_user_id, collection).to_dict()
     except Exception as error:
@@ -163,9 +164,11 @@ async def get_prompt_settings(
 @app.put("/prompt-settings")
 async def update_prompt_settings(
     payload: PromptSettingsRequest,
-    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    collection: str = "",
     x_user_id: str | None = Header(default=None),
 ) -> dict[str, Any]:
+    if not str(collection or "").strip():
+        raise HTTPException(status_code=400, detail="Collection is required.")
     try:
         normalized = normalize_prompt_settings(
             role=payload.role,
@@ -183,10 +186,12 @@ async def update_prompt_settings(
 
 @app.delete("/prompt-settings")
 async def reset_prompt_settings_endpoint(
-    collection: str = DEFAULT_BASE_COLLECTION_NAME,
+    collection: str = "",
     x_user_id: str | None = Header(default=None),
 ) -> dict[str, Any]:
     """Delete user-specific override and return the effective settings."""
+    if not str(collection or "").strip():
+        raise HTTPException(status_code=400, detail="Collection is required.")
     try:
         effective = reset_prompt_settings_for_user(
             user_id=x_user_id,

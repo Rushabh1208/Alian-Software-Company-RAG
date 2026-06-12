@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from rag.models.query_models import RetrievedChunk
-from rag.prompts.defaults import DEFAULT_PROMPT_ROLE, MANDATORY_PROMPT_CONSTRAINT
+from rag.prompts.defaults import default_prompt_role, mandatory_prompt_constraint
 from rag.prompts.prompt_settings import PromptSettings, merge_constraints
 from rag.utils.text_utils import compact, content_body
 
@@ -35,7 +35,7 @@ def build_gemini_prompt(
     prompt_settings: PromptSettings | None = None,
 ) -> str:
     settings = prompt_settings or PromptSettings()
-    role = _sanitize_prompt_text(settings.role or DEFAULT_PROMPT_ROLE)
+    role = _sanitize_prompt_text(settings.role or default_prompt_role())
     question_text = _sanitize_prompt_text(question)
     user_constraints = list(settings.constraints or [])
 
@@ -111,7 +111,7 @@ def _build_constraints_block(user_constraints: list[str]) -> str:
     # Base grounding rules that always apply — these are safety/quality
     # guardrails and must always be present.
     base_lines = [
-        f"- {MANDATORY_PROMPT_CONSTRAINT}",
+        f"- {mandatory_prompt_constraint()}",
         "- Respond in a warm, friendly, conversational tone like a real customer support agent.",
         "- Address the user directly. Use 'you' and 'your'.",
         "- Write in short paragraphs or clean bullet points. Never write walls of text.",

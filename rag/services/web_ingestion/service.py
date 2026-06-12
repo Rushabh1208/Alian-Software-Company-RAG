@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 import re
 
-from config.constants import DEFAULT_BASE_COLLECTION_NAME, DEFAULT_TARGET_WEBSITE
 from config.logging_setup import setup_pipeline_logger
 from config.paths import get_pipeline_paths
 from config.settings import AppSettings, load_settings
@@ -82,11 +81,19 @@ class WebsiteQueryResult:
 class WebsiteIngestionService:
     def __init__(self, settings: AppSettings | None = None) -> None:
         self.settings = settings or load_settings()
+        self._refresh_runtime_settings()
+
+    def _refresh_runtime_settings(self) -> None:
+        self.settings = load_settings()
         self.embedding_config = self.settings.config.get("embeddings", {})
         self.vectordb_config = self.settings.config.get("vectordb", {})
         self.crawler_config = self.settings.config.get("crawler", {})
         self.chunking_config = self.settings.config.get("chunking", {})
         self.streaming_config = self.settings.config.get("streaming_ingestion", {})
+        self.retrieval_config = self.settings.config.get("retrieval", {})
+        self.reranking_config = self.settings.config.get("reranking", {})
+        self.registration_config = self.settings.config.get("registration", {})
+        self.prompt_seed_config = self.settings.config.get("prompt_seed", {})
 
     async def index_website(
         self,
@@ -102,6 +109,7 @@ class WebsiteIngestionService:
         workspace directory, registry entry) is scoped to that user so that
         multiple users can index the same URL without any conflict.
         """
+        self._refresh_runtime_settings()
         normalized_url = normalize_website_url(url)
         # Generate a user-scoped collection/workspace name.
         collection_name = website_collection_name(normalized_url, user_id=user_id)
@@ -273,10 +281,6 @@ class WebsiteIngestionService:
         cleaned = []
         for record in registry:
             record_id = str(record.get("id") or "")
-            # Always keep base collection entry
-            if record_id == DEFAULT_BASE_COLLECTION_NAME:
-                cleaned.append(record)
-                continue
             # Keep only if ChromaDB collection still exists
             if record_id in live_collections:
                 cleaned.append(record)
@@ -296,7 +300,7 @@ class WebsiteIngestionService:
         self,
         question: str,
         *,
-        collection_name: str = DEFAULT_BASE_COLLECTION_NAME,
+        collection_name: str = "",
         top_k: int = 5,
         user_id: str | None = None,
     ) -> WebsiteQueryResult:
@@ -307,9 +311,12 @@ class WebsiteIngestionService:
         Node layer from the ownership table). The *user_id* parameter is kept
         for API consistency and logging only.
         """
+        self._refresh_runtime_settings()
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         paths.ensure_directories()
         resolved_collection = self._resolve_collection_name(paths.chromadb_dir, collection_name)
+        if not resolved_collection:
+            raise ValueError("Collection name is required.")
 
         cache_key = "|".join(
             [
@@ -318,6 +325,12 @@ class WebsiteIngestionService:
                 str(self.embedding_config.get("model", "BAAI/bge-small-en-v1.5")),
                 str(bool(self.embedding_config.get("normalize_embeddings", True))),
                 str((paths.embeddings_dir / "model_cache").resolve()),
+                str(int(self.retrieval_config.get("vector_top_k", 20) or 20)),
+                str(int(self.retrieval_config.get("final_top_k", 5) or 5)),
+                str(float(self.retrieval_config.get("max_search_distance", 1.15) or 1.15)),
+                str(bool(self.reranking_config.get("enabled", True))),
+                str(self.reranking_config.get("backend", "auto")),
+                str(self.reranking_config.get("model", "cross-encoder/ms-marco-MiniLM-L-6-v2")),
             ]
         )
 
@@ -330,6 +343,8 @@ class WebsiteIngestionService:
                 normalize_embeddings=bool(self.embedding_config.get("normalize_embeddings", True)),
                 model_cache_dir=paths.embeddings_dir / "model_cache",
                 embeddings_path=paths.embeddings_dir / "embeddings.json",
+                retrieval_config=self.retrieval_config,
+                reranking_config=self.reranking_config,
             )
             _QUERY_ENGINE_CACHE[cache_key] = engine
 
@@ -340,9 +355,8 @@ class WebsiteIngestionService:
         """
         Return website registry entries.
 
-        When *user_id* is provided only that user's entries are returned (plus
-        the shared base collection).  When *user_id* is None (admin) all entries
-        are returned.
+        When *user_id* is provided only that user's entries are returned.
+        When *user_id* is None (admin) all entries are returned.
         """
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         registry = load_json_records(paths.website_registry)
@@ -350,15 +364,9 @@ class WebsiteIngestionService:
             item for item in registry if str(item.get("source_type") or "") == "website"
         ]
 
-        # Ensure the shared base collection is always present
-        if not any(str(item.get("id") or "") == DEFAULT_BASE_COLLECTION_NAME for item in website_entries):
-            website_entries.insert(
-                0,
-                build_website_record(DEFAULT_TARGET_WEBSITE, collection_name=DEFAULT_BASE_COLLECTION_NAME).to_json(),
-            )
-
-        # Apply per-user filter (shared collection always included)
-        return filter_records_by_user(website_entries, user_id, include_shared=True)
+        # Apply per-user filter. Legacy unowned rows are excluded so new
+        # clients only see their own collections.
+        return filter_records_by_user(website_entries, user_id, include_shared=False)
 
     def delete_website(self, website_id: str, *, user_id: str | None = None) -> dict[str, str]:
         """
@@ -367,9 +375,6 @@ class WebsiteIngestionService:
         *user_id* is accepted for API consistency and future audit logging
         (the Node layer already enforces ownership checks before calling here).
         """
-        if website_id == DEFAULT_BASE_COLLECTION_NAME:
-            raise ValueError("The base collection cannot be deleted.")
-
         paths = get_pipeline_paths(self.settings.chroma_db_path)
         paths.ensure_directories()
         removed = remove_website_record(paths.website_registry, website_id)
@@ -404,15 +409,9 @@ class WebsiteIngestionService:
         }
 
     def _resolve_collection_name(self, persist_directory: Path, collection_name: str) -> str:
-        if collection_name != DEFAULT_BASE_COLLECTION_NAME:
-            return collection_name
-
-        preferred = ChromaVectorClient(
-            persist_directory=persist_directory,
-            collection_name=DEFAULT_BASE_COLLECTION_NAME,
-        )
-        if preferred.count() > 0:
-            return DEFAULT_BASE_COLLECTION_NAME
+        collection = str(collection_name or "").strip()
+        if collection:
+            return collection
 
         legacy = ChromaVectorClient(
             persist_directory=persist_directory,
@@ -421,7 +420,7 @@ class WebsiteIngestionService:
         if legacy.count() > 0:
             return legacy.collection_name
 
-        return DEFAULT_BASE_COLLECTION_NAME
+        return collection
 
     @staticmethod
     def _delete_collection_safely(persist_directory: Path, collection_name: str) -> None:

@@ -1,5 +1,5 @@
 const { askQuestion } = require("../rag_core/queryService");
-const { assertWebsiteAccess, DEFAULT_BASE_COLLECTION_NAME } = require("../services/websiteOwnershipService");
+const { assertWebsiteAccess } = require("../services/websiteOwnershipService");
 const { recordDailyQuery } = require("../services/analyticsService");
 
 async function queryController(req, res) {
@@ -9,8 +9,12 @@ async function queryController(req, res) {
       return res.status(400).json({ error: "Question is required." });
     }
 
-    const targetCollection = String(collection || websiteId || DEFAULT_BASE_COLLECTION_NAME);
-    const userId = req.auth?.sub || req.auth?.userId || null;
+    const targetCollection = String(collection || websiteId || "").trim();
+    if (!targetCollection) {
+      return res.status(400).json({ error: "Collection is required." });
+    }
+
+    const userId  = req.auth?.sub || req.auth?.userId || null;
     const isAdmin = String(req.auth?.role || "").toLowerCase() === "admin";
 
     try {
@@ -19,15 +23,22 @@ async function queryController(req, res) {
       return res.status(accessError.statusCode || 403).json({ error: accessError.message });
     }
 
-    // Record daily analytics for this user
-    if (userId) recordDailyQuery(userId);
-
+    // Run the query first so we have the real token count from the LLM response
     const payload = await askQuestion({
       question: String(question),
       topK: Number(topK || 10),
       collection: targetCollection,
       userId,
     });
+
+    // Record daily analytics AFTER the response so we can pass the actual
+    // token count (input + output) returned by the Python RAG layer.
+    // Falls back to 0 gracefully if the metrics field is absent.
+    if (userId) {
+      const tokensUsed = Number(payload?.result?.metrics?.total_tokens || 0);
+      recordDailyQuery(userId, tokensUsed);
+    }
+
     return res.json(payload);
   } catch (error) {
     return res.status(500).json({ error: error.message || "Query failed." });

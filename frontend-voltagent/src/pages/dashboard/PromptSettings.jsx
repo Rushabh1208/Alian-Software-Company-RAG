@@ -34,7 +34,7 @@ export function PromptSettingsPage() {
   const [successMsg, setSuccessMsg] = useState("");
   const [error, setError] = useState("");
   const [websites, setWebsites] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState("alian_software");
+  const [selectedCollection, setSelectedCollection] = useState("");
 
   const normalizedConstraints = useMemo(() => parseConstraints(constraintsText), [constraintsText]);
 
@@ -44,14 +44,24 @@ export function PromptSettingsPage() {
       .then((payload) => {
         const sites = Array.isArray(payload?.websites) ? payload.websites : [];
         setWebsites(sites);
-        const firstOwned = sites.find((site) => site.id !== "alian_software");
-        if (firstOwned) setSelectedCollection(firstOwned.id || firstOwned.collection_name);
+        const firstOwned = sites[0];
+        if (firstOwned) {
+          setSelectedCollection((current) => current || firstOwned.id || firstOwned.collection_name || "");
+        }
       })
       .catch(() => {});
   }, []);
 
   // Load (or reload) prompt settings whenever the selected website changes.
   useEffect(() => {
+    if (!selectedCollection) {
+      setSettings(DEFAULT_PROMPT_SETTINGS);
+      setRole(DEFAULT_ROLE);
+      setConstraintsText("");
+      setGuardrailsStatus(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     getPromptSettings(selectedCollection)
       .then((payload) => {
@@ -163,15 +173,14 @@ export function PromptSettingsPage() {
           className="w-full rounded-xl border border-hairline bg-canvas-soft px-4 py-2 text-sm text-ink outline-none focus:border-primary/50 transition"
           value={selectedCollection}
           onChange={(e) => setSelectedCollection(e.target.value)}
+          disabled={websites.length === 0}
         >
-          <option value="alian_software">Default (shared) collection</option>
-          {websites
-            .filter((site) => (site.id || site.collection_name) !== "alian_software")
-            .map((site) => (
-              <option key={site.id || site.collection_name} value={site.id || site.collection_name}>
-                {site.url || site.id || site.collection_name}
-              </option>
-            ))}
+          <option value="">{websites.length === 0 ? "No websites available" : "Select a website"}</option>
+          {websites.map((site) => (
+            <option key={site.id || site.collection_name} value={site.id || site.collection_name}>
+              {site.url || site.id || site.collection_name}
+            </option>
+          ))}
         </select>
         <p className="mt-1.5 text-xs text-mute">Each website has its own prompt role and constraints.</p>
       </Card>
@@ -234,9 +243,9 @@ export function PromptSettingsPage() {
             <div className="flex items-center justify-between gap-3 pt-2 border-t border-hairline">
               <button
                 className="rounded-xl border border-red-500/30 bg-red-500/8 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/15 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={resetting || saving}
                 onClick={handleReset}
                 type="button"
+                disabled={resetting || saving || !selectedCollection}
               >
                 {resetting ? "Resetting…" : "Reset Defaults"}
               </button>
@@ -244,7 +253,7 @@ export function PromptSettingsPage() {
               <div className="flex items-center gap-2">
                 <button
                   className="rounded-xl border border-hairline px-4 py-2 text-sm font-semibold text-mute transition hover:border-primary/40 hover:text-ink disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={guardrailsLoading || saving}
+                  disabled={guardrailsLoading || saving || !selectedCollection}
                   onClick={handleGuardrailsCheck}
                   type="button"
                 >
@@ -252,7 +261,7 @@ export function PromptSettingsPage() {
                 </button>
                 <button
                   className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={saving || guardrailsStatus !== "passed"}
+                  disabled={saving || guardrailsStatus !== "passed" || !selectedCollection}
                   onClick={handleSave}
                   type="button"
                   title={guardrailsStatus !== "passed" ? "Run a guardrails check first" : ""}

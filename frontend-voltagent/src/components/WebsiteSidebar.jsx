@@ -45,7 +45,6 @@ function WebsiteSidebar({
   onDeleteChat = () => {},
   onWebsitesSync = () => {},
 }) {
-  const baseActive = !selectedWebsiteId;
   const [statuses, setStatuses] = useState({});
   const pollingRef = useRef(null);
 
@@ -141,41 +140,15 @@ function WebsiteSidebar({
         <p className="text-[11px] font-semibold uppercase tracking-eyebrow text-mute">
           Collections
           <span className="ml-2 text-mute font-normal normal-case tracking-normal">
-            ({websites.filter((w) => w.id !== baseWebsiteId).length})
+            ({websites.length})
           </span>
         </p>
-      </div>
-
-      {/* Base collection */}
-      <div className="px-3 pb-2">
-        <button
-          className={[
-            "w-full rounded-sm border px-3 py-3 text-left transition",
-            baseActive
-              ? "border-primary/40 bg-primary/8"
-              : "border-transparent hover:border-hairline hover:bg-canvas-soft",
-          ].join(" ")}
-          onClick={() => onSelectWebsite(null)}
-          type="button"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <p className={`text-sm font-medium ${baseActive ? "text-primary" : "text-ink"}`}>
-                Default Collection
-              </p>
-              <p className="text-[11px] text-mute mt-0.5">Base knowledge</p>
-            </div>
-            <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-eyebrow text-primary">
-              Base
-            </span>
-          </div>
-        </button>
       </div>
 
       {/* Website collections */}
       <div className="flex-1 overflow-y-auto px-3 pb-3">
         <div className="flex flex-col gap-1">
-          {websites.filter((item) => item.id !== baseWebsiteId).map((website) => {
+          {websites.map((website) => {
             const active = selectedWebsiteId === website.id;
             const progress = statuses[website.id];
             const indexingStatus = progress?.status ?? "unknown";

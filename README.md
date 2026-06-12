@@ -350,8 +350,8 @@ Set `VITE_API_BASE_URL` if the backend is not running on `http://localhost:5000`
 
 ### Website Collections
 
-- `alian_software` is the base collection used internally by the RAG backend.
 - `website_<domain>` is used for each indexed site, for example `website_openai_com`.
+- The old `alian_software` shared collection is no longer preloaded for new clients.
 - The Python bridge keeps query-time retrieval, reranking, confidence scoring, and metadata handling inside the existing RAG modules.
 
 ### Public Widget

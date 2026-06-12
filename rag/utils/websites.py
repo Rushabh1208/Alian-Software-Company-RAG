@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from config.constants import DEFAULT_BASE_COLLECTION_NAME, WEBSITE_COLLECTION_PREFIX
+from config.constants import WEBSITE_COLLECTION_PREFIX
 
 # Separator used between the URL slug and the user-id suffix in collection names.
 # Must not appear in normal slugs (which use only [a-z0-9_]).
@@ -64,7 +64,7 @@ def website_domain(url: str) -> str:
 def website_slug(url: str) -> str:
     domain = website_domain(url)
     slug = re.sub(r"[^a-z0-9]+", "_", domain.lower()).strip("_")
-    return slug or DEFAULT_BASE_COLLECTION_NAME
+    return slug or "website"
 
 
 def _sanitise_user_id(user_id: str) -> str:
@@ -84,11 +84,7 @@ def website_collection_name(url: str, *, user_id: str | None = None) -> str:
     This guarantees that two different users indexing the same URL each get
     their own, fully isolated ChromaDB collection.
 
-    The base/shared collection (aliansoftware.com) is never user-scoped.
     """
-    if _is_default_company_site(url):
-        return DEFAULT_BASE_COLLECTION_NAME
-
     base = f"{WEBSITE_COLLECTION_PREFIX}{website_slug(url)}"
     if user_id:
         user_slug = _sanitise_user_id(str(user_id))
@@ -189,8 +185,8 @@ def filter_records_by_user(
     """
     Filter a list of website registry records to only those belonging to *user_id*.
 
-    When *include_shared* is True (default) the shared base collection
-    (owner_user_id == "") is always included regardless of user_id.
+    The helper now only preserves records that are actually owned by *user_id*
+    when a user id is supplied.  Legacy unowned rows are excluded.
     """
     if user_id is None:
         return records  # admin / unauthenticated → return all
@@ -198,13 +194,6 @@ def filter_records_by_user(
     result = []
     for item in records:
         owner = str(item.get("owner_user_id") or "")
-        if include_shared and not owner:
-            result.append(item)
-            continue
         if owner == str(user_id):
             result.append(item)
     return result
-
-
-def _is_default_company_site(url: str) -> bool:
-    return website_domain(url) in {"aliansoftware.com", "www.aliansoftware.com"}

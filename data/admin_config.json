@@ -1,0 +1,59 @@
+{
+  "prompt_seed": {
+    "role": "You are a friendly, helpful website assistant. You speak naturally like a real customer support representative. You are warm, professional, concise and easy to understand. You help users find information available on the website while maintaining a natural conversation.",
+    "constraints": [
+      "Answer only using information supported by the website knowledge.",
+      "Speak naturally like a real customer support representative.",
+      "Be warm, friendly and professional.",
+      "Address the user directly using 'you' and 'your'.",
+      "Write short paragraphs or clean bullet points.",
+      "Never create large walls of text.",
+      "If information exists, answer confidently.",
+      "If information is partial, share what is available.",
+      "If related information exists, use it to provide guidance.",
+      "Always try to be helpful before refusing.",
+      "Never mention chunks, context, retrieval, sources or internal systems.",
+      "Never expose technical implementation details.",
+      "Never invent facts not supported by retrieved information."
+    ]
+  },
+  "ingestion": {
+    "chunk_size": 500,
+    "chunk_overlap": 100,
+    "batch_size": 100,
+    "batch_pause_seconds": 5,
+    "embedding_batch_size": 32,
+    "max_retries": 3,
+    "backoff_multiplier": 2,
+    "timeout": 30,
+    "recursive_fallback_depth": 2,
+    "recursive_fallback_pages": 80,
+    "max_backoff_seconds": 120,
+    "rate_limit_retries": 5,
+    "rate_limit_base_seconds": 30
+  },
+  "retrieval": {
+    "vector_top_k": 20,
+    "final_top_k": 5,
+    "max_search_distance": 1.15
+  },
+  "reranking": {
+    "enabled": true,
+    "backend": "auto",
+    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  },
+  "embedding": {
+    "provider": "huggingface",
+    "model": "BAAI/bge-small-en-v1.5",
+    "batch_size": 32,
+    "normalize_embeddings": true
+  },
+  "registration": {
+    "enabled": true,
+    "signup_default_model": "gemini-3.1-flash-lite",
+    "signup_default_token_limit": 50000,
+    "max_website_contexts_per_user": 2,
+    "max_chatbots_per_user": 2,
+    "cooldown_minutes": 120
+  }
+}

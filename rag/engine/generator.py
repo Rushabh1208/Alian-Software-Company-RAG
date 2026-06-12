@@ -5,6 +5,7 @@ import asyncio
 from rag.models.query_models import RetrievedChunk
 from rag.prompts.prompt_settings import PromptSettings
 from rag.prompts.prompts import build_extractive_answer, build_gemini_prompt, clean_answer, GEMINI_MODEL
+from rag.prompts.defaults import default_prompt_role, mandatory_prompt_constraint
 from rag.utils.text_utils import is_bad_answer
 from rag.utils.token_utils import estimate_tokens
 
@@ -48,9 +49,8 @@ async def generate_answer(
     return answer, input_tokens, estimate_tokens(answer)
 
 def _build_system_instruction(prompt_settings: PromptSettings | None) -> str:
-    from rag.prompts.defaults import DEFAULT_PROMPT_ROLE, MANDATORY_PROMPT_CONSTRAINT
     settings = prompt_settings or PromptSettings()
-    role = str(settings.role or DEFAULT_PROMPT_ROLE).strip()
+    role = str(settings.role or default_prompt_role()).strip()
     constraints = list(settings.constraints or [])
 
     lines = [role, ""]
@@ -59,7 +59,7 @@ def _build_system_instruction(prompt_settings: PromptSettings | None) -> str:
         lines.extend(f"- {c}" for c in constraints)
         lines.append("")
     lines.append(f"GROUNDING RULES (always apply):")
-    lines.append(f"- {MANDATORY_PROMPT_CONSTRAINT}")
+    lines.append(f"- {mandatory_prompt_constraint()}")
     lines.append("- Never invent facts not in the provided context.")
     lines.append("- Never mention chunks, context, or internal system details.")
     return "\n".join(lines)

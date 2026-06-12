@@ -1,32 +1,12 @@
 [
   {
-    "widgetId": "widget_3536c046b6bb",
-    "ownerId": "user_c1a8c73bb3f3",
-    "collection": "alian_software",
-    "displayName": "Alian Software",
-    "status": "active",
-    "createdAt": "2026-06-11T07:16:53.415Z",
-    "updatedAt": "2026-06-11T08:02:54.051Z",
-    "mappingVersion": "2026-06-11T08:02:54.051Z"
-  },
-  {
-    "widgetId": "widget_3eb69f5b8c54",
+    "widgetId": "widget_b0986ab3968f",
     "ownerId": "user_930e0351055b",
-    "collection": "alian_software",
-    "displayName": "ALIAN",
-    "status": "active",
-    "createdAt": "2026-06-11T08:03:55.332Z",
-    "updatedAt": "2026-06-12T05:56:24.942Z",
-    "mappingVersion": "2026-06-12T05:56:24.942Z"
-  },
-  {
-    "widgetId": "widget_5bc906ecbc72",
-    "ownerId": "user_930e0351055b",
-    "collection": "website_mbit_edu_in",
+    "collection": "website_mbit_edu_in_u_user_930e0351055b",
     "displayName": "MBIT",
     "status": "active",
-    "createdAt": "2026-06-11T12:28:53.419Z",
-    "updatedAt": "2026-06-12T05:56:16.246Z",
-    "mappingVersion": "2026-06-12T05:56:16.246Z"
+    "createdAt": "2026-06-12T11:32:34.803Z",
+    "updatedAt": "2026-06-12T11:32:34.803Z",
+    "mappingVersion": "2026-06-12T11:32:34.803Z"
   }
 ]

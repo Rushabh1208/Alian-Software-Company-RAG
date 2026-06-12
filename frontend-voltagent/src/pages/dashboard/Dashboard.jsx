@@ -54,7 +54,7 @@ export function DashboardPage({ onNavigate }) {
       label: "Total Queries",
       value: metrics?.totalQueries ?? 0,
       href: "/dashboard/analytics",
-      description: "All-time queries (persists after deletion)",
+      description: "All-time queries",
     },
     {
       label: "Total Tokens Used",
@@ -69,6 +69,12 @@ export function DashboardPage({ onNavigate }) {
       description: "Queries made today",
     },
     {
+      label: "Tokens Today",
+      value: (metrics?.tokensToday ?? 0).toLocaleString(),
+      href: "/dashboard/analytics",
+      description: "Tokens consumed today",
+    },
+    {
       label: "Active Widgets",
       value: metrics?.activeWidgets ?? 0,
       href: "/dashboard/widgets",
@@ -80,10 +86,10 @@ export function DashboardPage({ onNavigate }) {
     <DashboardShell eyebrow="Overview" title="Dashboard" description="A live SaaS dashboard backed by backend APIs.">
       {error ? <Toast tone="error">{error}</Toast> : null}
 
-      <div className="grid gap-4 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid gap-4 xl:grid-cols-3 2xl:grid-cols-4">
         {loading ? (
           <>
-            {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+            {[...Array(7)].map((_, i) => <Skeleton key={i} className="h-28" />)}
           </>
         ) : (
           statCards.map(({ label, value, href, description }) => (

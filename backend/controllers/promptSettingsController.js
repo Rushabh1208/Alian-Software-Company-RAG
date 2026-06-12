@@ -8,7 +8,7 @@ const {
   updatePromptSettings,
   resetPromptSettings,
 } = require("../rag_core/promptSettingsService");
-const { assertWebsiteAccess, DEFAULT_BASE_COLLECTION_NAME } = require("../services/websiteOwnershipService");
+const { assertWebsiteAccess } = require("../services/websiteOwnershipService");
 
 function authContext(req) {
   const userId = req.auth?.sub || req.auth?.userId || null;
@@ -17,15 +17,16 @@ function authContext(req) {
 }
 
 function resolveCollection(req) {
-  const collection =
-    req.query?.collection || req.body?.collection || DEFAULT_BASE_COLLECTION_NAME;
-  return String(collection);
+  return String(req.query?.collection || req.body?.collection || "").trim();
 }
 
 // GET /api/prompt-settings?collection=<id>
 async function getPromptSettingsController(req, res) {
   try {
     const collection = resolveCollection(req);
+    if (!collection) {
+      return res.status(400).json({ error: "Collection is required." });
+    }
     const { userId, isAdmin } = authContext(req);
     assertWebsiteAccess(collection, { userId, isAdmin });
 
@@ -42,6 +43,9 @@ async function getPromptSettingsController(req, res) {
 async function updatePromptSettingsController(req, res) {
   try {
     const collection = resolveCollection(req);
+    if (!collection) {
+      return res.status(400).json({ error: "Collection is required." });
+    }
     const { userId, isAdmin } = authContext(req);
     assertWebsiteAccess(collection, { userId, isAdmin });
 
@@ -66,6 +70,9 @@ async function updatePromptSettingsController(req, res) {
 async function resetPromptSettingsController(req, res) {
   try {
     const collection = resolveCollection(req);
+    if (!collection) {
+      return res.status(400).json({ error: "Collection is required." });
+    }
     const { userId, isAdmin } = authContext(req);
     assertWebsiteAccess(collection, { userId, isAdmin });
 

@@ -3,12 +3,12 @@ const {
   indexWebsite,
   listWebsites,
 } = require("../services/web_ingestion/websiteService");
+const { loadAdminConfig } = require("../services/adminConfigService");
 const { runPythonBridge } = require("../utils/runPython");
 const { pruneWidgetsForCollections } = require("../services/widgetService");
 const {
   assertWebsiteAccess,
   claimWebsiteOwnership,
-  isSharedCollection,
   listWebsiteIdsForOwner,
   removeWebsiteOwnership,
 } = require("../services/websiteOwnershipService");
@@ -27,6 +27,18 @@ async function indexWebsiteController(req, res) {
     }
 
     const { userId, isAdmin } = authContext(req);
+    const adminConfig = loadAdminConfig();
+    const registrationConfig = adminConfig.registration || {};
+    const maxWebsites = Number(registrationConfig.max_website_contexts_per_user || 0);
+
+    if (!isAdmin && maxWebsites > 0) {
+      const ownedCount = listWebsiteIdsForOwner(userId).length;
+      if (ownedCount >= maxWebsites) {
+        return res.status(403).json({
+          error: `You can create up to ${maxWebsites} website context${maxWebsites === 1 ? "" : "s"} per user.`,
+        });
+      }
+    }
 
     // Pass userId to Python so it generates a user-scoped collection name.
     // This ensures each user gets their own isolated collection even for the
@@ -53,8 +65,7 @@ async function indexWebsiteController(req, res) {
   }
 }
 
-// List only the websites owned by the requesting user (plus the shared base
-// collection). Admins see everything.
+// List only the websites owned by the requesting user. Admins see everything.
 async function listWebsitesController(req, res) {
   try {
     const { userId, isAdmin } = authContext(req);
@@ -70,7 +81,7 @@ async function listWebsitesController(req, res) {
     const ownedIds = new Set(listWebsiteIdsForOwner(userId));
     const filtered = allWebsites.filter((site) => {
       const id = String(site.id || site.collection_name || "");
-      return isSharedCollection(id) || ownedIds.has(id);
+      return ownedIds.has(id);
     });
 
     return res.json({ ...payload, websites: filtered });

@@ -23,7 +23,6 @@ import { AdminDashboardLayout } from "./components/admin/AdminDashboardLayout";
 import { AdminOverviewPage } from "./pages/admin/Overview";
 import { AdminUsersPage } from "./pages/admin/Users";
 import { AdminWebsitesPage } from "./pages/admin/Websites";
-import { AdminJobsPage } from "./pages/admin/Jobs";
 import { AdminAnalyticsPage } from "./pages/admin/Analytics";
 import { AdminSystemHealthPage } from "./pages/admin/SystemHealth";
 import { AdminSubscriptionsPage } from "./pages/admin/Subscriptions";
@@ -66,7 +65,6 @@ const adminRoutes = {
   "/admin": AdminOverviewPage,
   "/admin/users": AdminUsersPage,
   "/admin/websites": AdminWebsitesPage,
-  "/admin/jobs": AdminJobsPage,
   "/admin/analytics": AdminAnalyticsPage,
   "/admin/system-health": AdminSystemHealthPage,
   "/admin/subscriptions": AdminSubscriptionsPage,

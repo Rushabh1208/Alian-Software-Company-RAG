@@ -253,9 +253,17 @@ export function getAdminOverviewApi() {
   return request("/api/admin/overview");
 }
 
-export function getAdminJobsApi() {
-  return request("/api/admin/jobs");
+export function getAdminConfigApi() {
+  return request("/api/admin/config");
 }
+
+export function updateAdminConfigApi(body) {
+  return request("/api/admin/config", {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
 
 export function getAdminHealthApi() {
   return request("/api/admin/system-health");
