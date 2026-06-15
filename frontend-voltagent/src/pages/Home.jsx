@@ -16,7 +16,7 @@ export function HomePage({ onNavigate }) {
             Turn any website into a polished RAG experience.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-body">
-            Voltagent is a dark-theme, developer-first public site for indexing websites, embedding widgets, and previewing retrieval analytics.
+            WebGenius is a dark-theme, developer-first public site for indexing websites, embedding widgets, and previewing retrieval analytics.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button onClick={() => onNavigate("/pricing")} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-on-primary">
@@ -82,7 +82,7 @@ export function HomePage({ onNavigate }) {
           <p className="text-[11px] uppercase tracking-[0.28em] text-primary">Widget demo</p>
           <div className="mt-5 rounded-2xl border border-hairline bg-canvas p-4">
             <div className="flex items-center justify-between border-b border-hairline pb-3">
-              <p className="text-sm font-medium text-ink-strong">Ask Voltagent</p>
+              <p className="text-sm font-medium text-ink-strong">Ask WebGenius</p>
               <span className="rounded-full border border-primary/20 px-2 py-1 text-[10px] uppercase tracking-[0.25em] text-primary">Active</span>
             </div>
             <div className="mt-4 space-y-3 text-sm text-body">
@@ -144,7 +144,7 @@ export function HomePage({ onNavigate }) {
           {[
             ["Does this use authentication?", "No. Phase 1 is a public website only."],
             ["Does it connect to backend APIs?", "No. The site is self-contained and marketing-focused."],
-            ["Is the UI dark only?", "Yes. The entire site stays on the Voltagent dark canvas."],
+            ["Is the UI dark only?", "Yes. The entire site stays on the WebGenius dark canvas."],
             ["Are dashboard pages included?", "Not in this phase. Public marketing pages only."],
           ].map(([q, a]) => (
             <Card key={q} className="p-5">

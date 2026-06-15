@@ -134,7 +134,6 @@ export function AdminUsersPage() {
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-wrap gap-3">
                       <StatBox label="Total Websites" value={metrics.totalWebsites} />
-                      <StatBox label="Total Chats" value={metrics.totalChats} />
                       <StatBox label="Total Queries" value={metrics.totalQueries} />
                       <StatBox label="Total Tokens" value={metrics.totalTokens} />
                       <StatBox label="Queries Today" value={metrics.queriesToday} />
@@ -177,24 +176,7 @@ export function AdminUsersPage() {
                       </div>
                     </div>
 
-                    <div>
-                      <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-mute">Recent conversations</p>
-                      {metrics.conversations?.length ? (
-                        <ul className="space-y-2">
-                          {metrics.conversations.slice(0, 5).map((conv) => (
-                            <li key={conv.id} className="rounded-xl border border-hairline bg-canvas px-3 py-2 text-xs text-body">
-                              <span className="font-medium text-ink-strong">{conv.title}</span>
-                              {" · "}
-                              {conv.source}
-                              {" · "}
-                              {conv.updated_at || conv.created_at}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-xs text-mute">No conversations yet.</p>
-                      )}
-                    </div>
+
                   </div>
                 ) : null}
               </div>

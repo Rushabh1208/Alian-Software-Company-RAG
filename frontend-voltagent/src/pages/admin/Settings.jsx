@@ -6,8 +6,8 @@ import { Skeleton, Toast } from "../../components/ui/Feedback";
 
 const SECTION_ORDER = [
   { id: "prompt_seed", label: "Prompt Seed", description: "Default prompt copied to new clients." },
-  { id: "ingestion", label: "Ingestion", description: "Chunking and batch settings." },
-  { id: "retrieval", label: "Retrieval", description: "Candidate fetch and final selection." },
+  { id: "ingestion", label: "Ingestion", description: "Chunking, batch settings, and retry strategies." },
+  { id: "retrieval", label: "Retrieval", description: "Candidate fetch, distances, and final selection." },
   { id: "reranking", label: "Reranking", description: "Second-pass ordering controls." },
   { id: "embedding", label: "Embedding", description: "Model used by the indexer and query flow." },
   { id: "registration", label: "Registration", description: "Signup defaults and user limits." },
@@ -15,8 +15,7 @@ const SECTION_ORDER = [
 
 const DEFAULT_CONFIG = {
   prompt_seed: {
-    role:
-      "You are a friendly, helpful website assistant. You speak naturally like a real customer support representative. You are warm, professional, concise and easy to understand. You help users find information available on the website while maintaining a natural conversation.",
+    role: "You are a friendly, helpful website assistant. You speak naturally like a real customer support representative. You are warm, professional, concise and easy to understand. You help users find information available on the website while maintaining a natural conversation.",
     constraints: [
       "Answer only using information supported by the website knowledge.",
       "Speak naturally like a real customer support representative.",
@@ -115,18 +114,9 @@ function normalizeConfig(raw) {
     registration: {
       enabled: Boolean(payload?.registration?.enabled ?? DEFAULT_CONFIG.registration.enabled),
       signup_default_model: String(payload?.registration?.signup_default_model ?? DEFAULT_CONFIG.registration.signup_default_model),
-      signup_default_token_limit: numberValue(
-        payload?.registration?.signup_default_token_limit,
-        DEFAULT_CONFIG.registration.signup_default_token_limit
-      ),
-      max_website_contexts_per_user: numberValue(
-        payload?.registration?.max_website_contexts_per_user,
-        DEFAULT_CONFIG.registration.max_website_contexts_per_user
-      ),
-      max_chatbots_per_user: numberValue(
-        payload?.registration?.max_chatbots_per_user,
-        DEFAULT_CONFIG.registration.max_chatbots_per_user
-      ),
+      signup_default_token_limit: numberValue(payload?.registration?.signup_default_token_limit, DEFAULT_CONFIG.registration.signup_default_token_limit),
+      max_website_contexts_per_user: numberValue(payload?.registration?.max_website_contexts_per_user, DEFAULT_CONFIG.registration.max_website_contexts_per_user),
+      max_chatbots_per_user: numberValue(payload?.registration?.max_chatbots_per_user, DEFAULT_CONFIG.registration.max_chatbots_per_user),
       cooldown_minutes: numberValue(payload?.registration?.cooldown_minutes, DEFAULT_CONFIG.registration.cooldown_minutes),
     },
   };
@@ -142,10 +132,7 @@ function joinLines(lines) {
 }
 
 function splitLines(text) {
-  return String(text || "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+  return String(text || "").split("\n").map((line) => line.trim()).filter(Boolean);
 }
 
 function sectionTitle(section) {
@@ -154,25 +141,55 @@ function sectionTitle(section) {
 
 function Field({ label, hint, children }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex-1">
       <div>
-        <label className="text-sm font-medium text-ink-strong">{label}</label>
-        {hint ? <p className="mt-1 text-xs text-body">{hint}</p> : null}
+        <label className="text-sm font-semibold text-ink-strong">{label}</label>
+        {hint ? <p className="mt-1 text-[13px] leading-relaxed text-body">{hint}</p> : null}
       </div>
       {children}
     </div>
   );
 }
 
-function NumberInput({ value, onChange, min = undefined, step = "1" }) {
+function ToggleSwitch({ checked, onChange, label, hint }) {
+  return (
+    <div className="flex items-start justify-between gap-6 rounded-2xl border border-hairline bg-canvas-soft/40 p-5 shadow-sm transition hover:border-hairline/80">
+      <div className="flex-1">
+        <p className="text-[15px] font-semibold text-ink-strong">{label}</p>
+        {hint && <p className="mt-1 text-[13px] leading-relaxed text-body">{hint}</p>}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={[
+          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2",
+          checked ? "bg-primary" : "bg-ink/20"
+        ].join(" ")}
+      >
+        <span
+          aria-hidden="true"
+          className={[
+            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+            checked ? "translate-x-5" : "translate-x-0"
+          ].join(" ")}
+        />
+      </button>
+    </div>
+  );
+}
+
+function NumberInput({ value, onChange, min = undefined, step = "1", placeholder = "" }) {
   return (
     <input
       type="number"
       min={min}
       step={step}
       value={value}
+      placeholder={placeholder}
       onChange={(event) => onChange(numberValue(event.target.value, value))}
-      className="w-full rounded-xl border border-hairline bg-canvas-soft px-4 py-3 text-sm text-ink outline-none transition focus:border-primary/60"
+      className="w-full rounded-xl border border-hairline bg-canvas px-4 py-3 text-sm text-ink outline-none shadow-sm transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
     />
   );
 }
@@ -184,7 +201,7 @@ function TextInput({ value, onChange, placeholder = "" }) {
       value={value}
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-xl border border-hairline bg-canvas-soft px-4 py-3 text-sm text-ink outline-none transition focus:border-primary/60"
+      className="w-full rounded-xl border border-hairline bg-canvas px-4 py-3 text-sm text-ink outline-none shadow-sm transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
     />
   );
 }
@@ -196,14 +213,34 @@ function TextArea({ value, onChange, rows = 6, placeholder = "" }) {
       rows={rows}
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-xl border border-hairline bg-canvas-soft px-4 py-3 text-sm leading-6 text-ink outline-none transition focus:border-primary/60"
+      className="w-full rounded-xl border border-hairline bg-canvas px-4 py-3 text-sm leading-6 text-ink outline-none shadow-sm transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
     />
   );
 }
 
-export function AdminSettingsPage() {
+function SectionCard({ title, children }) {
+  return (
+    <Card className="space-y-6 p-6 md:p-8 shadow-sm">
+      {title && <h3 className="text-lg font-semibold text-ink-strong mb-4">{title}</h3>}
+      {children}
+    </Card>
+  );
+}
+
+export function AdminSettingsPage({ onNavigate }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
-  const [activeSection, setActiveSection] = useState("prompt_seed");
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const urlSection = searchParams.get("section");
+  const [activeSection, setActiveSection] = useState(urlSection || "prompt_seed");
+
+  useEffect(() => {
+    const currentUrlSection = new URLSearchParams(window.location.search).get("section");
+    if (currentUrlSection && currentUrlSection !== activeSection) {
+      setActiveSection(currentUrlSection);
+    }
+  }, [window.location.search]);
+
   const [loading, setLoading] = useState(true);
   const [savingSection, setSavingSection] = useState("");
   const [toast, setToast] = useState(null);
@@ -256,7 +293,7 @@ export function AdminSettingsPage() {
       setConfig(normalizeConfig(response));
       setToast({
         tone: "success",
-        message: `${sectionTitle(section)} saved. Runtime settings refresh on the next request.`,
+        message: `${sectionTitle(section)} saved successfully.`,
         key: Date.now(),
       });
     } catch (error) {
@@ -271,8 +308,8 @@ export function AdminSettingsPage() {
   return (
     <DashboardShell
       eyebrow="Configuration"
-      title="Admin configuration"
-      description="Tune the live backend defaults for prompt seeding, ingestion, retrieval, reranking, embeddings, and registration."
+      title="Platform Settings"
+      description="System-wide defaults for AI models, crawler pipelines, and user registration."
     >
       {toast ? (
         <div className="fixed right-4 top-4 z-50">
@@ -283,362 +320,220 @@ export function AdminSettingsPage() {
       {loading ? (
         <Skeleton className="h-[70vh]" />
       ) : (
-        <div className="grid gap-5 xl:grid-cols-[280px_1fr]">
-          <Card className="border border-hairline bg-canvas-soft/70 p-4 xl:sticky xl:top-6 xl:h-fit">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-body">Configuration</p>
-            <h2 className="mt-2 text-xl font-semibold text-ink-strong">Sections</h2>
-            <p className="mt-2 text-sm text-body">Update the live defaults without changing the rest of the pipeline.</p>
-
-            <div className="mt-5 space-y-2">
-              {SECTION_ORDER.map((section) => {
-                const active = section.id === activeSection;
-                return (
-                  <button
-                    key={section.id}
-                    type="button"
-                    onClick={() => setActiveSection(section.id)}
-                    className={[
-                      "w-full rounded-2xl border px-4 py-3 text-left transition",
-                      active
-                        ? "border-primary/30 bg-primary/10 text-ink-strong"
-                        : "border-hairline bg-canvas text-body hover:border-primary/30 hover:text-ink-strong",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-medium">{section.label}</p>
-                        <p className="mt-1 text-xs text-body">{section.description}</p>
-                      </div>
-                      <span className={active ? "text-primary" : "text-body"}>›</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
-
-          <div className="space-y-5">
-            <Card className="border border-hairline bg-canvas-soft/70 p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">Configuration</p>
-              <h1 className="mt-2 text-3xl font-semibold text-ink-strong">{activeMeta.label}</h1>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-body">{activeMeta.description}</p>
+        <div className="relative pb-24">
+          <div className="max-w-5xl space-y-8">
+            <Card className="border-0 bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-none md:p-8">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-ink-strong tracking-tight">{activeMeta.label}</h1>
+                  <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-body">{activeMeta.description}</p>
+                </div>
+              </div>
             </Card>
 
-            {activeSection === "prompt_seed" ? (
-              <Card className="space-y-5 p-6">
-                <Field
-                  label="Role"
-                  hint="This is the base prompt copied into the runtime seed for new clients."
-                >
-                  <TextArea
-                    value={config.prompt_seed.role}
-                    onChange={(value) => patchSection("prompt_seed", { role: value })}
-                    rows={6}
-                  />
-                </Field>
+            {activeSection === "prompt_seed" && (
+              <div className="space-y-6">
+                <SectionCard title="System Persona">
+                  <Field label="Role definition" hint="The core identity provided to the assistant. New clients inherit this automatically.">
+                    <TextArea value={config.prompt_seed.role} onChange={(value) => patchSection("prompt_seed", { role: value })} rows={5} />
+                  </Field>
+                </SectionCard>
+                <SectionCard title="Behavioral Constraints">
+                  <Field label="Rules (one per line)" hint="These rules limit AI hallucinations and dictate the tone of responses.">
+                    <TextArea value={promptConstraintsText} onChange={(value) => patchSection("prompt_seed", { constraints: splitLines(value) })} rows={12} />
+                  </Field>
+                </SectionCard>
+              </div>
+            )}
 
-                <Field
-                  label="Constraints"
-                  hint="One rule per line. These are carried into the fallback prompt seed."
-                >
-                  <TextArea
-                    value={promptConstraintsText}
-                    onChange={(value) => patchSection("prompt_seed", { constraints: splitLines(value) })}
-                    rows={10}
-                  />
-                </Field>
+            {activeSection === "ingestion" && (
+              <div className="space-y-6">
+                <SectionCard title="Chunking Strategy">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <Field label="Chunk Size" hint="Maximum tokens per document chunk.">
+                      <NumberInput value={config.ingestion.chunk_size} onChange={(value) => patchSection("ingestion", { chunk_size: value })} min={50} />
+                    </Field>
+                    <Field label="Chunk Overlap" hint="Overlap tokens to preserve context between chunks.">
+                      <NumberInput value={config.ingestion.chunk_overlap} onChange={(value) => patchSection("ingestion", { chunk_overlap: value })} min={0} />
+                    </Field>
+                  </div>
+                </SectionCard>
 
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs text-body">Applies to the shared prompt seed that new clients inherit.</p>
-                  <button
-                    type="button"
-                    onClick={() => saveSection("prompt_seed")}
-                    disabled={savingSection === "prompt_seed"}
-                    className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {savingSection === "prompt_seed" ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              </Card>
-            ) : null}
+                <SectionCard title="Batch Processing">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <Field label="Batch Size" hint="Documents parsed per batch cycle.">
+                      <NumberInput value={config.ingestion.batch_size} onChange={(value) => patchSection("ingestion", { batch_size: value })} min={1} />
+                    </Field>
+                    <Field label="Embedding Batch" hint="Chunks vectorized together.">
+                      <NumberInput value={config.ingestion.embedding_batch_size} onChange={(value) => patchSection("ingestion", { embedding_batch_size: value })} min={1} />
+                    </Field>
+                    <Field label="Batch Pause (sec)" hint="Delay between batches.">
+                      <NumberInput value={config.ingestion.batch_pause_seconds} onChange={(value) => patchSection("ingestion", { batch_pause_seconds: value })} min={0} step="0.5" />
+                    </Field>
+                  </div>
+                </SectionCard>
 
-            {activeSection === "ingestion" ? (
-              <Card className="space-y-6 p-6">
-                <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Chunk Size" hint="Maximum tokens per chunk during website ingestion.">
-                    <NumberInput
-                      value={config.ingestion.chunk_size}
-                      onChange={(value) => patchSection("ingestion", { chunk_size: value })}
-                      min={50}
-                    />
-                  </Field>
-                  <Field label="Chunk Overlap" hint="Shared tokens between consecutive chunks.">
-                    <NumberInput
-                      value={config.ingestion.chunk_overlap}
-                      onChange={(value) => patchSection("ingestion", { chunk_overlap: value })}
-                      min={0}
-                    />
-                  </Field>
-                  <Field label="Batch Size" hint="How many URLs or chunks to process per batch.">
-                    <NumberInput
-                      value={config.ingestion.batch_size}
-                      onChange={(value) => patchSection("ingestion", { batch_size: value })}
-                      min={1}
-                    />
-                  </Field>
-                  <Field label="Batch Pause (seconds)" hint="Pause between batches to reduce pressure on crawlers.">
-                    <NumberInput
-                      value={config.ingestion.batch_pause_seconds}
-                      onChange={(value) => patchSection("ingestion", { batch_pause_seconds: value })}
-                      min={0}
-                      step="0.5"
-                    />
-                  </Field>
-                  <Field label="Embedding Batch Size" hint="Documents embedded together before flushing to Chroma.">
-                    <NumberInput
-                      value={config.ingestion.embedding_batch_size}
-                      onChange={(value) => patchSection("ingestion", { embedding_batch_size: value })}
-                      min={1}
-                    />
-                  </Field>
-                  <Field label="Timeout (seconds)" hint="Crawler timeout per request.">
-                    <NumberInput
-                      value={config.ingestion.timeout}
-                      onChange={(value) => patchSection("ingestion", { timeout: value })}
-                      min={1}
-                    />
-                  </Field>
-                </div>
+                <SectionCard title="Crawler Reliability">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    <Field label="Timeout (sec)" hint="Crawler HTTP timeout limit.">
+                      <NumberInput value={config.ingestion.timeout} onChange={(value) => patchSection("ingestion", { timeout: value })} min={1} />
+                    </Field>
+                    <Field label="Max Retries" hint="Base retry attempts.">
+                      <NumberInput value={config.ingestion.max_retries} onChange={(value) => patchSection("ingestion", { max_retries: value })} min={0} />
+                    </Field>
+                    <Field label="Backoff Multiplier" hint="Exponential scaling factor.">
+                      <NumberInput value={config.ingestion.backoff_multiplier} onChange={(value) => patchSection("ingestion", { backoff_multiplier: value })} min={1} step="0.1" />
+                    </Field>
+                    <Field label="Max Backoff (sec)" hint="Cap on exponential delay.">
+                      <NumberInput value={config.ingestion.max_backoff_seconds} onChange={(value) => patchSection("ingestion", { max_backoff_seconds: value })} min={1} />
+                    </Field>
+                  </div>
+                </SectionCard>
 
-                <div className="grid gap-5 md:grid-cols-3">
-                  <Field label="Retries" hint="Retry count for crawler and ingestion work.">
-                    <NumberInput
-                      value={config.ingestion.max_retries}
-                      onChange={(value) => patchSection("ingestion", { max_retries: value })}
-                      min={0}
-                    />
+                <SectionCard title="Fallback & Rate Limits">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <Field label="Fallback Depth" hint="Link traversal depth on sitemap failure.">
+                      <NumberInput value={config.ingestion.recursive_fallback_depth} onChange={(value) => patchSection("ingestion", { recursive_fallback_depth: value })} min={0} />
+                    </Field>
+                    <Field label="Fallback Pages" hint="Max pages to scrape recursively.">
+                      <NumberInput value={config.ingestion.recursive_fallback_pages} onChange={(value) => patchSection("ingestion", { recursive_fallback_pages: value })} min={1} />
+                    </Field>
+                    <Field label="Rate Limit Retries" hint="Retries on 429 Too Many Requests.">
+                      <NumberInput value={config.ingestion.rate_limit_retries} onChange={(value) => patchSection("ingestion", { rate_limit_retries: value })} min={0} />
+                    </Field>
+                    <Field label="Rate Limit Wait (sec)" hint="Base wait time for 429s.">
+                      <NumberInput value={config.ingestion.rate_limit_base_seconds} onChange={(value) => patchSection("ingestion", { rate_limit_base_seconds: value })} min={1} />
+                    </Field>
+                  </div>
+                </SectionCard>
+              </div>
+            )}
+
+            {activeSection === "retrieval" && (
+              <SectionCard title="Vector Search Parameters">
+                <div className="grid gap-6 md:grid-cols-3">
+                  <Field label="Vector Top K" hint="Raw chunks fetched from the vector DB.">
+                    <NumberInput value={config.retrieval.vector_top_k} onChange={(value) => patchSection("retrieval", { vector_top_k: value })} min={1} />
                   </Field>
-                  <Field label="Backoff Multiplier" hint="Exponential retry backoff factor.">
-                    <NumberInput
-                      value={config.ingestion.backoff_multiplier}
-                      onChange={(value) => patchSection("ingestion", { backoff_multiplier: value })}
-                      min={1}
-                      step="0.1"
-                    />
+                  <Field label="Final Top K" hint="Chunks forwarded to the LLM context.">
+                    <NumberInput value={config.retrieval.final_top_k} onChange={(value) => patchSection("retrieval", { final_top_k: value })} min={1} />
                   </Field>
-                  <Field label="Rate Limit Retries" hint="How many 429s to tolerate before skipping.">
-                    <NumberInput
-                      value={config.ingestion.rate_limit_retries}
-                      onChange={(value) => patchSection("ingestion", { rate_limit_retries: value })}
-                      min={0}
-                    />
+                  <Field label="Search Distance" hint="Threshold for vector similarity.">
+                    <NumberInput value={config.retrieval.max_search_distance} onChange={(value) => patchSection("retrieval", { max_search_distance: value })} min={0.1} step="0.01" />
                   </Field>
                 </div>
+              </SectionCard>
+            )}
 
-                <button
-                  type="button"
-                  onClick={() => saveSection("ingestion")}
-                  disabled={savingSection === "ingestion"}
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {savingSection === "ingestion" ? "Saving..." : "Save"}
-                </button>
-              </Card>
-            ) : null}
+            {activeSection === "reranking" && (
+              <div className="space-y-6">
+                <ToggleSwitch
+                  label="Enable Reranking Pipeline"
+                  hint="When enabled, vector candidates are rescored by a cross-encoder before selection."
+                  checked={config.reranking.enabled}
+                  onChange={(checked) => patchSection("reranking", { enabled: checked })}
+                />
 
-            {activeSection === "retrieval" ? (
-              <Card className="space-y-6 p-6">
-                <div className="grid gap-5 md:grid-cols-3">
-                  <Field label="Vector Top K" hint="Candidate chunks fetched from Chroma for each sub-query.">
-                    <NumberInput
-                      value={config.retrieval.vector_top_k}
-                      onChange={(value) => patchSection("retrieval", { vector_top_k: value })}
-                      min={1}
-                    />
-                  </Field>
-                  <Field label="Final Top K" hint="Maximum chunks kept after reranking and filtering.">
-                    <NumberInput
-                      value={config.retrieval.final_top_k}
-                      onChange={(value) => patchSection("retrieval", { final_top_k: value })}
-                      min={1}
-                    />
-                  </Field>
-                  <Field label="Max Search Distance" hint="Higher values broaden retrieval; lower values tighten it.">
-                    <NumberInput
-                      value={config.retrieval.max_search_distance}
-                      onChange={(value) => patchSection("retrieval", { max_search_distance: value })}
-                      min={0.1}
-                      step="0.01"
-                    />
-                  </Field>
-                </div>
+                <SectionCard title="Model Specifications">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <Field label="Backend Provider" hint="Engine running the reranker (e.g. 'auto', 'huggingface').">
+                      <TextInput value={config.reranking.backend} onChange={(value) => patchSection("reranking", { backend: value })} placeholder="auto" />
+                    </Field>
+                    <Field label="Cross-Encoder Model" hint="The specific huggingface or provider model ID.">
+                      <TextInput value={config.reranking.model} onChange={(value) => patchSection("reranking", { model: value })} placeholder="cross-encoder/ms-marco-MiniLM-L-6-v2" />
+                    </Field>
+                  </div>
+                </SectionCard>
+              </div>
+            )}
 
-                <button
-                  type="button"
-                  onClick={() => saveSection("retrieval")}
-                  disabled={savingSection === "retrieval"}
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {savingSection === "retrieval" ? "Saving..." : "Save"}
-                </button>
-              </Card>
-            ) : null}
+            {activeSection === "embedding" && (
+              <div className="space-y-6">
+                <ToggleSwitch
+                  label="Normalize Embeddings"
+                  hint="Projects vectors onto a unit hypersphere. Recommended for cosine similarity search."
+                  checked={config.embedding.normalize_embeddings}
+                  onChange={(checked) => patchSection("embedding", { normalize_embeddings: checked })}
+                />
 
-            {activeSection === "reranking" ? (
-              <Card className="space-y-6 p-6">
-                <div className="rounded-2xl border border-hairline bg-canvas px-4 py-4">
-                  <label className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-ink-strong">Enable reranking</p>
-                      <p className="mt-1 text-xs text-body">Turn this on to reorder candidate chunks before the answer is generated.</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={config.reranking.enabled}
-                      onChange={(event) => patchSection("reranking", { enabled: event.target.checked })}
-                      className="h-4 w-4 accent-primary"
-                    />
-                  </label>
-                </div>
+                <SectionCard title="Vectorization Engine">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <Field label="Embedding Provider" hint="Provider running the embeddings (e.g. 'huggingface', 'openai').">
+                      <TextInput value={config.embedding.provider} onChange={(value) => patchSection("embedding", { provider: value })} placeholder="huggingface" />
+                    </Field>
+                    <Field label="Model ID" hint="The semantic model mapping text to vectors.">
+                      <TextInput value={config.embedding.model} onChange={(value) => patchSection("embedding", { model: value })} placeholder="BAAI/bge-small-en-v1.5" />
+                    </Field>
+                  </div>
+                  <div className="mt-6 md:w-1/2">
+                    <Field label="Inference Batch Size" hint="Concurrent strings sent to the embedding model.">
+                      <NumberInput value={config.embedding.batch_size} onChange={(value) => patchSection("embedding", { batch_size: value })} min={1} />
+                    </Field>
+                  </div>
+                </SectionCard>
+              </div>
+            )}
 
-                <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Backend" hint="Usually auto, unless you want to force a specific reranker backend.">
-                    <TextInput
-                      value={config.reranking.backend}
-                      onChange={(value) => patchSection("reranking", { backend: value })}
-                      placeholder="auto"
-                    />
-                  </Field>
-                  <Field label="Model" hint="Cross-encoder model used for reranking.">
-                    <TextInput
-                      value={config.reranking.model}
-                      onChange={(value) => patchSection("reranking", { model: value })}
-                      placeholder="cross-encoder/ms-marco-MiniLM-L-6-v2"
-                    />
-                  </Field>
-                </div>
+            {activeSection === "registration" && (
+              <div className="space-y-6">
+                <ToggleSwitch
+                  label="Allow Open Registration"
+                  hint="Disable this to restrict platform access to invite-only or manually created accounts."
+                  checked={config.registration.enabled}
+                  onChange={(checked) => patchSection("registration", { enabled: checked })}
+                />
 
-                <button
-                  type="button"
-                  onClick={() => saveSection("reranking")}
-                  disabled={savingSection === "reranking"}
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {savingSection === "reranking" ? "Saving..." : "Save"}
-                </button>
-              </Card>
-            ) : null}
+                <SectionCard title="User Tier Defaults">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <Field label="Default LLM Model" hint="Assigned to new users upon signup.">
+                      <TextInput value={config.registration.signup_default_model} onChange={(value) => patchSection("registration", { signup_default_model: value })} />
+                    </Field>
+                    <Field label="Starting Token Limit" hint="Monthly token allowance granted by default.">
+                      <NumberInput value={config.registration.signup_default_token_limit} onChange={(value) => patchSection("registration", { signup_default_token_limit: value })} min={1} />
+                    </Field>
+                    <Field label="Max Website Contexts" hint="The total number of knowledge bases a user can crawl.">
+                      <NumberInput value={config.registration.max_website_contexts_per_user} onChange={(value) => patchSection("registration", { max_website_contexts_per_user: value })} min={0} />
+                    </Field>
+                    <Field label="Max Chatbot Instances" hint="The number of unique widgets a user can deploy.">
+                      <NumberInput value={config.registration.max_chatbots_per_user} onChange={(value) => patchSection("registration", { max_chatbots_per_user: value })} min={0} />
+                    </Field>
+                  </div>
+                </SectionCard>
 
-            {activeSection === "embedding" ? (
-              <Card className="space-y-6 p-6">
-                <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Embedding Model" hint="Used by ingestion and query-time embeddings.">
-                    <TextInput
-                      value={config.embedding.model}
-                      onChange={(value) => patchSection("embedding", { model: value })}
-                      placeholder="BAAI/bge-small-en-v1.5"
-                    />
-                  </Field>
-                  <Field label="Batch Size" hint="Embedding batch size used by the indexer.">
-                    <NumberInput
-                      value={config.embedding.batch_size}
-                      onChange={(value) => patchSection("embedding", { batch_size: value })}
-                      min={1}
-                    />
-                  </Field>
-                </div>
+                <SectionCard title="Security & Rate Limiting">
+                  <div className="md:w-1/2">
+                    <Field label="New Account Cooldown (minutes)" hint="Delay before a newly created account can initiate heavy crawler jobs.">
+                      <NumberInput value={config.registration.cooldown_minutes} onChange={(value) => patchSection("registration", { cooldown_minutes: value })} min={0} />
+                    </Field>
+                  </div>
+                </SectionCard>
+              </div>
+            )}
+          </div>
 
-                <div className="rounded-2xl border border-hairline bg-canvas px-4 py-4">
-                  <label className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-ink-strong">Normalize embeddings</p>
-                      <p className="mt-1 text-xs text-body">Keep this on for the current semantic-search pipeline.</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={config.embedding.normalize_embeddings}
-                      onChange={(event) => patchSection("embedding", { normalize_embeddings: event.target.checked })}
-                      className="h-4 w-4 accent-primary"
-                    />
-                  </label>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => saveSection("embedding")}
-                  disabled={savingSection === "embedding"}
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {savingSection === "embedding" ? "Saving..." : "Save"}
-                </button>
-              </Card>
-            ) : null}
-
-            {activeSection === "registration" ? (
-              <Card className="space-y-6 p-6">
-                <div className="rounded-2xl border border-hairline bg-canvas px-4 py-4">
-                  <label className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-ink-strong">Registration enabled</p>
-                      <p className="mt-1 text-xs text-body">Disable this to block new account sign-ups.</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={config.registration.enabled}
-                      onChange={(event) => patchSection("registration", { enabled: event.target.checked })}
-                      className="h-4 w-4 accent-primary"
-                    />
-                  </label>
-                </div>
-
-                <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Signup default model" hint="Stored on new users as their default model policy.">
-                    <TextInput
-                      value={config.registration.signup_default_model}
-                      onChange={(value) => patchSection("registration", { signup_default_model: value })}
-                    />
-                  </Field>
-                  <Field label="Signup default token limit" hint="Saved on the new user record as a starting allowance.">
-                    <NumberInput
-                      value={config.registration.signup_default_token_limit}
-                      onChange={(value) => patchSection("registration", { signup_default_token_limit: value })}
-                      min={1}
-                    />
-                  </Field>
-                  <Field label="Max website contexts per user" hint="Limits how many websites a user can register.">
-                    <NumberInput
-                      value={config.registration.max_website_contexts_per_user}
-                      onChange={(value) => patchSection("registration", { max_website_contexts_per_user: value })}
-                      min={0}
-                    />
-                  </Field>
-                  <Field label="Max chatbots per user" hint="Limits how many widget configurations a user can create.">
-                    <NumberInput
-                      value={config.registration.max_chatbots_per_user}
-                      onChange={(value) => patchSection("registration", { max_chatbots_per_user: value })}
-                      min={0}
-                    />
-                  </Field>
-                </div>
-
-                <Field label="Cooldown duration (minutes)" hint="Optional delay before a new account can perform restricted actions.">
-                  <NumberInput
-                    value={config.registration.cooldown_minutes}
-                    onChange={(value) => patchSection("registration", { cooldown_minutes: value })}
-                    min={0}
-                  />
-                </Field>
-
-                <button
-                  type="button"
-                  onClick={() => saveSection("registration")}
-                  disabled={savingSection === "registration"}
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {savingSection === "registration" ? "Saving..." : "Save"}
-                </button>
-              </Card>
-            ) : null}
+          {/* Sticky Save Bar */}
+          <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-hairline bg-canvas/80 px-6 py-4 backdrop-blur-xl lg:left-72">
+            <div className="mx-auto flex max-w-[1800px] items-center justify-between">
+              <div className="hidden sm:block">
+                <p className="text-sm font-medium text-ink-strong">Unsaved changes will be lost</p>
+                <p className="text-xs text-body">Apply settings to the {activeMeta.label} configuration</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => saveSection(activeSection)}
+                disabled={savingSection === activeSection}
+                className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 text-[15px] font-semibold text-on-primary shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-primary/30 active:scale-95 disabled:pointer-events-none disabled:opacity-60 w-full sm:w-auto justify-center"
+              >
+                {savingSection === activeSection ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
+                    Saving...
+                  </>
+                ) : (
+                  "Save Configuration"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

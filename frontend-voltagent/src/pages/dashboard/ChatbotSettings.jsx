@@ -9,7 +9,7 @@ const DEFAULTS = {
   accentColor: "#00d992",
   welcomeMessage: "Hi, how can I help?",
   suggestedQuestions: [],
-  widgetTitle: "Voltagent Assistant",
+  widgetTitle: "WebGenius Assistant",
 };
 
 const PRESET_COLORS = ["#00d992", "#6366f1", "#f59e0b", "#ef4444", "#3b82f6", "#ec4899"];

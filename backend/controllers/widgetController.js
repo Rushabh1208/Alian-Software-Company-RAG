@@ -27,7 +27,7 @@ const SETTINGS_DEFAULTS = {
   accent_color: "#00d992",
   welcome_message: "Hi, how can I help?",
   suggested_questions: [],
-  widget_title: "Voltagent Assistant",
+  widget_title: "WebGenius Assistant",
 };
 
 // Return the widget settings for a given owner user id.

@@ -79,7 +79,7 @@
       accentColor: "#00d992",
       welcomeMessage: "",
       suggestedQuestions: [],
-      widgetTitle: "Voltagent Assistant",
+      widgetTitle: "WebGenius Assistant",
     },
     sessions: [],
     currentSessionId: null,
@@ -323,7 +323,7 @@
           suggestedQuestions: Array.isArray(ws.suggestedQuestions)
             ? ws.suggestedQuestions
             : state.widgetSettings.suggestedQuestions,
-          widgetTitle: String(ws.widgetTitle || state.widgetSettings.widgetTitle || "Voltagent Assistant"),
+          widgetTitle: String(ws.widgetTitle || state.widgetSettings.widgetTitle || "WebGenius Assistant"),
         };
         applyTheme();
       }

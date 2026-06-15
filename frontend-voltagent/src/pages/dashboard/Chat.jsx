@@ -277,6 +277,7 @@ function HistorySidebar({ chats, currentChatId, onSelectChat, onNewChat, onDelet
 }
 
 // ─── Main Chat Page ───────────────────────────────────────────────────────────
+// ─── Main Chat Page ───────────────────────────────────────────────────────────
 export function ChatPage() {
   const [websites, setWebsites] = useState([]);
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
@@ -289,22 +290,29 @@ export function ChatPage() {
   const [error, setError] = useState("");
   const [chunkModalOpen, setChunkModalOpen] = useState(false);
   const [modalChunks, setModalChunks] = useState([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const chatEndRef = useRef(null);
 
   // ── Load user's chats from DB on mount ─────────────────────────────────────
   useEffect(() => {
     setChatsLoading(true);
-    listChatsApi()
-      .then((payload) => {
-        const loaded = Array.isArray(payload.conversations) ? payload.conversations : [];
-        setChats(loaded);
-        if (loaded.length > 0) setCurrentChatId(loaded[0].id);
-      })
-      .catch(() => {
-        // If auth fails or network error, start with empty state
-        setChats([]);
-      })
-      .finally(() => setChatsLoading(false));
+      listChatsApi()
+        .then((payload) => {
+          const loaded = Array.isArray(payload.conversations) ? payload.conversations : [];
+          // Sort chats newest first based on created_at or updated_at timestamp
+          loaded.sort((a, b) => {
+            const aDate = new Date(a.created_at || a.updated_at || 0);
+            const bDate = new Date(b.created_at || b.updated_at || 0);
+            return bDate - aDate;
+          });
+          setChats(loaded);
+          if (loaded.length > 0) setCurrentChatId(loaded[0].id);
+        })
+        .catch(() => {
+          // If auth fails or network error, start with empty state
+          setChats([]);
+        })
+        .finally(() => setChatsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -323,11 +331,12 @@ export function ChatPage() {
 
   const currentChat = chats.find((c) => c.id === currentChatId) || chats[0] || { messages: [] };
 
+  // Scroll to the latest message whenever the chat changes or new messages arrive
   useEffect(() => {
     requestAnimationFrame(() => {
       chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     });
-  }, [currentChat?.messages?.length]);
+  }, [currentChatId, currentChat?.messages?.length]);
 
   const selectedWebsite = websites.find((w) => w.id === selectedWebsiteId) || null;
   const collectionId = selectedWebsite?.collection_name || "";
@@ -497,23 +506,38 @@ export function ChatPage() {
       </div>
 
       {/* Main layout: History | Chat | Analytics */}
-      <div className="flex gap-4 h-[calc(100vh-220px)] min-h-[620px]">
+      <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-220px)] min-h-[620px]">
 
         {/* ── Left: History sidebar ── */}
-        <HistorySidebar
-          chats={chats}
-          currentChatId={currentChatId}
-          onSelectChat={handleSelectChat}
-          onNewChat={handleNewChat}
-          onDeleteChat={handleDeleteChat}
-          loading={chatsLoading}
-        />
+        <div className={`${historyOpen ? "block" : "hidden"} md:block shrink-0`}>
+          <HistorySidebar
+            chats={chats}
+            currentChatId={currentChatId}
+            onSelectChat={(id) => {
+              handleSelectChat(id);
+              setHistoryOpen(false);
+            }}
+            onNewChat={() => {
+              handleNewChat();
+              setHistoryOpen(false);
+            }}
+            onDeleteChat={handleDeleteChat}
+            loading={chatsLoading}
+          />
+        </div>
 
         {/* ── Center: Chat panel ── */}
         <div className="flex flex-1 min-w-0 flex-col rounded-2xl border border-hairline bg-canvas overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-hairline px-5 py-3 shrink-0">
             <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setHistoryOpen(!historyOpen)}
+                className="md:hidden rounded-lg border border-hairline px-2.5 py-1 text-xs text-body hover:text-ink"
+              >
+                {historyOpen ? "✕ Close History" : "☰ History"}
+              </button>
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-mute">Query Scope</p>
                 <h2 className="mt-0.5 text-sm font-semibold text-ink-strong">{collectionLabel}</h2>

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Card } from "../../components/marketing/MarketingPrimitives";
 import { DashboardShell } from "../../components/dashboard/DashboardShell";
-import { getDashboardMetricsApi, getConversationsApi, getWidgets, getWebsites } from "../../lib/api";
+import { getDashboardMetricsApi, getWidgets, getWebsites } from "../../lib/api";
 import { Skeleton, EmptyState, Toast } from "../../components/ui/Feedback";
 
 export function DashboardPage({ onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [metrics, setMetrics] = useState(null);
-  const [latestConversations, setLatestConversations] = useState([]);
+
   const [latestWebsites, setLatestWebsites] = useState([]);
   const [widgets, setWidgets] = useState([]);
 
@@ -16,15 +16,13 @@ export function DashboardPage({ onNavigate }) {
     let mounted = true;
     const load = async () => {
       try {
-        const [metricPayload, convoPayload, websitePayload, widgetPayload] = await Promise.all([
+        const [metricPayload, websitePayload, widgetPayload] = await Promise.all([
           getDashboardMetricsApi(),
-          getConversationsApi(),
           getWebsites(),
           getWidgets(),
         ]);
         if (!mounted) return;
         setMetrics(metricPayload);
-        setLatestConversations((convoPayload.conversations || []).slice(0, 3));
         setLatestWebsites((websitePayload.websites || []).slice(0, 3));
         setWidgets((widgetPayload.widgets || []).slice(0, 3));
       } catch (e) {
@@ -44,12 +42,7 @@ export function DashboardPage({ onNavigate }) {
       href: "/dashboard/websites",
       description: "Manage your indexed websites",
     },
-    {
-      label: "Total Chats",
-      value: metrics?.totalChats ?? 0,
-      href: "/dashboard/conversations",
-      description: "View all conversations",
-    },
+
     {
       label: "Total Queries",
       value: metrics?.totalQueries ?? 0,
@@ -156,7 +149,7 @@ export function DashboardPage({ onNavigate }) {
           {metrics?.recentActivity?.length ? metrics.recentActivity.map((item) => (
             <button
               key={`${item.type}-${item.label}`}
-              onClick={() => onNavigate(item.type === "Conversation" ? "/dashboard/conversations" : "/dashboard/widgets")}
+              onClick={() => onNavigate("/dashboard/widgets")}
               className="rounded-xl border border-hairline bg-canvas px-4 py-4 text-left transition hover:border-primary/40 hover:bg-primary/5"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-primary">{item.type}</p>
@@ -167,24 +160,7 @@ export function DashboardPage({ onNavigate }) {
         </div>
       </Card>
 
-      <Card className="p-5">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-ink-strong">Latest conversations</p>
-          <button onClick={() => onNavigate("/dashboard/conversations")} className="text-xs text-primary hover:underline">View all →</button>
-        </div>
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          {latestConversations.length ? latestConversations.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onNavigate("/dashboard/conversations")}
-              className="rounded-xl border border-hairline bg-canvas px-4 py-4 text-left transition hover:border-primary/40 hover:bg-primary/5"
-            >
-              <p className="text-sm font-medium text-ink-strong">{item.title}</p>
-              <p className="mt-1 text-xs text-body">{item.source || "conversation"} · {item.messages?.length || 0} messages</p>
-            </button>
-          )) : <EmptyState title="No conversations yet" description="Chat activity appears here once users start asking questions." />}
-        </div>
-      </Card>
+
     </DashboardShell>
   );
 }

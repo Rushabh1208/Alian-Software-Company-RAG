@@ -6,9 +6,9 @@ export const dashboardStats = [
 ];
 
 export const websites = [
-  { name: "voltagent.dev", status: "Synced", updated: "3 min ago", pages: 143, color: "bg-primary" },
-  { name: "docs.voltagent.dev", status: "Indexing", updated: "11 min ago", pages: 84, color: "bg-yellow-400" },
-  { name: "help.voltagent.dev", status: "Needs reindex", updated: "2h ago", pages: 52, color: "bg-red-400" },
+  { name: "webgenius.com", status: "Synced", updated: "3 min ago", pages: 143, color: "bg-primary" },
+  { name: "docs.webgenius.com", status: "Indexing", updated: "11 min ago", pages: 84, color: "bg-yellow-400" },
+  { name: "help.webgenius.com", status: "Needs reindex", updated: "2h ago", pages: 52, color: "bg-red-400" },
 ];
 
 export const conversations = [

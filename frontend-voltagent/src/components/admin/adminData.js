@@ -6,15 +6,15 @@ export const adminOverviewStats = [
 ];
 
 export const adminUsers = [
-  { name: "Aman Singh", email: "aman@voltagent.dev", role: "Owner", status: "Active", lastSeen: "2 min ago" },
+  { name: "Aman Singh", email: "aman@webgenius.com", role: "Owner", status: "Active", lastSeen: "2 min ago" },
   { name: "Sofia Chen", email: "sofia@northstar.ai", role: "Admin", status: "Disabled", lastSeen: "1 day ago" },
   { name: "Jordan Lee", email: "jordan@studio.io", role: "Member", status: "Active", lastSeen: "10 min ago" },
 ];
 
 export const adminWebsites = [
-  { domain: "voltagent.dev", status: "Healthy", widgets: 3, reindex: "Available" },
-  { domain: "docs.voltagent.dev", status: "Queued", widgets: 1, reindex: "Running" },
-  { domain: "help.voltagent.dev", status: "Attention", widgets: 0, reindex: "Required" },
+  { domain: "webgenius.com", status: "Healthy", widgets: 3, reindex: "Available" },
+  { domain: "docs.webgenius.com", status: "Queued", widgets: 1, reindex: "Running" },
+  { domain: "help.webgenius.com", status: "Attention", widgets: 0, reindex: "Required" },
 ];
 
 export const adminJobs = [
@@ -23,9 +23,3 @@ export const adminJobs = [
   { id: "job-103", type: "Embedding", status: "Completed", updated: "35 min ago" },
 ];
 
-export const adminHealth = [
-  { label: "Node API Status", value: "Operational", tone: "text-primary" },
-  { label: "FastAPI Status", value: "Operational", tone: "text-primary" },
-  { label: "ChromaDB Status", value: "Degraded", tone: "text-yellow-400" },
-  { label: "Storage Usage", value: "68%", tone: "text-body" },
-];

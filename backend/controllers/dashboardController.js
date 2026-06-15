@@ -1,9 +1,8 @@
 const { getAdminOverviewMetrics, getUserAnalytics, seedAnalytics } = require("../services/analyticsService");
-const { listConversations, listChatMessages, seedConversationStats, getUserStats, getAllUserStats } = require("../services/conversationService");
+const { getUserStats, getAllUserStats } = require("../services/conversationService");
 const { getWidgetSettings, saveWidgetSettings } = require("../services/widgetSettingsService");
 const { listWidgets, listWidgetsByOwner } = require("../services/widgetService");
 const { listWebsites } = require("../services/web_ingestion/websiteService");
-const { listPlans, getUserSubscription } = require("../services/subscriptionService");
 const { readTable } = require("../utils/dbStore");
 const { listWebsiteIdsForOwner } = require("../services/websiteOwnershipService");
 const { getUserById, toPublicUser } = require("../services/authService");
@@ -28,15 +27,12 @@ async function dashboardMetricsController(req, res) {
       });
     }
     const widgets = userId ? listWidgetsByOwner(userId) : listWidgets();
-    seedConversationStats();
     seedAnalytics();
     const analytics    = getUserAnalytics(userId);
-    const conversations = listConversations(userId);
     const userStats    = getUserStats(userId);
 
     return res.json({
       totalWebsites:  websites.length,
-      totalChats:     conversations.length,
       totalQueries:   userStats.total_queries,
       totalTokens:    userStats.total_tokens,
       queriesToday:   analytics.queriesToday ?? 0,
@@ -44,7 +40,6 @@ async function dashboardMetricsController(req, res) {
       tokensToday:    analytics.tokensToday  ?? 0,
       activeWidgets:  widgets.filter((w) => w.status === "active").length,
       recentActivity: [
-        ...conversations.slice(0, 3).map((item) => ({ label: item.title, type: "Conversation", timestamp: item.updated_at || item.created_at })),
         ...widgets.slice(0, 2).map((item) => ({ label: item.displayName, type: "Widget",       timestamp: item.updatedAt  || item.createdAt  })),
       ],
     });
@@ -53,19 +48,6 @@ async function dashboardMetricsController(req, res) {
   }
 }
 
-// ── Conversations ─────────────────────────────────────────────────────────────
-async function conversationsController(req, res) {
-  try {
-    const userId = userIdFromAuth(req);
-    const items = listConversations(userId).map((conversation) => ({
-      ...conversation,
-      messages: listChatMessages(conversation.id),
-    }));
-    return res.json({ conversations: items });
-  } catch (error) {
-    return res.status(500).json({ error: error.message || "Failed to load conversations." });
-  }
-}
 
 // ── User analytics ────────────────────────────────────────────────────────────
 async function analyticsController(req, res) {
@@ -86,7 +68,7 @@ async function widgetSettingsController(req, res) {
       theme: "dark",
       welcome_message: "Hi, how can I help?",
       suggested_questions: ["How do I index a site?", "How do widgets work?"],
-      widget_title: "Voltagent Assistant",
+      widget_title: "WebGenius Assistant",
       accent_color: "#00d992",
     };
     return res.json({ settings });
@@ -146,10 +128,48 @@ async function adminOverviewController(_req, res) {
     const totalTokensAllTime  = allUserStats.reduce((sum, s) => sum + (s.total_tokens  || 0), 0);
     const totalQueriesAllTime = allUserStats.reduce((sum, s) => sum + (s.total_queries || 0), 0);
 
-    // Conversations
-    const totalChats = readTable("conversations").length;
 
-    const subscriptions = listPlans();
+
+    // Group allDaily by date for platform-wide analytics
+    const dailyGrouped = {};
+    allDaily.forEach((r) => {
+      const date = r.date;
+      if (!date) return;
+      if (!dailyGrouped[date]) {
+        dailyGrouped[date] = { date, label: r.label, queries: 0, chats: 0, tokens: 0 };
+      }
+      dailyGrouped[date].queries += (r.queries || 0);
+      dailyGrouped[date].chats += (r.chats || 0);
+      dailyGrouped[date].tokens += (r.tokens || 0);
+    });
+    const dailyAnalytics = Object.values(dailyGrouped)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-14);
+
+    // Group allMonthly by month for platform-wide analytics
+    const allMonthly = readTable("analytics_monthly");
+    const monthlyGrouped = {};
+    allMonthly.forEach((r) => {
+      const month = r.month;
+      if (!month) return;
+      if (!monthlyGrouped[month]) {
+        monthlyGrouped[month] = { month, label: r.label, queries: 0, chats: 0, tokens: 0 };
+      }
+      monthlyGrouped[month].queries += (r.queries || 0);
+      monthlyGrouped[month].chats += (r.chats || 0);
+      monthlyGrouped[month].tokens += (r.tokens || 0);
+    });
+    const monthlyAnalytics = Object.values(monthlyGrouped)
+      .sort((a, b) => a.month.localeCompare(b.month))
+      .slice(-6);
+
+    // Summary of collections/websites
+    const websitesSummary = allWebsites.map((site) => ({
+      id: site.id || site.collection_name,
+      domain: site.domain || site.collection_name,
+      pageCount: site.page_count || 0,
+      status: site.status || "active",
+    })).sort((a, b) => b.pageCount - a.pageCount);
 
     return res.json({
       metrics: {
@@ -162,45 +182,18 @@ async function adminOverviewController(_req, res) {
         totalQueriesToday,
         totalTokensAllTime,
         totalQueriesAllTime,
-        totalChats,
       },
-      subscriptions,
-      revenueSummary: {
-        monthlyRevenue: 12540,
-        mrr: 12540,
-        activeSubscribers: 1948,
-      },
+      dailyAnalytics,
+      monthlyAnalytics,
+      websitesSummary,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Failed to load overview." });
   }
 }
 
-// ── Admin system health ───────────────────────────────────────────────────────
-async function adminHealthController(_req, res) {
-  try {
-    return res.json({
-      nodeApi: "operational",
-      fastApi: "operational",
-      chromaDb: "operational",
-      queue: "operational",
-      storageUsage: 68,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message || "Failed to load system health." });
-  }
-}
 
-// ── Admin subscriptions ───────────────────────────────────────────────────────
-async function adminSubscriptionsController(_req, res) {
-  try {
-    const plans = listPlans();
-    const subscription = getUserSubscription("user_seed");
-    return res.json({ plans, subscription });
-  } catch (error) {
-    return res.status(500).json({ error: error.message || "Failed to load subscriptions." });
-  }
-}
+
 
 // ── Per-user metrics (admin view) ─────────────────────────────────────────────
 async function userMetricsController(req, res) {
@@ -220,16 +213,13 @@ async function userMetricsController(req, res) {
     });
 
     const widgets = listWidgetsByOwner(userId);
-    seedConversationStats();
     seedAnalytics();
     const analytics     = getUserAnalytics(userId);
-    const conversations = listConversations(userId);
     const userStats     = getUserStats(userId);
 
     return res.json({
       user:          toPublicUser(targetUser),
       totalWebsites: websites.length,
-      totalChats:    conversations.length,
       totalQueries:  userStats.total_queries,
       totalTokens:   userStats.total_tokens,
       queriesToday:  analytics.queriesToday ?? 0,
@@ -238,9 +228,7 @@ async function userMetricsController(req, res) {
       totalWidgets:  widgets.length,
       widgets,
       websites,
-      conversations,
       recentActivity: [
-        ...conversations.slice(0, 5).map((item) => ({ label: item.title, type: "Conversation", timestamp: item.updated_at || item.created_at })),
         ...widgets.slice(0, 5).map((item) => ({ label: item.displayName, type: "Widget",       timestamp: item.updatedAt  || item.createdAt  })),
       ],
     });
@@ -250,11 +238,8 @@ async function userMetricsController(req, res) {
 }
 
 module.exports = {
-  adminHealthController,
   adminOverviewController,
-  adminSubscriptionsController,
   analyticsController,
-  conversationsController,
   dashboardMetricsController,
   saveWidgetSettingsController,
   userMetricsController,

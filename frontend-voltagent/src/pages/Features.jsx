@@ -16,7 +16,7 @@ export function FeaturesPage({ onNavigate }) {
         {items.map((item) => (
           <Card key={item} className="p-6">
             <p className="text-sm font-medium text-ink-strong">{item}</p>
-            <p className="mt-2 text-sm leading-6 text-body">Each feature is presented in the same dark, precise Voltagent visual language as the home page.</p>
+            <p className="mt-2 text-sm leading-6 text-body">Each feature is presented in the same dark, precise WebGenius visual language as the home page.</p>
           </Card>
         ))}
       </div>

@@ -15,8 +15,8 @@ export function SiteHeader({ currentPath, navItems, onNavigate, onToggleMenu, me
         <button onClick={() => onNavigate("/")} className="flex items-center gap-3 text-left">
           <span className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-primary">✦</span>
           <div>
-            <p className="text-sm font-semibold text-ink-strong">Voltagent</p>
-            <p className="text-[11px] uppercase tracking-[0.28em] text-mute">RAG website platform</p>
+            <p className="text-sm font-semibold text-ink-strong">WebGenius</p>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-mute">AI-Powered Website Intelligence Platform</p>
           </div>
         </button>
 

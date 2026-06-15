@@ -25,6 +25,9 @@ export function WebsitesPage() {
 
   useEffect(() => {
     refresh().catch((e) => setError(e.message || "Failed to load websites.")).finally(() => setLoading(false));
+    
+    const interval = setInterval(refresh, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const stats = useMemo(() => {
@@ -39,25 +42,24 @@ export function WebsitesPage() {
   const handleAdd = async () => {
     setActionLoading(true);
     setError("");
+    const newUrl = url.trim();
+    if (!newUrl) { setActionLoading(false); return; }
     try {
-      await indexWebsite(url);
+      // Optimistically add placeholder site with indexing status
+      const placeholder = {
+        id: `tmp-${Date.now()}`,
+        domain: newUrl,
+        status: "indexing",
+        page_count: 0,
+      };
+      setWebsites((prev) => [...prev, placeholder]);
       setUrl("");
+      await indexWebsite(newUrl);
+      // Refresh to get updated site list; remove temporary placeholder afterwards
       await refresh();
+      setWebsites((prev) => prev.filter((s) => !(s.id && s.id.startsWith("tmp-"))));
     } catch (e) {
       setError(e.message || "Failed to add website.");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleEdit = async (site) => {
-    setActionLoading(true);
-    setError("");
-    try {
-      await indexWebsite(site.domain || site.collection_name);
-      await refresh();
-    } catch (e) {
-      setError(e.message || "Failed to edit website.");
     } finally {
       setActionLoading(false);
     }
@@ -94,9 +96,8 @@ export function WebsitesPage() {
                 <p className="mt-1 text-xs text-body">{site.page_count || 0} pages · Updated {site.updated_at || site.created_at || "recently"}</p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button onClick={() => handleEdit(site)} className="rounded-full border border-hairline px-4 py-2 text-sm text-body" disabled={actionLoading}>Edit Website</button>
-                <button onClick={async () => { await deleteWebsite(site.id || site.collection_name); await refresh(); }} className="rounded-full border border-hairline px-4 py-2 text-sm text-body" disabled={actionLoading}>Delete Website</button>
-                <button onClick={async () => { await adminReindexWebsiteApi(site.id || site.collection_name); }} className="rounded-full border border-primary/30 px-4 py-2 text-sm text-primary" disabled={actionLoading}>Reindex Website</button>
+                  <button onClick={async () => { await deleteWebsite(site.id || site.collection_name); await refresh(); }} className="rounded-full border border-hairline px-4 py-2 text-sm text-body" disabled={actionLoading}>Delete Website</button>
+                  <button onClick={async () => { await adminReindexWebsiteApi(site.id || site.collection_name); }} className="rounded-full border border-primary/30 px-4 py-2 text-sm text-primary" disabled={actionLoading}>Reindex Website</button>
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs text-body">

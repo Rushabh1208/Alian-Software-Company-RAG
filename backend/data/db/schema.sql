@@ -1,4 +1,4 @@
--- Voltagent SaaS foundation schema
+-- WebGenius SaaS foundation schema
 
 CREATE TABLE roles (
   id UUID PRIMARY KEY,
@@ -80,7 +80,7 @@ CREATE TABLE widget_settings (
   theme VARCHAR(30) NOT NULL DEFAULT 'dark',
   welcome_message TEXT NOT NULL DEFAULT '',
   suggested_questions JSON NOT NULL,
-  widget_title VARCHAR(150) NOT NULL DEFAULT 'Voltagent Assistant',
+  widget_title VARCHAR(150) NOT NULL DEFAULT 'WebGenius Assistant',
   accent_color VARCHAR(20) NOT NULL DEFAULT '#00d992',
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_widget_settings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

@@ -27,11 +27,9 @@ function ensureSeeded() {
   const seedPath = path.join(DB_DIR, "seed.json");
   const seed = fs.existsSync(seedPath) ? JSON.parse(fs.readFileSync(seedPath, "utf8")) : { roles: [], plans: [] };
   if (!fs.existsSync(tablePath("roles"))) writeTable("roles", seed.roles || []);
-  if (!fs.existsSync(tablePath("plans"))) writeTable("plans", seed.plans || []);
   if (!fs.existsSync(tablePath("users"))) writeTable("users", []);
   if (!fs.existsSync(tablePath("websites"))) writeTable("websites", []);
   if (!fs.existsSync(tablePath("website_indexes"))) writeTable("website_indexes", []);
-  if (!fs.existsSync(tablePath("subscriptions"))) writeTable("subscriptions", []);
   if (!fs.existsSync(tablePath("api_keys"))) writeTable("api_keys", []);
   if (!fs.existsSync(tablePath("notifications"))) writeTable("notifications", []);
   if (!fs.existsSync(tablePath("refresh_tokens"))) writeTable("refresh_tokens", []);

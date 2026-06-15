@@ -1,6 +1,7 @@
 const { askQuestion } = require("../rag_core/queryService");
 const { assertWebsiteAccess } = require("../services/websiteOwnershipService");
 const { recordDailyQuery } = require("../services/analyticsService");
+const { incrementUserStats } = require("../services/conversationService");
 
 async function queryController(req, res) {
   try {
@@ -37,6 +38,7 @@ async function queryController(req, res) {
     if (userId) {
       const tokensUsed = Number(payload?.result?.metrics?.total_tokens || 0);
       recordDailyQuery(userId, tokensUsed);
+      incrementUserStats(userId, { queries: 1, tokens: tokensUsed });
     }
 
     return res.json(payload);

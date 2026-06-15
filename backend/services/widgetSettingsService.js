@@ -15,7 +15,7 @@ function saveWidgetSettings(userId, payload) {
     theme: payload.theme || "dark",
     welcome_message: payload.welcomeMessage || "",
     suggested_questions: Array.isArray(payload.suggestedQuestions) ? payload.suggestedQuestions : [],
-    widget_title: payload.widgetTitle || "Voltagent Assistant",
+    widget_title: payload.widgetTitle || "WebGenius Assistant",
     accent_color: payload.accentColor || "#00d992",
     updated_at: now,
   };

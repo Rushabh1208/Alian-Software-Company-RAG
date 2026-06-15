@@ -2,7 +2,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000
 
 function getStoredToken() {
   try {
-    return localStorage.getItem("voltagent_access_token") || "";
+    return localStorage.getItem("webgenius_access_token") || "";
   } catch {
     return "";
   }
@@ -37,26 +37,26 @@ async function request(path, options = {}) {
 
 export function setStoredAuth({ accessToken, refreshToken, user }) {
   try {
-    if (accessToken) localStorage.setItem("voltagent_access_token", accessToken);
-    if (refreshToken) localStorage.setItem("voltagent_refresh_token", refreshToken);
-    if (user) localStorage.setItem("voltagent_user", JSON.stringify(user));
+    if (accessToken) localStorage.setItem("webgenius_access_token", accessToken);
+    if (refreshToken) localStorage.setItem("webgenius_refresh_token", refreshToken);
+    if (user) localStorage.setItem("webgenius_user", JSON.stringify(user));
   } catch {}
 }
 
 export function clearStoredAuth() {
   try {
-    localStorage.removeItem("voltagent_access_token");
-    localStorage.removeItem("voltagent_refresh_token");
-    localStorage.removeItem("voltagent_user");
+    localStorage.removeItem("webgenius_access_token");
+    localStorage.removeItem("webgenius_refresh_token");
+    localStorage.removeItem("webgenius_user");
   } catch {}
 }
 
 export function loadStoredAuth() {
   try {
-    const user = JSON.parse(localStorage.getItem("voltagent_user") || "null");
+    const user = JSON.parse(localStorage.getItem("webgenius_user") || "null");
     return {
-      accessToken: localStorage.getItem("voltagent_access_token") || "",
-      refreshToken: localStorage.getItem("voltagent_refresh_token") || "",
+      accessToken: localStorage.getItem("webgenius_access_token") || "",
+      refreshToken: localStorage.getItem("webgenius_refresh_token") || "",
       user: user || null,
     };
   } catch {
@@ -66,7 +66,7 @@ export function loadStoredAuth() {
 
 export function getStoredRefreshToken() {
   try {
-    return localStorage.getItem("voltagent_refresh_token") || "";
+    return localStorage.getItem("webgenius_refresh_token") || "";
   } catch {
     return "";
   }
@@ -205,15 +205,6 @@ export function deleteUserApi(id) {
 export function getUserMetricsApi(id) {
   return request(`/api/admin/users/${encodeURIComponent(id)}/metrics`);
 }
-
-export function listPlansApi() {
-  return request("/api/subscriptions/plans");
-}
-
-export function mySubscriptionApi() {
-  return request("/api/subscriptions/me");
-}
-
 export function adminWebsitesApi() {
   return request("/api/admin/websites");
 }
@@ -230,9 +221,6 @@ export function getUserAnalyticsApi() {
   return request("/api/dashboard/analytics");
 }
 
-export function getConversationsApi() {
-  return request("/api/conversations");
-}
 
 export function getWidgetSettingsApi() {
   return request("/api/widget-settings");
@@ -265,13 +253,7 @@ export function updateAdminConfigApi(body) {
 }
 
 
-export function getAdminHealthApi() {
-  return request("/api/admin/system-health");
-}
 
-export function getAdminSubscriptionsApi() {
-  return request("/api/admin/subscriptions");
-}
 
 export { API_BASE_URL };
 // ── User-scoped chat storage API ──────────────────────────────────────────────

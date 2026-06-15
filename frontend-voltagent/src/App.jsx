@@ -16,7 +16,6 @@ import { PromptSettingsPage } from "./pages/dashboard/PromptSettings";
 import { WebsitesPage } from "./pages/dashboard/Websites";
 import { WidgetsPage } from "./pages/dashboard/Widgets";
 import { ChatbotSettingsPage } from "./pages/dashboard/ChatbotSettings";
-import { ConversationsPage } from "./pages/dashboard/Conversations";
 import { AnalyticsPage } from "./pages/dashboard/Analytics";
 import { ProfilePage } from "./pages/dashboard/Profile";
 import { AdminDashboardLayout } from "./components/admin/AdminDashboardLayout";
@@ -24,8 +23,7 @@ import { AdminOverviewPage } from "./pages/admin/Overview";
 import { AdminUsersPage } from "./pages/admin/Users";
 import { AdminWebsitesPage } from "./pages/admin/Websites";
 import { AdminAnalyticsPage } from "./pages/admin/Analytics";
-import { AdminSystemHealthPage } from "./pages/admin/SystemHealth";
-import { AdminSubscriptionsPage } from "./pages/admin/Subscriptions";
+
 import { AdminSettingsPage } from "./pages/admin/Settings";
 import {
   clearStoredAuth,
@@ -55,7 +53,6 @@ const dashboardRoutes = {
   "/dashboard/websites": WebsitesPage,
   "/dashboard/widgets": WidgetsPage,
   "/dashboard/chatbot-settings": ChatbotSettingsPage,
-  "/dashboard/conversations": ConversationsPage,
   "/dashboard/analytics": AnalyticsPage,
   "/dashboard/profile": ProfilePage,
   "/dashboard/prompt-settings": PromptSettingsPage,
@@ -66,8 +63,7 @@ const adminRoutes = {
   "/admin/users": AdminUsersPage,
   "/admin/websites": AdminWebsitesPage,
   "/admin/analytics": AdminAnalyticsPage,
-  "/admin/system-health": AdminSystemHealthPage,
-  "/admin/subscriptions": AdminSubscriptionsPage,
+
   "/admin/settings": AdminSettingsPage,
 };
 
@@ -76,21 +72,29 @@ function getPath() {
   return pathname.endsWith("/") && pathname !== "/" ? pathname.slice(0, -1) : pathname || "/";
 }
 
+function getSearch() {
+  return window.location.search;
+}
+
 function navigate(to) {
-  if (to === window.location.pathname) return;
+  if (to === window.location.pathname + window.location.search) return;
   window.history.pushState({}, "", to);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
 export default function App() {
   const [path, setPath] = useState(getPath);
+  const [search, setSearch] = useState(getSearch);
   const [menuOpen, setMenuOpen] = useState(false);
   const [auth, setAuth] = useState({ user: null, accessToken: "", refreshToken: "" });
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
 
   useEffect(() => {
-    const onPop = () => setPath(getPath());
+    const onPop = () => {
+      setPath(getPath());
+      setSearch(getSearch());
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
@@ -108,7 +112,7 @@ export default function App() {
           });
           setAuthLoading(false);
           return;
-        } catch {}
+        } catch { }
       }
 
       const refreshToken = stored.refreshToken || getStoredRefreshToken();
@@ -201,7 +205,7 @@ export default function App() {
     try {
       const token = auth.refreshToken || getStoredRefreshToken();
       if (token) await logoutApi(token);
-    } catch {}
+    } catch { }
     clearStoredAuth();
     setAuth({ user: null, accessToken: "", refreshToken: "" });
     navigate("/login");

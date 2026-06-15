@@ -1,4 +1,5 @@
 const { nextId, readTable, writeTable, ensureSeeded } = require("../utils/dbStore");
+const { recordDailyQuery } = require("./analyticsService");
 
 // ── User stats helpers ─────────────────────────────────────────────────────────
 
@@ -10,7 +11,36 @@ function ensureUserStatsTable() {
 function getUserStats(userId) {
   ensureUserStatsTable();
   const rows = readTable("user_stats");
-  return rows.find((r) => r.user_id === userId) || { user_id: userId, total_queries: 0, total_tokens: 0 };
+  const stat = rows.find((r) => r.user_id === userId) || { user_id: userId, total_queries: 0, total_tokens: 0 };
+
+  // Self-healing: Ensure lifetime stats are at least the sum of daily analytics
+  const dailyRows = readTable("analytics_daily").filter((r) => r.user_id === userId);
+  const dailyTokensSum = dailyRows.reduce((sum, r) => sum + (r.tokens || 0), 0);
+  const dailyQueriesSum = dailyRows.reduce((sum, r) => sum + (r.queries || 0), 0);
+
+  if (dailyTokensSum > stat.total_tokens || dailyQueriesSum > stat.total_queries) {
+    stat.total_tokens = Math.max(stat.total_tokens, dailyTokensSum);
+    stat.total_queries = Math.max(stat.total_queries, dailyQueriesSum);
+
+    const idx = rows.findIndex((r) => r.user_id === userId);
+    if (idx >= 0) {
+      rows[idx].total_tokens = stat.total_tokens;
+      rows[idx].total_queries = stat.total_queries;
+      rows[idx].updated_at = new Date().toISOString();
+      writeTable("user_stats", rows);
+    } else {
+      rows.push({
+        id: nextId("stat"),
+        user_id: userId,
+        total_queries: stat.total_queries,
+        total_tokens: stat.total_tokens,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      writeTable("user_stats", rows);
+    }
+  }
+  return stat;
 }
 
 function incrementUserStats(userId, { queries = 0, tokens = 0 }) {
@@ -139,12 +169,8 @@ function addChatMessage({ conversationId, userId, role, content }) {
   // Track usage stats permanently (survives chat deletion)
   // Each assistant message = 1 query consumed; tokens = combined user+assistant content
   if (role === "assistant") {
-    // find the last user message in this conversation to count its tokens too
-    const allMsgs = readTable("chat_messages").filter((m) => m.conversation_id === conversationId);
-    const lastUser = [...allMsgs].reverse().find((m) => m.role === "user");
-    const promptTokens = estimateTokens(lastUser?.content || "");
-    const completionTokens = estimateTokens(content);
-    incrementUserStats(userId, { queries: 1, tokens: promptTokens + completionTokens });
+    // Token usage and queries are now logged centrally in queryController
+    // to prevent double-counting and to use the exact LLM token metrics.
   }
 
   // bump conversation updated_at
@@ -190,6 +216,7 @@ module.exports = {
   getAllUserStats,
   getConversationById,
   getUserStats,
+  incrementUserStats,
   listChatMessages,
   listConversations,
   seedConversationStats,

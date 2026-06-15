@@ -3,7 +3,7 @@ import { Card, SectionTitle } from "../components/marketing/MarketingPrimitives"
 export function AboutPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <SectionTitle eyebrow="About" title="A public website built around the Voltagent look and feel." description="The goal is to give the project a credible SaaS face while preserving the dashboard-first dark aesthetic." />
+      <SectionTitle eyebrow="About" title="A public website built around the WebGenius look and feel." description="The goal is to give the project a credible SaaS face while preserving the dashboard-first dark aesthetic." />
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <Card className="p-6">
           <p className="text-sm font-medium text-ink-strong">What this phase includes</p>

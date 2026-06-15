@@ -8,7 +8,6 @@ const widgetRoutes = require("./routes/widgetRoutes");
 const guardrailsRoutes = require('./routes/guardrailsRoutes');
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adminWebsiteRoutes = require("./routes/adminWebsiteRoutes");
 const sessionRoutes = require("./routes/sessionRoutes");
@@ -87,7 +86,6 @@ function createApp() {
   app.use("/api", sessionRoutes);
   app.use("/api", meRoutes);
   app.use("/api", userRoutes);
-  app.use("/api", subscriptionRoutes);
   app.use("/api", adminRoutes);
   app.use("/api", adminWebsiteRoutes);
   app.use("/api", dashboardRoutes);

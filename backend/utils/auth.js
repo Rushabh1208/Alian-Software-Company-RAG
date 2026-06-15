@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET || "voltagent-access-secret";
-const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || "voltagent-refresh-secret";
+const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET || "webgenius-access-secret";
+const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || "webgenius-refresh-secret";
 const ACCESS_TOKEN_TTL_SECONDS = Number(process.env.JWT_ACCESS_TTL_SECONDS || 60 * 60);
 const REFRESH_TOKEN_TTL_SECONDS = Number(process.env.JWT_REFRESH_TTL_SECONDS || 60 * 60 * 24 * 30);
 

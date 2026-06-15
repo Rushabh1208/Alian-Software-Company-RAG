@@ -3,8 +3,8 @@ export function SiteFooter({ onNavigate }) {
     <footer className="border-t border-hairline/80 bg-canvas-soft/60">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm font-semibold text-ink-strong">Voltagent</p>
-          <p className="mt-1 text-sm text-body">Dark, fast, and built for website indexing + embedded RAG.</p>
+          <p className="text-sm font-semibold text-ink-strong">WebGenius</p>
+          <p className="mt-1 text-sm text-body">AI-Powered Website Intelligence Platform.</p>
         </div>
         <div className="flex flex-wrap gap-3 text-sm text-body">
           <button onClick={() => onNavigate("/features")} className="hover:text-ink">Features</button>

@@ -194,14 +194,7 @@ export function AdminOverviewPage({ onNavigate }) {
             accent="amber"
             onClick={() => navigate("/admin/analytics")}
           />
-          <StatCard
-            label="Total Conversations"
-            value={m.totalChats}
-            sub="Across all users"
-            icon="💬"
-            accent="green"
-            onClick={() => navigate("/admin/analytics")}
-          />
+
         </Section>
 
       </div>
