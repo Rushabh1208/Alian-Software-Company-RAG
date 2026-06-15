@@ -1,2 +1,0 @@
--- Initial SaaS foundation migration
--- Apply the schema in backend/data/db/schema.sql.

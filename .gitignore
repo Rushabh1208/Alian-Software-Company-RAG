@@ -1,28 +1,85 @@
-# Python
+# ============================================================
+#  RAG-PROJECT .gitignore
+#  Covers: Python (FastAPI/RAG), Node.js (Express backend,
+#  Vite+React frontend, Widget), ChromaDB, data pipeline outputs
+# ============================================================
+
+# ----- Python -----
 __pycache__/
 *.py[cod]
 *$py.class
 *.pyd
+*.pyo
 .Python
-.venv/
-venv/
-env/
-ENV/
+*.so
+*.egg
+*.egg-info/
+.eggs/
+sdist/
+wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Environment
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# ----- Environment / Secrets -----
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
-# Build and packaging
-build/
-dist/
-*.egg-info/
-.eggs/
+# ----- Node.js / npm (all sub-projects) -----
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.node_repl_history
 
-# Tooling
+# ----- Frontend build artifacts (Vite / React) -----
+frontend-voltagent/dist/
+frontend-voltagent/.vite/
+
+# ----- Backend build artifacts -----
+backend/dist/
+backend/build/
+
+# ----- ChromaDB databases -----
+chroma_db/
+data/chromadb/
+backend/chroma/*.sqlite3
+backend/chroma/*.sqlite3-*
+
+# ----- Pipeline data (generated/scraped content) -----
+data/raw/*
+data/parsed/*
+data/cleaned/*
+data/chunks/*
+data/embeddings/*
+data/metadata/*
+data/sitemap/*
+data/websites/*
+data/widgets/*
+data/prompt_settings_users/*
+
+# ----- Backend JSON data stores (runtime data, user info) -----
+backend/data/db/*.json
+!backend/data/db/seed.json
+!backend/data/db/schema.sql
+backend/data/db/migrations/
+
+# ----- Logs -----
+logs/
+*.log
+
+# ----- Python tooling / test caches -----
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -31,56 +88,39 @@ htmlcov/
 .tox/
 .nox/
 
-# IDE/editor
+# ----- Build / packaging -----
+build/
+dist/
+*.egg-info/
+
+# ----- IDE / Editor -----
 .idea/
 .vscode/
 *.swp
 *.swo
 *.swa
 *~
+.project
+.classpath
+.settings/
+
+# ----- OS generated files -----
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# Node.js / npm
-node_modules/
-package-lock.json
-yarn.lock
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
-.eslintcache
-.node_repl_history
-
-# Frontend build artifacts
-frontend/dist/
-frontend/.vite/
-frontend/.next/
-frontend/build/
-frontend/out/
-
-# Backend build artifacts
-backend/dist/
-backend/build/
-backend/.next/
-
-# Project artifacts - data files
-data/raw/*
-data/parsed/*
-data/cleaned/*
-data/chunks/*
-data/embeddings/*
-data/chromadb/*
-data/metadata/*
-data/sitemap/*
-data/websites/*
-logs/**/*.log
-
-# Generated/cached files
+# ----- Generated / cached files -----
 embedding_cache.json
 model_cache/
 .cache/
 
-# Keep directory placeholders
+# ----- Scratch / temp files -----
+scratch_test.js
+
+# ----- Keep directory structure -----
 !data/**/.gitkeep
 !logs/**/.gitkeep
