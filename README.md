@@ -34,6 +34,24 @@ The system is designed to stay small, local, and production-friendly:
 2. Parse and clean HTML content.
 3. Generate metadata and chunk the content.
 4. Create local embeddings and persist them to `data/embeddings/embeddings.json`.
+
+## Overview
+
+The system is designed to stay small, local, and production-friendly:
+
+- Local HuggingFace embeddings
+- JSON-based embedding storage
+- Cross-encoder reranking
+- Confidence scoring and rejection logic
+- Gemini 2.5 Flash for final response generation only
+- CLI querying with metrics and source display
+
+## Architecture Flow
+
+1. Crawl the website from sitemap and public pages.
+2. Parse and clean HTML content.
+3. Generate metadata and chunk the content.
+4. Create local embeddings and persist them to `data/embeddings/embeddings.json`.
 5. Retrieve top chunks for a query using embedding similarity.
 6. Rerank retrieved chunks with a cross encoder.
 7. Validate confidence and grounding.
@@ -45,8 +63,8 @@ The system is designed to stay small, local, and production-friendly:
 Create and activate a virtual environment:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
 Install dependencies:
@@ -88,9 +106,9 @@ RAG_BACKOFF_MULTIPLIER=2.0
 ### 1. Prepare the Python environment
 
 ```powershell
-cd c:\Users\as\Desktop\JS\RAG-PROJECT
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+# Navigate to the project root directory
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 python -m playwright install
@@ -140,7 +158,7 @@ python -m scripts.run_pipeline --from embed --to vectordb
 
 ### 3. Web app wrapper (optional)
 
-The `backend/` and `frontend/` folders provide a thin web UI around the Python pipeline.
+The `backend/` and `frontend-voltagent/` folders provide a thin web UI around the Python pipeline.
 
 Start the backend:
 
@@ -153,8 +171,8 @@ npm start
 Start the Python bridge separately in another terminal:
 
 ```powershell
-cd c:\Users\as\Desktop\JS\RAG-PROJECT
-.venv\Scripts\Activate.ps1
+# From the project root directory
+.\venv\Scripts\Activate.ps1
 uvicorn rag.api.server:app --host 127.0.0.1 --port 8000
 ```
 
@@ -168,7 +186,7 @@ $env:RAG_PYTHON_API_TIMEOUT_MS = 0
 Start the frontend:
 
 ```powershell
-cd frontend
+cd frontend-voltagent
 npm install
 npm run dev
 ```
@@ -191,14 +209,14 @@ The core pipeline is Python-only and consists of:
 - `pyproject.toml` / `requirements.txt` — Python packaging and dependencies
 - `.env.example` / `.env` — runtime environment variables
 
-The core pipeline does not require `backend/` or `frontend/`.
+The core pipeline does not require `backend/` or `frontend-voltagent/`.
 
 ## What is optional or not used by the core pipeline?
 
 The following directories and files are not required to run the core ingestion pipeline:
 
 - `backend/` — optional Express API wrapper for the web app
-- `frontend/` — optional React UI for browser access
+- `frontend-voltagent/` — optional React UI for browser access
 - `rag/api/bridge.py` — optional CLI-style JSON bridge wrapper, not required when using `uvicorn rag.api.server:app`
 - `backend/chroma/chromaService.js` — helper file not imported anywhere in the current backend code
 - `backend/utils/paths.js` — helper file not imported anywhere in the current backend code
@@ -264,7 +282,7 @@ rag/                 Python RAG library and ingestion stages
   utils/             text utilities, website utilities, and helpers
 scripts/             executable Python stage runners and query CLI
 backend/             optional Express API wrapper for the web frontend
-frontend/            optional React UI and browser application
+frontend-voltagent/  optional React UI and browser application
 data/                generated artifacts, embeddings, and ChromaDB persistence
 logs/                runtime logs for crawls, parsing, embeddings, and vectordb
 docs/                project notes and design documentation
@@ -277,7 +295,7 @@ tests/               placeholder test package (no tests implemented yet)
 - `backend/utils/paths.js` — not imported by the backend or current pipeline
 - `rag/api/bridge.py` — optional CLI bridge wrapper, not needed when using `uvicorn rag.api.server:app`
 - `backend/` — optional web API wrapper
-- `frontend/` — optional browser UI
+- `frontend-voltagent/` — optional browser UI
 - `docs/` — documentation only
 - `tests/` — placeholder test package only
 
@@ -314,8 +332,8 @@ npm start
 Before using `POST /api/index-website`, start the Python bridge in a separate terminal:
 
 ```powershell
-cd c:\Users\as\Desktop\JS\RAG-PROJECT
-.venv\Scripts\Activate.ps1
+# From the project root directory
+.\venv\Scripts\Activate.ps1
 uvicorn rag.api.server:app --host 127.0.0.1 --port 8000
 ```
 
@@ -341,7 +359,7 @@ The frontend uses normal query requests and persists chat history in browser loc
 ### Frontend
 
 ```powershell
-cd frontend
+cd frontend-voltagent
 npm install
 npm run dev
 ```

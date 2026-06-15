@@ -208,7 +208,7 @@ export default function App() {
     } catch { }
     clearStoredAuth();
     setAuth({ user: null, accessToken: "", refreshToken: "" });
-    navigate("/login");
+    navigate("/");
   }
 
   // ChatPage is rendered persistently below; this resolves the page for all other routes
